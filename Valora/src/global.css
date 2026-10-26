@@ -1,0 +1,49 @@
+@import "tailwindcss/preflight.css" layer(base);
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,600&display=swap");
+@layer theme, base, components, utilities;
+@config "../tailwind.config.js";
+
+body {
+  @apply leading-[normal] m-0;
+}
+@layer base {
+  *,
+  *::before,
+  *::after {
+    border-width: 0;
+  }
+}
+
+
+/* Ajustes responsivos da tela de login: preservam o design original. */
+.valora-login { min-height: 100vh; padding-right: 0 !important; }
+.valora-login-layout { width: 100%; max-width: none !important; height: auto !important; min-height: 100vh; display: grid !important; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0 !important; align-items: stretch !important; }
+.valora-login-hero { width: 100%; max-width: none !important; min-width: 0 !important; height: auto !important; min-height: 100vh !important; background-image: url('/Brand@3x.png'); background-position: center; padding: 6px clamp(25px, 4vw, 58px) 24px !important; }
+.valora-login-panel { width: 100%; max-width: none !important; min-width: 0 !important; padding: 30px clamp(30px, 6vw, 110px) 40px !important; display: flex; flex-direction: column; align-items: stretch !important; gap: 0 !important; }
+.valora-login-panel > div:first-child { margin-bottom: auto; }
+.valora-login-form { width: 100%; max-width: 490px; margin: auto !important; padding-right: 0 !important; gap: 17px !important; }
+.valora-login-panel > div:first-child { margin-bottom: 22px; }
+.valora-login-form > div:nth-child(2) { padding-top: 22px !important; }
+@media (max-width: 900px) {
+  .valora-login-layout { grid-template-columns: 1fr; }
+  .valora-login-hero { min-height: 520px !important; }
+  .valora-login-panel { min-height: 700px; padding: 28px 30px 50px !important; }
+}
+@media (max-width: 480px) {
+  .valora-login-hero { min-height: 650px !important; }
+  .valora-login-panel { min-height: 640px; padding: 20px !important; }
+  .valora-login-form input { min-width: 0 !important; }
+}
+
+/* Dashboard: preserve 1440x1024 Figma canvas proportions at desktop size. */
+body:has([data-valora-dashboard]) { overflow-x: auto; }
+
+/* Todos os controles interativos indicam clique, inclusive ações demonstrativas. */
+button, a, select, summary, [role="button"], input[type="button"], input[type="submit"], input[type="checkbox"], input[type="radio"] { cursor: pointer; }
+button:disabled { cursor: not-allowed; }
+
+/* Indicador visual de interacao: sem alterar layout ou comportamento. */
+button, a, select, summary, label[for], [role="button"], [role="link"], [role="menuitem"], [role="tab"], [aria-haspopup], input[type="button"], input[type="submit"], input[type="checkbox"], input[type="radio"] { cursor: pointer !important; }
+button:disabled, [aria-disabled="true"] { cursor: not-allowed !important; }

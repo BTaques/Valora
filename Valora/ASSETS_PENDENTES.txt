@@ -1,0 +1,1 @@
+Imagem original da aurora boreal do cartão Conquiste seus sonhos (Figma: imgAuroraImagePlaceholder / ba4fb.png). O ZIP exportado pelo Locofy não inclui Conquiste-seus-sonhos@3x.png. É necessário exportar a imagem original do Figma para public/Conquiste-seus-sonhos@3x.png. Não foi substituída por imagem semelhante.

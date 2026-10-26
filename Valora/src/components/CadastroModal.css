@@ -1,0 +1,25 @@
+.valora-modal-backdrop{position:fixed;inset:0;z-index:1000;background:rgba(22,13,45,.68);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:20px;overflow-y:auto;font-family:Inter,Arial,sans-serif}
+.valora-cadastro-modal{position:relative;width:min(100%,570px);max-height:calc(100vh - 40px);overflow-y:auto;background:#fff;border-radius:22px;box-shadow:0 28px 100px rgba(18,10,45,.35);padding:30px 44px 27px;color:#211844}
+.valora-modal-close{position:absolute;right:23px;top:17px;font-size:29px;line-height:1;background:transparent;color:#77708c;cursor:pointer;padding:5px 9px}
+.valora-modal-close:hover{color:#4d21b3}
+.valora-cadastro-brand{display:flex;align-items:center;justify-content:center;gap:7px;font-size:23px;font-weight:700;color:#4d21b3;margin-bottom:12px}
+.valora-cadastro-brand img{width:31px;height:31px;object-fit:contain}
+.valora-cadastro-heading{text-align:center;margin-bottom:22px}
+.valora-cadastro-kicker{color:#7948d7;font-size:10px;font-weight:700;letter-spacing:.2em;margin:0 0 7px}
+.valora-cadastro-heading h2{font-size:27px;line-height:1.2;font-weight:700;margin:0 0 8px}
+.valora-cadastro-heading>p:last-child{font-size:13px;color:#827a98;margin:0}
+.valora-cadastro-form{display:flex;flex-direction:column;gap:12px}
+.valora-cadastro-form label{display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:600;color:#282139;min-width:0}
+.valora-cadastro-form input{height:44px;border:1px solid #d9d3e4;border-radius:9px;background:#fff;padding:0 13px;font-family:inherit;font-size:13px;color:#282139;width:100%;min-width:0;outline:none}
+.valora-cadastro-form input:focus{border-color:#7141d5;box-shadow:0 0 0 3px rgba(113,65,213,.12)}
+.valora-cadastro-form input::placeholder{color:#aaa4b8}
+.valora-cadastro-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.valora-cadastro-password{position:relative}
+.valora-cadastro-password input{padding-right:78px}
+.valora-cadastro-password button{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:transparent;color:#6940bc;font-size:11px;font-weight:600;cursor:pointer}
+.valora-cadastro-submit{margin-top:5px;width:100%;height:47px;background:linear-gradient(90deg,#6329db,#4514ad);color:white;border-radius:10px;display:flex;align-items:center;justify-content:center;gap:13px;font-weight:700;font-size:14px;cursor:pointer}
+.valora-cadastro-submit:hover{filter:brightness(1.09)}
+.valora-cadastro-feedback{margin:0;font-size:12px;line-height:1.4;color:#5b368e}
+.valora-cadastro-footer{margin:16px 0 0;text-align:center;color:#807990;font-size:12px}
+.valora-cadastro-footer button{color:#5c2bc4;font-weight:700;background:none;cursor:pointer;padding:0 3px}
+@media(max-width:580px){.valora-modal-backdrop{padding:10px}.valora-cadastro-modal{padding:28px 20px 22px;max-height:calc(100vh - 20px);border-radius:16px}.valora-cadastro-row{grid-template-columns:1fr;gap:12px}.valora-cadastro-heading h2{font-size:23px}}
