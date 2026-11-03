@@ -1,19 +1,11 @@
 import {useEffect,useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import Topbar5 from '../components/Topbar5';
+import { api, type CategoryDto } from '../services/valoraApi';
 const abs=(x:number,y:number,w:number,h:number)=>({position:'absolute' as const,left:x,top:y,width:w,height:h});
 const money=(n:number)=>n.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
-type Cat={name:string;color:string;bg:string;symbol:string;spent:number;percent:number};
-const initial:Cat[]=[
-{name:'Alimentação',color:'#ff996f',bg:'#ffe7df',symbol:'food',spent:625.4,percent:50},
-{name:'Transporte',color:'#4885db',bg:'#e4eeff',symbol:'car',spent:365,percent:29},
-{name:'Lazer',color:'#df67a3',bg:'#ffe3f0',symbol:'game',spent:249.9,percent:12},
-{name:'Saúde',color:'#e95c70',bg:'#ffe2e5',symbol:'heart',spent:120,percent:7},
-{name:'Educação',color:'#8159e0',bg:'#e9e3ff',symbol:'grad',spent:98,percent:2},
-{name:'Moradia',color:'#34b8b4',bg:'#ddf7f5',symbol:'home',spent:0,percent:0},
-{name:'Salário',color:'#3aa66c',bg:'#ddf7ea',symbol:'money',spent:0,percent:0},
-{name:'Outros',color:'#777b95',bg:'#ededf2',symbol:'dots',spent:0,percent:0},
-];
+type Cat={idCategoria?:number;name:string;color:string;bg:string;symbol:string;spent:number;percent:number};
+const fromApiCategory=(item:CategoryDto):Cat=>({idCategoria:item.idCategoria,name:item.nmCategoria,color:'#8159e0',bg:'#e9e3ff',symbol:'dots',spent:0,percent:0});
 function CategoryGlyph({name,size=18}:{name:string;size?:number}){
  const common={width:size,height:size,viewBox:'0 0 24 24',fill:'none',stroke:'currentColor',strokeWidth:1.8,strokeLinecap:'round' as const,strokeLinejoin:'round' as const};
  const shapes:Record<string,React.ReactNode>={
@@ -33,12 +25,13 @@ function Icon({item,size=28}:{item:Cat;size?:number}){return <span className="in
 export default function Categorias(){
 const navigate=useNavigate();const [zoom,setZoom]=useState(1);
 useEffect(()=>{const f=()=>setZoom(Math.max(1,innerWidth/1440));f();window.addEventListener('resize',f);return()=>window.removeEventListener('resize',f)},[]);
-const [cats,setCats]=useState<Cat[]>(initial),[query,setQuery]=useState(''),[period,setPeriod]=useState('Este mês'),[editing,setEditing]=useState<number|null>(null),[modal,setModal]=useState(false),[name,setName]=useState(''),[color,setColor]=useState('#8159e0');
+useEffect(()=>{let active=true;api.categorias.list().then(items=>{if(active)setCats(items.map(fromApiCategory))}).catch(error=>{if(active)setApiError(error instanceof Error?error.message:'Erro ao carregar categorias')});return()=>{active=false}},[]);
+const [cats,setCats]=useState<Cat[]>([]),[query,setQuery]=useState(''),[period,setPeriod]=useState('Este mês'),[editing,setEditing]=useState<number|null>(null),[modal,setModal]=useState(false),[name,setName]=useState(''),[color,setColor]=useState('#8159e0'),[apiError,setApiError]=useState('');
 const nav=[['Início','/dashboard','/Wrapper.svg'],['Movimentações','/movimentacoes','/Movimenta-es-icon.svg'],['Caixinhas','/caixinhas','/Archive-Caixinhas.svg'],['Categorias','/categorias','/Divider.svg'],['Contas conectadas','/contas-conectadas','/Contas-conectadas-icon.svg']];
 const start=()=>{setEditing(null);setName('');setColor('#8159e0');setModal(true)};
 const edit=(i:number)=>{setEditing(i);setName(cats[i].name);setColor(cats[i].color);setModal(true)};
-const remove=(i:number)=>{if(window.confirm('Excluir a categoria '+cats[i].name+'?'))setCats(old=>old.filter((_,j)=>j!==i))};
-const save=()=>{if(!name.trim())return;const item:Cat={name:name.trim(),color,bg:color+'20',symbol:'dots',spent:editing===null?0:cats[editing].spent,percent:editing===null?0:cats[editing].percent};setCats(old=>editing===null?[...old,item]:old.map((c,i)=>i===editing?{...item,symbol:c.symbol}:c));setModal(false)};
+const remove=async(i:number)=>{const item=cats[i];if(!item?.idCategoria)return;if(!window.confirm('Excluir a categoria '+item.name+'?'))return;try{await api.categorias.remove(item.idCategoria);setCats(old=>old.filter((_,j)=>j!==i));setApiError('')}catch(error){setApiError(error instanceof Error?error.message:'Não foi possível excluir a categoria')}};
+const save=async()=>{if(!name.trim())return;try{const result=editing===null?await api.categorias.create(name.trim()):await api.categorias.update(cats[editing].idCategoria!,name.trim());const normalized=fromApiCategory(result);setCats(old=>editing===null?[...old,normalized]:old.map((c,i)=>i===editing?{...normalized,color,bg:color+'20',symbol:c.symbol}:c));setModal(false);setApiError('')}catch(error){setApiError(error instanceof Error?error.message:'Não foi possível salvar a categoria')}};
 return <div style={{zoom}} className="relative w-[1440px] min-h-[1024px] bg-[#f6f9fe] font-[Inter] text-[#140d40]">
 <aside style={abs(0,0,232,1024)} className="bg-[#130938] text-white">
 <div className="absolute left-[35px] top-[31px] flex items-center gap-[2px]"><img src="/logo-branco-3@2x.png" className="w-[40px] h-[33px] object-contain"/><b className="text-[27px]">Valora</b></div>
@@ -46,12 +39,12 @@ return <div style={{zoom}} className="relative w-[1440px] min-h-[1024px] bg-[#f6
 <div style={abs(18,716,198,252)} className="overflow-hidden rounded-[10px] border border-[#452985]"><img src="/Promo2@3x.png" className="absolute inset-0 w-full h-full object-cover"/><div className="absolute inset-0 bg-gradient-to-b from-[#130938]/75 via-transparent to-transparent"/><p className="absolute left-[10px] top-[12px] text-[8px] tracking-[2px] font-semibold text-[#b285ff]">CONTROLE —</p><p className="absolute left-[10px] top-[26px] text-[12px] font-semibold leading-[16px]">Entenda melhor como<br/><span className="text-[#b285ff]">você gasta.</span></p><p className="absolute left-[10px] top-[56px] text-[10px]">Organize seus gastos.</p></div>
 </aside>
 <div style={abs(235,0,1205,74)}><Topbar5/></div>
-<h1 style={abs(254,102,600,44)} className="font-bold text-[32px]">Categorias</h1><p style={abs(254,144,650,24)} className="text-[#595291] text-[16px]">Organize e personalize suas categorias de gastos.</p>
+<h1 style={abs(254,102,600,44)} className="font-bold text-[32px]">Categorias</h1><p style={abs(254,144,650,24)} className="text-[#595291] text-[16px]">Organize e personalize suas categorias de gastos.</p>{apiError&&<p role="alert" className="absolute left-[254px] top-[164px] text-[11px] text-red-600">{apiError}</p>}
 <button style={abs(1232,106,188,48)} onClick={start} className="bg-[#5212d1] text-white rounded-[10px] text-[14px] font-medium flex items-center justify-center gap-[12px]"><span className="text-[22px] leading-none">＋</span>Nova categoria</button>
 <section style={abs(252,183,745,302)} className="rounded-[9px] bg-white border border-[#e3e5f2]">
 <b className="absolute left-[17px] top-[19px] text-[16px]">Gastos por categoria</b><select value={period} onChange={e=>setPeriod(e.target.value)} className="absolute right-[18px] top-[10px] h-[40px] w-[118px] border border-[#e3e5f2] rounded-[8px] bg-white px-3 text-[11px]">{['Este mês','Mês passado','Este ano'].map(x=><option key={x}>{x}</option>)}</select>
 <img src="/Donut-categorias-final.svg" alt="Gráfico de gastos por categoria" className="absolute left-[19px] top-[57px] w-[216px] h-[216px]"/>
-<b className="absolute left-[71px] top-[150px] text-[18px]">R$ 1.250,30</b><span className="absolute left-[85px] top-[177px] text-[#595291] text-[11px]">Total de gastos</span>
+<b className="absolute left-[71px] top-[150px] text-[18px]">R$ 0,00</b><span className="absolute left-[85px] top-[177px] text-[#595291] text-[11px]">Total de gastos</span>
 {cats.slice(0,5).map((c,i)=><div key={c.name} className="absolute left-[269px] right-[18px] h-[22px] flex items-center text-[12px]" style={{top:74+i*38}}><span className="w-[16px] h-[16px] rounded-full mr-[9px]" style={{background:c.color}}/><span className="flex-1">{c.name}</span><span className="text-[11px] font-medium w-[105px]">{money(c.spent)}</span><span className="text-[11px] text-[#595291] w-[30px] text-right">{c.percent}%</span></div>)}
 </section>
 <section style={abs(1015,183,405,302)} className="rounded-[9px] bg-white border border-[#e3e5f2]">
