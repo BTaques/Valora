@@ -2,12 +2,12 @@ import SidebarMenu from '../components/SidebarMenu';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Topbar5 from '../components/Topbar5';
-import { GoalIcon } from '../components/GoalIcon';
+import { GoalIcon, getCashboxIcon } from '../components/GoalIcon';
 import { api, type CashboxDto } from '../services/valoraApi';
 import {formatMoneyInput,parseMoneyInput} from '../utils/moneyInput';
 
 type Goal={idCaixinha:number;name:string;amount:number;target:number;icon:string};
-const fromApiCashbox=(item:CashboxDto):Goal=>({idCaixinha:item.idCaixinha,name:item.nmCaixinha,amount:Number(item.vlAtual),target:Number(item.vlMeta),icon:localStorage.getItem(`valora.cashbox.icon.${item.idCaixinha}`)||'target'});
+const fromApiCashbox=(item:CashboxDto):Goal=>({idCaixinha:item.idCaixinha,name:item.nmCaixinha,amount:Number(item.vlAtual),target:Number(item.vlMeta),icon:getCashboxIcon(item.idCaixinha,item.nmCaixinha)});
 const money=(n:number)=>n.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
 const pos=(x:number,y:number,w:number,h:number)=>({position:'absolute' as const,left:x,top:y,width:w,height:h});
 export default function Caixinhas(){
