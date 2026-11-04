@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 const paths:Record<string,ReactNode>={
 car:<><path d="M5 17h14l1-5-2.3-5.5a2 2 0 0 0-1.8-1.2H8.1a2 2 0 0 0-1.8 1.2L4 12l1 5Z"/><path d="M4 12h16M5 17v2a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1v-2m8 0v2a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1v-2"/><circle cx="7.5" cy="14.5" r=".7" fill="currentColor" stroke="none"/><circle cx="16.5" cy="14.5" r=".7" fill="currentColor" stroke="none"/></>,
-plane:<><path d="M21 3 10.8 13.2l-5.7-1.1-2.1 2.1 6.8 3.4 3.4 6.8 2.1-2.1-1.1-5.7L24 6.4A2.4 2.4 0 0 0 21 3Z" transform="translate(-1 -1) scale(.98)"/><path d="m9 15-4.5 4.5m1.5-7-3.5-2m10.5 7 2 3.5"/></>,
+plane:<><path d="M21 3 9.8 14.2 4 12l-2 2 7 4 4 7 2-2-2.2-5.8L24 6a2.1 2.1 0 0 0-3-3Z" transform="translate(-1.2 -1.2) scale(.98)"/><path d="m10 14-6 6m2-8-3-2m10 8 2 3"/></>,
 graduation:<><path d="m2 9 10-5 10 5-10 5-10-5ZM6 12v5c3 3 9 3 12 0v-5M22 9v7"/></>,
 medical:<><path d="M9 3h6l2 4-1.8 2H8.8L7 7l2-4Z"/><path d="M9 9c-2.7 1.6-4.5 4.5-4.5 7.3A4.7 4.7 0 0 0 9.2 21h5.6a4.7 4.7 0 0 0 4.7-4.7c0-2.8-1.8-5.7-4.5-7.3M9 12h6M12 12v6m-3-3h6"/></>,
 home:<><path d="m3 10 9-7 9 7v11H3V10ZM9 21v-8h6v8"/></>,
