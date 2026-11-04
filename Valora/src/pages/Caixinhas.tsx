@@ -1,3 +1,4 @@
+import SidebarMenu from '../components/SidebarMenu';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Topbar5 from '../components/Topbar5';
@@ -16,8 +17,7 @@ useEffect(()=>{let active=true;api.caixinhas.list().then(items=>{if(active)setGo
  const cards=[...goals];const sum=goals.reduce((n,g)=>n+g.amount,0);const total=goals.reduce((n,g)=>n+g.target,0);
  return <div style={{zoom}} className="relative w-[1440px] min-h-[1024px] bg-[#f9f9fe] font-[Inter] text-[#140f33]">
  <aside style={pos(0,0,232,1024)} className="bg-[#160b30] px-3">
- <div className="flex items-center gap-1 pt-[34px] pb-[43px] pl-3 text-white text-[27px] font-bold"><img src="/logo-branco-3@2x.png" className="w-10 h-[33px] object-contain"/>Valora</div>
- <nav className="flex flex-col gap-1">{nav.map(([label,href,icon])=><button key={label} onClick={()=>href!=='#'&&navigate(href)} className={'h-[54px] w-full border border-[#46395e] rounded-[10px] flex items-center gap-5 px-[13px] text-left text-white text-[14px] '+(label==='Caixinhas'?'bg-[#4212a6]':'bg-transparent')}><img src={icon} className="w-6 h-6 object-contain"/>{label}</button>)}</nav>
+ <SidebarMenu active="Caixinhas"/>
  <div style={pos(20,725,198,242)} className="rounded-[12px] overflow-hidden"><img src="/Carro1-Valora.png" alt="" className="absolute w-full h-full object-cover object-[60%_center]"/><div className="absolute inset-0 bg-[#5212d6]/[.05]"/><p className="absolute left-[21px] top-[25px] text-[#b285ff] font-semibold text-[14px]">Seus sonhos</p><p className="absolute left-[21px] top-[42px] text-white font-semibold text-[12px]">mais próximos de você.</p></div><p style={pos(41,735,160,12)} className="text-[#b285ff] font-semibold text-[8px] tracking-[2px]">CONQUISTE —</p>
  </aside>
  <div style={pos(235,0,1205,74)}><Topbar5/></div>
