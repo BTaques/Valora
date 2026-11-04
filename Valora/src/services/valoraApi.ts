@@ -310,6 +310,8 @@ export const api = {
     },
   },
 
+export type CashboxTransferCreate = { descricao:string; valor:number; tipo:"CAIXINHA_GUARDAR"|"CAIXINHA_RESGATE"; dataMovimentacao:string; idCategoria:number; idConta:number; idContaDestino:null; idCaixinha:number };
+
   movimentacoes: {
     list(page = 0, size = 100): Promise<PageDto<MovementDto>> {
       return request<PageDto<MovementDto>>(`/api/movimentacao/listar-movimentacoes?page=${page}&size=${size}&sort=dataMovimentacao,desc`);
@@ -322,6 +324,9 @@ export const api = {
         all.push(...next.content);
       }
       return all;
+    },
+    transferCashbox(data: CashboxTransferCreate): Promise<MovementDto> {
+      return request<MovementDto>("/api/movimentacao", {method:"POST",body:data});
     },
     create(data: MovementCreate): Promise<MovementDto> {
       return request<MovementDto>("/api/movimentacao", { method: "POST", body: data });
