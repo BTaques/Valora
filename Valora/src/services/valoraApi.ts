@@ -178,9 +178,21 @@ export function clearSession(): void {
 }
 
 async function fetchCurrentUser(): Promise<ValoraUser> {
-  const user = await request<ValoraUser>("/api/usuario");
-  sessionStorage.setItem(USER_KEY, JSON.stringify(user));
-  return user;
+  const email = getLoginEmail()?.trim().toLowerCase();
+  if (!email) throw new Error("Sessão sem e-mail. Entre novamente na sua conta.");
+  // A API não possui GET /api/usuario (me); usa a listagem paginada disponível.
+  let page = 0;
+  while (true) {
+    const result = await request<PageDto<ValoraUser>>(`/api/usuario/listar-usuarios?page=${page}&size=100`);
+    const user = result.content.find(item => item.email?.trim().toLowerCase() === email);
+    if (user) {
+      sessionStorage.setItem(USER_KEY, JSON.stringify(user));
+      return user;
+    }
+    page++;
+    if (page >= result.totalPages) break;
+  }
+  throw new Error("Não foi possível localizar seu usuário. Entre novamente na sua conta.");
 }
 
 export type RegisterPayload = {
