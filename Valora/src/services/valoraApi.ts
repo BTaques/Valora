@@ -338,5 +338,8 @@ export const api = {
     updateName(id: number, nome: string): Promise<AccountDto> {
       return request<AccountDto>("/api/conta/atualizar", { method: "PUT", body: { id, nome } });
     },
+    remove(id: number): Promise<void> {
+      return request<void>(`/api/conta/${id}`, { method: "DELETE" });
+    },
   },
 };
