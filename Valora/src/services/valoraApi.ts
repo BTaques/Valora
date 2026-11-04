@@ -1,6 +1,7 @@
 const API_URL = ("http://localhost:8080").replace(/\/$/, "");
 const TOKEN_KEY = "valora.accessToken";
 const USER_KEY = "valora.currentUser";
+const EMAIL_KEY = "valora.loginEmail";
 
 export type ValoraUser = {
   id: number;
@@ -166,9 +167,14 @@ export function getStoredUser(): ValoraUser | null {
   }
 }
 
+export function getLoginEmail(): string | null {
+  return sessionStorage.getItem(EMAIL_KEY);
+}
+
 export function clearSession(): void {
   sessionStorage.removeItem(TOKEN_KEY);
   sessionStorage.removeItem(USER_KEY);
+  sessionStorage.removeItem(EMAIL_KEY);
 }
 
 async function fetchCurrentUser(): Promise<ValoraUser> {
@@ -206,6 +212,7 @@ export const api = {
       });
       if (!result?.token) throw new Error("A API não retornou o token de autenticação.");
       sessionStorage.setItem(TOKEN_KEY, result.token);
+      sessionStorage.setItem(EMAIL_KEY, email);
     },
 
     async register(payload: RegisterPayload): Promise<void> {
