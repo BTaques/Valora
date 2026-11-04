@@ -1,3 +1,4 @@
+import SidebarMenu from '../components/SidebarMenu';
 import {useEffect,useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import Topbar5 from '../components/Topbar5';
@@ -33,9 +34,7 @@ export default function ContasConectadas(){
  const connect=(name='')=>{setQuery('');setChosen(name);setModalStep(name==='Itaú'?2:1)};
  const close=()=>setModalStep(0);
  return <div style={{zoom}} className="relative w-[1440px] min-h-[1024px] bg-[#f6f9fe] font-[Inter] text-[#0e0b2e]">
- <aside style={pos(0,0,232,1024)} className="bg-[#130930] text-white">
- <div className="absolute left-[34px] top-[27px] flex items-center gap-[3px]"><img src="/logo-branco-3@2x.png" className="w-[40px] h-[33px] object-contain"/><b className="text-[25px]">Valora</b></div>
- {nav.map(([label,href,icon],i)=><button key={label} onClick={()=>navigate(href)} style={pos(14,113+i*58,204,48)} className={'rounded-[9px] border border-[#452985] flex items-center gap-[19px] px-[15px] text-[14px] text-[#f2f0ff] '+(label==='Contas conectadas'?'bg-[#631ee4]':'bg-transparent')}><img src={icon} className="w-[24px] h-[24px] object-contain"/>{label}</button>)}
+ <aside style={pos(0,0,232,1024)} className="bg-[#130930] text-white"><SidebarMenu active="Contas conectadas"/>
  <div style={pos(17,726,198,242)} className="overflow-hidden rounded-[12px]"><img src="/Promo-Tela7-Valora.png" className="absolute inset-0 w-full h-full object-cover object-[67%_center]" alt="Planejamento de objetivos"/><div className="absolute inset-0 bg-gradient-to-b from-[#130930]/75 via-transparent to-transparent"/><p className="absolute left-[13px] top-[11px] text-[8px] font-semibold tracking-[2px] text-[#b285ff]">ORGANIZAÇÃO —</p><p className="absolute left-[13px] top-[29px] text-[10px] font-semibold leading-[15px]">O primeiro passo<br/>para conquistar<br/>seus <span className="text-[#b285ff]">objetivos.</span></p></div>
  </aside>
  <div style={pos(235,0,1205,74)}><Topbar5/></div>
