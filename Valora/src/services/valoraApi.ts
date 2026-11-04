@@ -325,7 +325,7 @@ export const api = {
       }
       return all;
     },
-    updateDetails(id: number, data: { descricao: string; dataMovimentacao: string; valor: number; tipo: "RECEITA"|"DESPESA"; idConta: number }): Promise<MovementDto> {
+    updateDetails(id: number, data: { descricao: string; dataMovimentacao: string; valor: number; tipo: "RECEITA"|"DESPESA"; idConta: number; idCategoria: number }): Promise<MovementDto> {
       return request<MovementDto>(`/api/movimentacao/atualizar/${id}`, { method: "PUT", body: data });
     },
     remove(id: number): Promise<void> { return request<void>(`/api/movimentacao/${id}`, {method:"DELETE"}); },
