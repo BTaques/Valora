@@ -11,17 +11,17 @@ const banks=[
 {name:'Bradesco',src:'/Banco-Bradesco-Valora.png'},
 {name:'Caixa',src:'/Banco-Caixa-Valora.png'},
 {name:'C6 Bank',src:'/Banco-C6-Valora.png'},
-{name:'Outras instituições',src:''},
+{name:'Inter',src:'/Banco-Inter-Valora.png'},
 ];
 function Icon({kind,size=23}:{kind:'transfer'|'eye'|'lock'|'bank'|'shield';size?:number}){const paths={transfer:<><path d="M4 7h16m-4-4 4 4-4 4M20 17H4m4-4-4 4 4 4"/></>,eye:<><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></>,lock:<><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></>,bank:<><path d="m2 9 10-6 10 6M4 10h16M5 19h14M3 22h18M7 10v9m5-9v9m5-9v9"/></>,shield:<><path d="M12 2 4 6v6c0 5 3.3 8.5 8 10 4.7-1.5 8-5 8-10V6l-8-4Z"/><path d="m9 12 2 2 4-4"/></>};return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">{paths[kind]}</svg>}
 export default function ContasConectadas(){
  const navigate=useNavigate();
- const [zoom,setZoom]=useState(1),[modalStep,setModalStep]=useState<0|1|2|3>(0),[query,setQuery]=useState(''),[chosen,setChosen]=useState(''),[showAll,setShowAll]=useState(false);
+ const [zoom,setZoom]=useState(1),[modalStep,setModalStep]=useState<0|1|2|3>(0),[query,setQuery]=useState('');
  useEffect(()=>{const f=()=>setZoom(Math.max(1,window.innerWidth/1440));f();window.addEventListener('resize',f);return()=>window.removeEventListener('resize',f)},[]);
  const nav=[['Início','/dashboard','/Wrapper.svg'],['Movimentações','/movimentacoes','/Movimenta-es-icon.svg'],['Caixinhas','/caixinhas','/Archive-Caixinhas.svg'],['Categorias','/categorias','/Divider.svg'],['Contas conectadas','/contas-conectadas','/Contas-conectadas-icon.svg']];
- const connect=(name='')=>{setQuery('');setChosen(name);setModalStep(name==='Itaú'?2:1)};
+ const connect=(name='')=>{setQuery('');setModalStep(name==='Itaú'?2:1)};
  const close=()=>setModalStep(0);
- return <div style={{zoom}} className="relative w-[1440px] min-h-[1100px] bg-[#f6f9fe] font-[Inter] text-[#0e0b2e]">
+ return <div style={{zoom}} className="relative w-[1440px] min-h-[1200px] bg-[#f6f9fe] font-[Inter] text-[#0e0b2e]">
  <aside style={pos(0,0,232,1024)} className="bg-[#130930] text-white"><SidebarMenu active="Minhas contas"/>
  <div style={pos(17,726,198,242)} className="overflow-hidden rounded-[12px]"><img src="/Promo-Tela7-Valora.png" className="absolute inset-0 w-full h-full object-cover object-[67%_center]" alt="Planejamento de objetivos"/><div className="absolute inset-0 bg-gradient-to-b from-[#130930]/75 via-transparent to-transparent"/><p className="absolute left-[13px] top-[11px] text-[8px] font-semibold tracking-[2px] text-[#b285ff]">ORGANIZAÇÃO —</p><p className="absolute left-[13px] top-[29px] text-[10px] font-semibold leading-[15px]">O primeiro passo<br/>para conquistar<br/>seus <span className="text-[#b285ff]">objetivos.</span></p></div>
  </aside>
@@ -45,11 +45,10 @@ export default function ContasConectadas(){
  <span className="absolute left-[19px] top-[19px] text-[#541feb]"><Icon kind="shield" size={36}/></span><b className="absolute left-[67px] top-[19px] text-[15px]">Seus dados em segurança</b><span className="absolute right-[13px] top-[13px] font-semibold text-[19px]">belvo.</span>
  <p className="absolute left-[67px] top-[46px] w-[290px] text-[#5c5785] text-[11px] leading-[16px]">A Valora utiliza a tecnologia da Belvo, autorizada pelo Banco Central, e segue todos os padrões de segurança do Open Finance.</p><button onClick={()=>connect()} className="absolute left-[67px] top-[103px] text-[11px] font-semibold text-[#541feb]">Saiba mais sobre a segurança →</button>
  </section>
- <section style={pos(270,740,1140,264)} className="bg-white border border-[#e0e3f2] rounded-[12px]">
- <h2 className="absolute left-[19px] top-[17px] text-[18px] font-semibold">Instituições disponíveis</h2><p className="absolute left-[19px] top-[45px] text-[12px] text-[#5c5785]">Conecte sua conta nos principais bancos do Brasil.</p><button onClick={()=>setShowAll(!showAll)} className="absolute right-[18px] top-[27px] text-[12px] text-[#4d0fd1] font-semibold">Ver todas &nbsp; →</button>
- <div className="absolute left-[19px] top-[81px] flex gap-[12px]">{banks.map((bank)=><button key={bank.name} onClick={()=>connect(bank.name)} className="w-[126px] h-[142px] rounded-[10px] border border-[#d6d1e8] bg-white hover:border-[#6e1af5] hover:shadow-sm flex flex-col items-center pt-[14px]"><div className="w-[48px] h-[48px] flex items-center justify-center">{bank.src?<img src={bank.src} alt="" className="max-w-[48px] max-h-[48px] object-contain"/>:<span className="text-[#541feb]"><Icon kind="bank" size={40}/></span>}</div><span className="text-[11px] mt-[13px] text-center">{bank.name}</span></button>)}</div>
+ <section style={pos(270,740,1140,420)} className="bg-white border border-[#e0e3f2] rounded-[12px]">
+ <h2 className="absolute left-[19px] top-[17px] text-[18px] font-semibold">Instituições disponíveis</h2><p className="absolute left-[19px] top-[45px] text-[12px] text-[#5c5785]">Conecte sua conta nos principais bancos do Brasil.</p>
+ <div className="absolute left-[19px] top-[81px] grid grid-cols-4 gap-[12px]">{banks.map((bank)=><button key={bank.name} onClick={()=>connect(bank.name)} className="w-[126px] h-[142px] rounded-[10px] border border-[#d6d1e8] bg-white hover:border-[#6e1af5] hover:shadow-sm flex flex-col items-center pt-[14px]"><div className="w-[72px] h-[72px] flex items-center justify-center"><img src={bank.src} alt="" className="max-w-[72px] max-h-[72px] object-contain"/></div><span className="text-[11px] mt-[3px] text-center">{bank.name}</span></button>)}</div>
  </section>
- {showAll&&<div style={pos(1050,956,360,65)} className="z-20 bg-white shadow-md border rounded-lg p-3 text-[12px] flex gap-3 items-center"><img src="/Banco-Inter-Valora.png" alt="" className="w-10 h-10 object-contain"/><button onClick={()=>connect('Inter')}>Banco Inter — selecionar</button><button onClick={()=>setShowAll(false)} className="ml-auto">✕</button></div>}
  {modalStep>0&&<div className="absolute inset-0 z-[300] bg-[rgba(22,15,52,0.58)]" onMouseDown={close}>
  <div role="dialog" aria-modal="true" aria-label="Conectar conta" style={pos(330,160,780,704)} className="bg-[#f6f9fe] rounded-[20px] shadow-[0_10px_30px_rgba(0,0,0,.16)] overflow-hidden" onMouseDown={e=>e.stopPropagation()}>
  <button aria-label="Fechar" onClick={close} className="absolute right-[40px] top-[24px] text-[#685e79] text-[28px] z-10">×</button>
@@ -58,7 +57,7 @@ export default function ContasConectadas(){
  <p className="absolute left-[43px] top-[84px] text-[14px] font-semibold text-[#5c5785]">Selecione a instituição financeira que deseja conectar através do Open Finance.</p>
  <label className="absolute left-[43px] top-[126px] w-[694px] h-[52px] rounded-[10px] border border-[#e0dbf0] bg-[#f9f8fc] flex items-center gap-3 px-[16px] text-[#756e99]"><span className="text-[23px]">⌕</span><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Buscar instituição..." className="flex-1 bg-transparent outline-none text-[14px]"/></label>
  <div className="absolute left-[43px] top-[204px] w-[694px] grid grid-cols-3 gap-x-[21px] gap-y-[19px]">
- {[...banks.slice(0,7),{name:'Inter',src:'/Banco-Inter-Valora.png'},banks[7]].filter(b=>b.name.toLocaleLowerCase('pt-BR').includes(query.toLocaleLowerCase('pt-BR'))).map(b=><button key={b.name} onClick={()=>b.name==='Itaú'&&setModalStep(2)} aria-label={'Selecionar '+b.name} className={'h-[121px] rounded-[12px] border-[1.7px] border-[#beb8cf] bg-white flex flex-col items-center pt-[10px] '+(b.name==='Itaú'?'hover:border-[#6c34d5] hover:bg-[#f5efff]':'opacity-75')} title={b.name==='Itaú'?'Selecionar Itaú':'Disponível em uma integração futura'}><div className="w-[58px] h-[58px] flex items-center justify-center">{b.src?<img src={b.src} alt="" className="w-[58px] h-[58px] object-contain"/>:<Icon kind="bank" size={38}/>}</div><b className="text-[13px] text-[#1f1747] mt-[8px]">{b.name}</b></button>)}
+ {banks.filter(b=>b.name.toLocaleLowerCase('pt-BR').includes(query.toLocaleLowerCase('pt-BR'))).map(b=><button key={b.name} onClick={()=>b.name==='Itaú'&&setModalStep(2)} aria-label={'Selecionar '+b.name} className={'h-[121px] rounded-[12px] border-[1.7px] border-[#beb8cf] bg-white flex flex-col items-center justify-center gap-[5px] '+(b.name==='Itaú'?'hover:border-[#6c34d5] hover:bg-[#f5efff]':'opacity-75')} title={b.name==='Itaú'?'Selecionar Itaú':'Disponível em uma integração futura'}><div className="w-[78px] h-[72px] flex items-center justify-center"><img src={b.src} alt="" className="max-w-[78px] max-h-[72px] object-contain"/></div><b className="text-[13px] text-[#1f1747]">{b.name}</b></button>)}
  </div><p className="absolute left-0 right-0 bottom-[30px] text-center text-[11px] text-[#807a99]">Powered by <b className="text-[#14121f]">belvo.</b></p>
  </>}
  {modalStep===2&&<>
