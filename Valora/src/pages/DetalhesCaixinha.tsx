@@ -3,6 +3,7 @@ import {useNavigate} from 'react-router-dom';
 import Topbar5 from '../components/Topbar5';
 import {GoalIcon} from '../components/GoalIcon';
 import {api, type CashboxDto} from '../services/valoraApi';
+import {formatMoneyInput,parseMoneyInput,moneyInputFromNumber} from '../utils/moneyInput';
 const pos=(x:number,y:number,w:number,h:number)=>({position:'absolute' as const,left:x,top:y,width:w,height:h});
 const brl=(n:number)=>n.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
 type IconName='target'|'wallet'|'chart'|'name'|'calendar'|'history'|'progress'|'trash';
@@ -29,7 +30,7 @@ const [cashbox,setCashbox]=useState<CashboxDto|null>(null),[apiError,setApiError
 const [goalName,setGoalName]=useState(''),[nameEditing,setNameEditing]=useState(false),[draftName,setDraftName]=useState(''),[amount,setAmount]=useState(0),[movements]=useState(seed),[deposit,setDeposit]=useState(''),[withdraw,setWithdraw]=useState(''),[period,setPeriod]=useState('Últimos 6 meses'),[more,setMore]=useState(false),[deleted,setDeleted]=useState(false);
 useEffect(()=>{if(!cashboxId){setApiError('Abra uma caixinha pela lista para visualizar os detalhes.');return}let active=true;api.caixinhas.get(cashboxId).then(item=>{if(!active)return;setCashbox(item);setGoalName(item.nmCaixinha);setDraftName(item.nmCaixinha);setAmount(Number(item.vlAtual))}).catch(error=>{if(active)setApiError(error instanceof Error?error.message:'Não foi possível carregar a caixinha')});return()=>{active=false}},[cashboxId]);
 const target=Number(cashbox?.vlMeta??0),pct=target>0?Math.round(amount/target*100):0;
-async function register(kind:'Entrada'|'Saída',raw:string){const v=Number(raw.replace(',','.'));if(!cashbox||!Number.isFinite(v)||v<=0)return;if(kind==='Saída'&&v>amount)return;const balance=amount+(kind==='Entrada'?v:-v);try{const updated=await api.caixinhas.update(cashbox.idCaixinha,{nome:goalName,meta:Number(cashbox.vlMeta),valorAtual:balance});setCashbox(updated);setAmount(Number(updated.vlAtual));setDeposit('');setWithdraw('');setApiError('')}catch(error){setApiError(error instanceof Error?error.message:'Não foi possível atualizar o saldo')}}
+async function register(kind:'Entrada'|'Saída',raw:string){const v=parseMoneyInput(raw);if(!cashbox||!Number.isFinite(v)||v<=0)return;if(kind==='Saída'&&v>amount)return;const balance=amount+(kind==='Entrada'?v:-v);try{const updated=await api.caixinhas.update(cashbox.idCaixinha,{nome:goalName,meta:Number(cashbox.vlMeta),valorAtual:balance});setCashbox(updated);setAmount(Number(updated.vlAtual));setDeposit('');setWithdraw('');setApiError('')}catch(error){setApiError(error instanceof Error?error.message:'Não foi possível atualizar o saldo')}}
 async function saveGoalName(){if(!cashbox||!draftName.trim())return;try{const updated=await api.caixinhas.update(cashbox.idCaixinha,{nome:draftName.trim(),meta:Number(cashbox.vlMeta),valorAtual:amount});setCashbox(updated);setGoalName(updated.nmCaixinha);setNameEditing(false);setApiError('')}catch(error){setApiError(error instanceof Error?error.message:'Não foi possível atualizar a caixinha')}}
 const nav=[['Início','/dashboard','/Wrapper.svg'],['Movimentações','/movimentacoes','/Movimenta-es-icon.svg'],['Caixinhas','/caixinhas','/Archive-Caixinhas.svg'],['Categorias','/categorias','/Divider.svg'],['Contas conectadas','/contas-conectadas','/Contas-conectadas-icon.svg']];
 return <div style={{zoom}} className="relative w-[1440px] min-h-[1024px] bg-[#f9f9fe] font-[Inter] text-[#120d38]">
@@ -76,14 +77,14 @@ return <div style={{zoom}} className="relative w-[1440px] min-h-[1024px] bg-[#f9
 <b className="absolute left-[16px] top-[14px] text-[15px]">Registrar valor fixo</b>
 <p className="absolute left-[16px] top-[39px] text-[9px] text-[#575294]">Registre um valor para adicionar à sua caixinha.</p>
 <label htmlFor="deposit-value" className="absolute left-[24px] top-[64px] text-[12px] font-semibold text-[#120d38]">Valor:</label>
-<input id="deposit-value" type="number" min="0.01" step="0.01" value={deposit} onChange={e=>setDeposit(e.target.value)} placeholder="R$ 0,00" className="absolute left-[16px] top-[85px] w-[351px] h-[35px] border border-[#e5e5f2] rounded-[8px] px-3 text-[12px]"/>
-<div className="absolute left-[16px] top-[129px] flex gap-[8px]">{[100,200,500,1000].map(v=><button key={v} onClick={()=>setDeposit(String(v))} className="w-[79px] h-[40px] border border-[#e5e5f2] rounded-[8px] text-[11px]">R$ {v.toLocaleString('pt-BR')}</button>)}</div>
+<input id="deposit-value" type="text" inputMode="numeric" value={deposit} onChange={e=>setDeposit(formatMoneyInput(e.target.value))} placeholder="R$ 0,00" className="absolute left-[16px] top-[85px] w-[351px] h-[35px] border border-[#e5e5f2] rounded-[8px] px-3 text-[12px]"/>
+<div className="absolute left-[16px] top-[129px] flex gap-[8px]">{[100,200,500,1000].map(v=><button key={v} onClick={()=>setDeposit(moneyInputFromNumber(v))} className="w-[79px] h-[40px] border border-[#e5e5f2] rounded-[8px] text-[11px]">R$ {v.toLocaleString('pt-BR')}</button>)}</div>
 <button onClick={()=>register('Entrada',deposit)} className="absolute left-[16px] top-[182px] w-[351px] h-[44px] bg-[#4f12d6] text-white text-[12px] rounded-[10px]">Registrar valor &nbsp; →</button>
 </section>
 <section style={pos(1035,454,385,177)} className="rounded-[10px] border border-[#e5e3f0] bg-white">
 <b className="absolute left-[16px] top-[14px] text-[15px]">Registrar retirada do valor</b>
 <p className="absolute left-[16px] top-[39px] text-[9px] text-[#575294]">Usou parte desse dinheiro? Registre o valor para manter sua caixinha atualizada.</p>
-<input type="number" min="0.01" step="0.01" value={withdraw} onChange={e=>setWithdraw(e.target.value)} placeholder="R$ 0,00" className="absolute left-[16px] top-[64px] w-[351px] h-[41px] border border-[#e5e5f2] rounded-[8px] px-3 text-[12px]"/>
+<input type="text" inputMode="numeric" value={withdraw} onChange={e=>setWithdraw(formatMoneyInput(e.target.value))} placeholder="R$ 0,00" className="absolute left-[16px] top-[64px] w-[351px] h-[41px] border border-[#e5e5f2] rounded-[8px] px-3 text-[12px]"/>
 <button onClick={()=>register('Saída',withdraw)} className="absolute left-[16px] top-[114px] w-[351px] h-[44px] bg-[#f4edff] border border-[#c7b0f5] text-[#4f12d6] text-[12px] rounded-[10px]">Registrar retirada &nbsp; →</button>
 </section>
 <section style={pos(1035,644,385,331)} className="rounded-[10px] border border-[#e5e3f0] bg-white">
