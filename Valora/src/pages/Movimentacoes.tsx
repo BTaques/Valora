@@ -1,3 +1,4 @@
+import SidebarMenu from '../components/SidebarMenu';
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Topbar5 from "../components/Topbar5";
@@ -30,9 +31,8 @@ export default function Movimentacoes(){
  const px=(x:number,y:number,w:number,h:number)=>({position:"absolute" as const,left:x,top:y,width:w,height:h});
  return <div style={{zoom}} className="relative w-[1440px] min-h-[1024px] bg-[#f8f8fc] font-[Inter] text-[#191236]">
  <aside className="absolute left-0 top-0 w-[232px] h-[1024px] bg-[#160b30] px-3">
-  <div className="flex items-center gap-1 pt-[34px] pb-[43px] pl-3 text-white text-[27px] font-bold"><img src="/logo-branco-3@2x.png" className="w-10 h-[33px] object-contain"/>Valora</div>
-  <nav className="flex flex-col gap-1">{nav.map(([label,href,icon])=><button key={label} onClick={()=>href!=="#"&&navigate(href)} className={"h-[54px] w-full border border-[#46395e] rounded-[10px] flex items-center gap-5 px-[13px] text-left text-white text-[14px] "+(label==="Movimentações"?"bg-[#4212a6]":"bg-transparent")}><img src={icon} className="w-6 h-6 object-contain"/>{label}</button>)}</nav>
-  <div className="absolute left-[18px] top-[727px] w-[195px] h-[235px] overflow-hidden rounded-[12px] border border-[#382175]">
+  <SidebarMenu active="Movimentações"/>
+ <div className="absolute left-[18px] top-[727px] w-[195px] h-[235px] overflow-hidden rounded-[12px] border border-[#382175]">
    <img src="/Parcerias-Valora@3x.png" alt="" className="absolute inset-0 w-full h-full object-cover"/>
    <p className="absolute left-[17px] top-[15px] text-[#b285ff] text-[8px] font-semibold tracking-[2px]">FACILIDADE — NOVO</p>
    <p className="absolute left-[16px] top-[30px] text-white text-[16px] font-bold leading-[20px]">Vincule sua conta<br/><span className="text-[#b285ff]">bancária.</span></p>
