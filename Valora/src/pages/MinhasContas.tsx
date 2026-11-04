@@ -55,7 +55,7 @@ export default function MinhasContas(){
  <h1 style={pos(270,106,600,45)} className="font-bold text-[30px]">Minhas contas</h1>
  <p style={pos(270,150,750,25)} className="text-[#595291] text-[14px]">Gerencie todas as suas contas em um só lugar.</p>
  {error&&<p role="alert" style={pos(270,176,900,24)} className="text-red-600 text-[12px]">{error}</p>}
- <section style={pos(270,195,1110,320)} className="rounded-[12px] bg-white border border-[#e3e5f2]">
+ <section id="contas-cadastradas" style={pos(270,195,1110,320)} className="rounded-[12px] bg-white border border-[#e3e5f2]">
  <h2 className="absolute left-[22px] top-[18px] text-[19px] font-semibold">Contas cadastradas</h2><span className="absolute right-[23px] top-[23px] text-[13px] text-[#595291]">{accounts.length} {accounts.length===1?'conta':'contas'}</span>
  <div className="absolute left-[22px] right-[22px] top-[67px] bottom-[25px] flex gap-[15px] overflow-x-auto pb-2">
  {loading?<p className="text-[#595291] text-[13px]">Carregando contas...</p>:accounts.length===0?<div className="w-full h-full rounded-[12px] border border-dashed border-[#d9d0ed] flex flex-col items-center justify-center gap-3 text-[#595291] text-[14px]">Nenhuma conta cadastrada.<button onClick={()=>setModal(true)} className="text-[#5712d6] font-semibold">Adicionar primeira conta →</button></div>:accounts.map(a=><article key={a.id} className="relative w-[525px] min-w-[350px] max-w-[525px] flex-1 h-[225px] rounded-[12px] border border-[#e3e5f2] p-[19px]">
