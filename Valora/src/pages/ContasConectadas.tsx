@@ -4,7 +4,7 @@ import {useNavigate} from 'react-router-dom';
 import Topbar5 from '../components/Topbar5';
 const pos=(x:number,y:number,w:number,h:number)=>({position:'absolute' as const,left:x,top:y,width:w,height:h});
 const banks=[
-{name:'Itaú',src:'/logos/itau.png'},
+{name:'Itaú',src:'/logos/itau-corrigido.svg'},
 {name:'Nubank',src:'/logos/nubank.png'},
 {name:'Santander',src:'/logos/santander.png'},
 {name:'Banco do Brasil',src:'/logos/bb.png'},
@@ -57,11 +57,11 @@ export default function ContasConectadas(){
  <p className="absolute left-[43px] top-[84px] text-[14px] font-semibold text-[#5c5785]">Selecione a instituição financeira que deseja conectar através do Open Finance.</p>
  <label className="absolute left-[43px] top-[126px] w-[694px] h-[52px] rounded-[10px] border border-[#e0dbf0] bg-[#f9f8fc] flex items-center gap-3 px-[16px] text-[#756e99]"><span className="text-[23px]">⌕</span><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Buscar instituição..." className="flex-1 bg-transparent outline-none text-[14px]"/></label>
  <div className="absolute left-[43px] top-[204px] w-[694px] grid grid-cols-3 gap-x-[21px] gap-y-[19px]">
- {banks.filter(b=>b.name.toLocaleLowerCase('pt-BR').includes(query.toLocaleLowerCase('pt-BR'))).map(b=><button key={b.name} onClick={()=>b.name==='Itaú'&&setModalStep(2)} aria-label={'Selecionar '+b.name} className={'h-[121px] rounded-[12px] border-[1.7px] border-[#beb8cf] bg-white flex flex-col items-center justify-center gap-[5px] '+(b.name==='Itaú'?'hover:border-[#6c34d5] hover:bg-[#f5efff]':'opacity-75')} title={b.name==='Itaú'?'Selecionar Itaú':'Disponível em uma integração futura'}><div className="w-[78px] h-[72px] flex items-center justify-center"><img src={b.src} alt="" className="max-w-[78px] max-h-[72px] object-contain"/></div><b className="text-[13px] text-[#1f1747]">{b.name}</b></button>)}
+ {banks.filter(b=>b.name.toLocaleLowerCase('pt-BR').includes(query.toLocaleLowerCase('pt-BR'))).map(b=><button key={b.name} onClick={()=>b.name==='Itaú'&&setModalStep(2)} aria-label={'Selecionar '+b.name} className={'h-[121px] rounded-[12px] border-[1.7px] border-[#beb8cf] bg-white flex flex-col items-center justify-center gap-[5px] '+(b.name==='Itaú'?'hover:border-[#6c34d5] hover:bg-[#f5efff]' :'')} title={b.name==='Itaú'?'Selecionar Itaú':'Disponível em uma integração futura'}><div className="w-[78px] h-[72px] flex items-center justify-center"><img src={b.src} alt="" className="max-w-[78px] max-h-[72px] object-contain"/></div><b className="text-[13px] text-[#1f1747]">{b.name}</b></button>)}
  </div><p className="absolute left-0 right-0 bottom-[30px] text-center text-[11px] text-[#807a99]">Powered by <b className="text-[#14121f]">belvo.</b></p>
  </>}
  {modalStep===2&&<>
- <img src="/logos/itau.png" alt="Itaú" className="absolute left-[361px] top-[54px] w-[58px] h-[52px] object-contain rounded-[5px]"/>
+ <img src="/logos/itau-corrigido.svg" alt="Itaú" className="absolute left-[361px] top-[54px] w-[58px] h-[52px] object-contain rounded-[5px]"/>
  <p className="absolute top-[116px] left-0 w-full text-center text-[#241b37] font-semibold text-[17px]">Itaú</p>
  <h2 className="absolute top-[157px] left-0 w-full text-center text-[#241b37] font-bold text-[26px]">Autorizar no banco</h2>
  <p className="absolute top-[207px] left-[100px] w-[580px] text-center text-[#685e79] text-[15px] leading-[23px]">Você será redirecionado para o ambiente seguro do Itaú para autorizar o compartilhamento dos dados da sua conta e movimentações com a Valora através do Open Finance.</p>
