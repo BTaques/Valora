@@ -25,6 +25,28 @@ export type CategoryDto = {
   dtCriacao: string;
 };
 
+export type MovementType = "RECEITA" | "DESPESA" | "CAIXINHA_GUARDAR" | "CAIXINHA_RESGATE" | "TRANSFERENCIA_ENTRE_CONTAS";
+export type MovementDto = {
+  id: number;
+  descricao: string;
+  valor: number;
+  tipo: MovementType;
+  dataMovimentacao: string;
+  categoria: string;
+  conta: string | null;
+};
+export type MovementCreate = {
+  descricao: string;
+  valor: number;
+  tipo: "RECEITA" | "DESPESA";
+  dataMovimentacao: string;
+  idCategoria: number;
+  idConta: number;
+  idContaDestino: null;
+  idCaixinha: null;
+};
+export type PageDto<T> = { content: T[]; totalElements: number; totalPages: number };
+
 export type CashboxDto = {
   idCaixinha: number;
   idUsuario: number;
@@ -264,6 +286,24 @@ export const api = {
     },
     remove(id: number): Promise<void> {
       return request<void>(`/api/caixinhas/${id}`, { method: "DELETE" });
+    },
+  },
+
+  movimentacoes: {
+    list(page = 0, size = 100): Promise<PageDto<MovementDto>> {
+      return request<PageDto<MovementDto>>(`/api/movimentacao/listar-movimentacoes?page=${page}&size=${size}&sort=dataMovimentacao,desc`);
+    },
+    async listAll(): Promise<MovementDto[]> {
+      const first = await api.movimentacoes.list();
+      const all = [...first.content];
+      for (let page = 1; page < first.totalPages; page++) {
+        const next = await api.movimentacoes.list(page);
+        all.push(...next.content);
+      }
+      return all;
+    },
+    create(data: MovementCreate): Promise<MovementDto> {
+      return request<MovementDto>("/api/movimentacao", { method: "POST", body: data });
     },
   },
 
