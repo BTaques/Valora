@@ -1,7 +1,7 @@
 import {useEffect,useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import Topbar5 from '../components/Topbar5';
-import { api, type CategoryDto } from '../services/valoraApi';
+import { api, type CategoryDto, type MovementDto } from '../services/valoraApi';
 const abs=(x:number,y:number,w:number,h:number)=>({position:'absolute' as const,left:x,top:y,width:w,height:h});
 const money=(n:number)=>n.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
 type Cat={idCategoria?:number;name:string;color:string;bg:string;symbol:string;spent:number;percent:number};
@@ -25,8 +25,16 @@ function Icon({item,size=28}:{item:Cat;size?:number}){return <span className="in
 export default function Categorias(){
 const navigate=useNavigate();const [zoom,setZoom]=useState(1);
 useEffect(()=>{const f=()=>setZoom(Math.max(1,innerWidth/1440));f();window.addEventListener('resize',f);return()=>window.removeEventListener('resize',f)},[]);
-useEffect(()=>{let active=true;api.categorias.list().then(items=>{if(active)setCats(items.map(fromApiCategory))}).catch(error=>{if(active)setApiError(error instanceof Error?error.message:'Erro ao carregar categorias')});return()=>{active=false}},[]);
-const [cats,setCats]=useState<Cat[]>([]),[query,setQuery]=useState(''),[period,setPeriod]=useState('Este mês'),[editing,setEditing]=useState<number|null>(null),[modal,setModal]=useState(false),[name,setName]=useState(''),[color,setColor]=useState('#8159e0'),[apiError,setApiError]=useState('');
+useEffect(()=>{let active=true;Promise.all([api.categorias.list(),api.movimentacoes.listAll()]).then(([items,movements])=>{if(!active)return;setCats(items.map(fromApiCategory));setMovements(movements);setApiError('')}).catch(error=>{if(active)setApiError(error instanceof Error?error.message:'Erro ao carregar categorias e gastos')});return()=>{active=false}},[]);
+const [movements,setMovements]=useState<MovementDto[]>([]);const [cats,setCats]=useState<Cat[]>([]),[query,setQuery]=useState(''),[period,setPeriod]=useState('Este mês'),[editing,setEditing]=useState<number|null>(null),[modal,setModal]=useState(false),[name,setName]=useState(''),[color,setColor]=useState('#8159e0'),[apiError,setApiError]=useState('');
+const now=new Date();
+const filteredMovements=movements.filter(m=>{if(m.tipo!=="DESPESA")return false;const date=new Date(m.dataMovimentacao+"T12:00:00");if(Number.isNaN(date.getTime()))return false;if(period==="Este mês")return date.getMonth()===now.getMonth()&&date.getFullYear()===now.getFullYear();if(period==="Mês passado"){const prev=new Date(now.getFullYear(),now.getMonth()-1,1);return date.getMonth()===prev.getMonth()&&date.getFullYear()===prev.getFullYear()}return date.getFullYear()===now.getFullYear()});
+const totalSpent=filteredMovements.reduce((s,m)=>s+Number(m.valor),0);
+const calculatedCats=cats.map(cat=>{const spent=filteredMovements.filter(m=>m.categoria===cat.name).reduce((s,m)=>s+Number(m.valor),0);return {...cat,spent,percent:totalSpent>0?Math.round(spent/totalSpent*100):0}});
+const palette=['#661fe8','#f59e0b','#3b82f6','#14b8a6','#ec4899','#8b5cf6'];
+const chartParts=calculatedCats.filter(cat=>cat.spent>0);
+let chartOffset=0;
+const chartGradient=chartParts.map((cat,i)=>{const start=chartOffset;chartOffset+=cat.spent/totalSpent*100;return `${palette[i%palette.length]} ${start}% ${chartOffset}%`}).join(', ');
 const nav=[['Início','/dashboard','/Wrapper.svg'],['Movimentações','/movimentacoes','/Movimenta-es-icon.svg'],['Caixinhas','/caixinhas','/Archive-Caixinhas.svg'],['Categorias','/categorias','/Divider.svg'],['Contas conectadas','/contas-conectadas','/Contas-conectadas-icon.svg']];
 const start=()=>{setEditing(null);setName('');setColor('#8159e0');setModal(true)};
 const edit=(i:number)=>{setEditing(i);setName(cats[i].name);setColor(cats[i].color);setModal(true)};
@@ -43,9 +51,10 @@ return <div style={{zoom}} className="relative w-[1440px] min-h-[1024px] bg-[#f6
 <button style={abs(1232,106,188,48)} onClick={start} className="bg-[#5212d1] text-white rounded-[10px] text-[14px] font-medium flex items-center justify-center gap-[12px]"><span className="text-[22px] leading-none">＋</span>Nova categoria</button>
 <section style={abs(252,183,745,302)} className="rounded-[9px] bg-white border border-[#e3e5f2]">
 <b className="absolute left-[17px] top-[19px] text-[16px]">Gastos por categoria</b><select value={period} onChange={e=>setPeriod(e.target.value)} className="absolute right-[18px] top-[10px] h-[40px] w-[118px] border border-[#e3e5f2] rounded-[8px] bg-white px-3 text-[11px]">{['Este mês','Mês passado','Este ano'].map(x=><option key={x}>{x}</option>)}</select>
-<img src="/Donut-categorias-final.svg" alt="Gráfico de gastos por categoria" className="absolute left-[19px] top-[57px] w-[216px] h-[216px]"/>
-<b className="absolute left-[71px] top-[150px] text-[18px]">R$ 0,00</b><span className="absolute left-[85px] top-[177px] text-[#595291] text-[11px]">Total de gastos</span>
-{cats.slice(0,5).map((c,i)=><div key={c.name} className="absolute left-[269px] right-[18px] h-[22px] flex items-center text-[12px]" style={{top:74+i*38}}><span className="w-[16px] h-[16px] rounded-full mr-[9px]" style={{background:c.color}}/><span className="flex-1">{c.name}</span><span className="text-[11px] font-medium w-[105px]">{money(c.spent)}</span><span className="text-[11px] text-[#595291] w-[30px] text-right">{c.percent}%</span></div>)}
+<div aria-label={totalSpent>0?"Gráfico de gastos por categoria":"Nenhum gasto registrado"} className="absolute left-[19px] top-[57px] w-[216px] h-[216px] rounded-full" style={{background:totalSpent>0?`conic-gradient(${chartGradient})`:'#eceaf4'}}><div className="absolute inset-[24px] bg-white rounded-full"/></div>
+<b className="absolute left-[71px] top-[150px] text-[18px]">{money(totalSpent)}</b><span className="absolute left-[85px] top-[177px] text-[#595291] text-[11px]">Total de gastos</span>
+{calculatedCats.slice(0,5).map((c,i)=><div key={c.name} className="absolute left-[269px] right-[18px] h-[22px] flex items-center text-[12px]" style={{top:74+i*38}}><span className="w-[16px] h-[16px] rounded-full mr-[9px]" style={{background:palette[i%palette.length]}}/><span className="flex-1">{c.name}</span><span className="text-[11px] font-medium w-[105px]">{money(c.spent)}</span><span className="text-[11px] text-[#595291] w-[30px] text-right">{c.percent}%</span></div>)}
+{totalSpent===0&&<p className="absolute left-[75px] top-[273px] text-[11px] text-[#595291]">Nenhum gasto no período</p>}
 </section>
 <section style={abs(1015,183,405,302)} className="rounded-[9px] bg-white border border-[#e3e5f2]">
 <div className="absolute left-[35px] top-[17px] w-[62px] h-[62px] bg-[#e8e0ff] rounded-[12px] flex items-center justify-center"><img src="/Category-tag-badge.svg" className="w-[42px] h-[42px]"/></div>
@@ -56,7 +65,7 @@ return <div style={{zoom}} className="relative w-[1440px] min-h-[1024px] bg-[#f6
 <b className="absolute left-[17px] top-[14px] text-[16px]">Suas categorias</b><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="⌕  Buscar categoria..." className="absolute right-[19px] top-[7px] w-[208px] h-[40px] rounded-[8px] border border-[#e3e5f2] px-[12px] text-[11px] placeholder:text-[#8078ab]"/>
 <div className="absolute left-[17px] right-[19px] top-[55px] h-[40px] bg-[#f6f7fc] flex items-center text-[11px] text-[#595291]">
 <span className="w-[183px] pl-[4px]">Nome</span><span className="w-[87px]">Cor</span><span className="w-[148px]">Ícone</span><span className="flex-1">Total gasto (este mês)</span><span className="w-[90px] text-center">Ações</span></div>
-<div className="absolute left-[17px] right-[19px] top-[95px] h-[345px] overflow-y-auto">{cats.map((c,i)=>({c,i})).filter(({c})=>c.name.toLowerCase().includes(query.toLowerCase())).map(({c,i})=><div key={c.name+i} className="h-[43px] border-b border-[#e5e8f2] flex items-center text-[11px]">
+<div className="absolute left-[17px] right-[19px] top-[95px] h-[345px] overflow-y-auto">{calculatedCats.map((c,i)=>({c,i})).filter(({c})=>c.name.toLowerCase().includes(query.toLowerCase())).map(({c,i})=><div key={c.name+i} className="h-[43px] border-b border-[#e5e8f2] flex items-center text-[11px]">
 <span className="w-[183px] pl-[4px]">{c.name}</span><span className="w-[87px]"><span className="block w-[28px] h-[28px] rounded-full" style={{background:c.color}}/></span><span className="w-[148px]"><Icon item={c}/></span><span className="flex-1 font-medium">{money(c.spent)} <span className="ml-[50px] font-normal text-[#595291]">{c.percent}%</span></span><span className="w-[90px] flex items-center justify-center gap-[12px] text-[#7a61e5]"><button onClick={()=>edit(i)} aria-label={'Editar '+c.name} className="text-[18px] leading-none">✎</button><button onClick={()=>remove(i)} aria-label={'Excluir '+c.name} className="hover:opacity-70"><CategoryGlyph name="trash" size={19}/></button></span></div>)}</div>
 </section>
 {modal&&<div className="fixed inset-0 z-[200] bg-[#130938]/45 flex items-center justify-center" onMouseDown={()=>setModal(false)}><div className="w-[430px] bg-white rounded-[14px] shadow-2xl p-7" onMouseDown={e=>e.stopPropagation()}><div className="flex justify-between items-center"><h2 className="text-[21px] font-bold">{editing===null?'Nova categoria':'Editar categoria'}</h2><button onClick={()=>setModal(false)} className="text-[24px]">×</button></div><label className="block mt-6 mb-2 text-[13px]">Nome da categoria</label><input autoFocus value={name} onChange={e=>setName(e.target.value)} className="w-full border border-[#e3e5f2] rounded-lg h-11 px-3" placeholder="Ex.: Pets"/><label className="block mt-5 mb-2 text-[13px]">Cor da categoria</label><div className="flex gap-3">{['#8159e0','#ff996f','#4885db','#df67a3','#34b8b4','#3aa66c'].map(c=><button key={c} onClick={()=>setColor(c)} className={'w-9 h-9 rounded-full '+(color===c?'ring-2 ring-offset-2 ring-[#5712d6]':'')} style={{background:c}}/>)}</div><button onClick={save} className="mt-7 h-11 w-full rounded-lg bg-[#5712d6] text-white">{editing===null?'Criar categoria':'Salvar alterações'}</button></div></div>}
