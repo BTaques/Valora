@@ -315,8 +315,8 @@ export const api = {
   },
 
   contas: {
-    list(): Promise<{ content: AccountDto[]; totalElements: number; totalPages: number }> {
-      return request("/api/conta/listar-contas");
+    list(page = 0): Promise<{ content: AccountDto[]; totalElements: number; totalPages: number }> {
+      return request(`/api/conta/listar-contas?page=${page}`);
     },
     create(data: { nome: string; saldo: number }): Promise<AccountDto> {
       return request<AccountDto>("/api/conta", { method: "POST", body: data });
