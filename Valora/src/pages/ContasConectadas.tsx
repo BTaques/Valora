@@ -35,11 +35,11 @@ export default function ContasConectadas(){
  const connect=(name='')=>{setQuery('');setChosen(name);setModalStep(name==='Itaú'?2:1)};
  const close=()=>setModalStep(0);
  return <div style={{zoom}} className="relative w-[1440px] min-h-[1024px] bg-[#f6f9fe] font-[Inter] text-[#0e0b2e]">
- <aside style={pos(0,0,232,1024)} className="bg-[#130930] text-white"><SidebarMenu active="Contas conectadas"/>
+ <aside style={pos(0,0,232,1024)} className="bg-[#130930] text-white"><SidebarMenu active="Minhas contas"/>
  <div style={pos(17,726,198,242)} className="overflow-hidden rounded-[12px]"><img src="/Promo-Tela7-Valora.png" className="absolute inset-0 w-full h-full object-cover object-[67%_center]" alt="Planejamento de objetivos"/><div className="absolute inset-0 bg-gradient-to-b from-[#130930]/75 via-transparent to-transparent"/><p className="absolute left-[13px] top-[11px] text-[8px] font-semibold tracking-[2px] text-[#b285ff]">ORGANIZAÇÃO —</p><p className="absolute left-[13px] top-[29px] text-[10px] font-semibold leading-[15px]">O primeiro passo<br/>para conquistar<br/>seus <span className="text-[#b285ff]">objetivos.</span></p></div>
  </aside>
  <div style={pos(235,0,1205,74)}><Topbar5/></div>
- <button style={pos(270,92,230,22)} onClick={()=>navigate('/dashboard')} className="text-left text-[14px] text-[#1f146b]">← &nbsp; Voltar para o início</button>
+ <button style={pos(270,92,230,22)} onClick={()=>navigate('/minhas-contas')} className="text-left text-[14px] text-[#1f146b]">← &nbsp; Voltar para Minhas contas</button>
  <h1 style={pos(270,126,700,44)} className="font-semibold text-[31px]">Conectar conta bancária</h1>
  <p style={pos(270,168,960,25)} className="text-[#5c5785] text-[14px]">Importe suas movimentações automaticamente e tenha um controle financeiro ainda mais completo.</p>
  <section style={pos(270,212,730,500)} className="bg-white rounded-[12px] border border-[#e0e3f2] overflow-hidden">
