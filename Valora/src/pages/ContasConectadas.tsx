@@ -3,6 +3,7 @@ import {useEffect,useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import Topbar5 from '../components/Topbar5';
 import {api,type AccountDto} from '../services/valoraApi';
+import {formatMoneyInput,parseMoneyInput} from '../utils/moneyInput';
 const pos=(x:number,y:number,w:number,h:number)=>({position:'absolute' as const,left:x,top:y,width:w,height:h});
 const banks=[
 {name:'Itaú',src:'/Clean-Banco-Itau-Valora.png'},
@@ -20,14 +21,14 @@ export default function ContasConectadas(){
  const [accounts,setAccounts]=useState<AccountDto[]>([]);
  const [manualOpen,setManualOpen]=useState(false);
  const [accountName,setAccountName]=useState('');
- const [initialBalance,setInitialBalance]=useState('0');
+ const [initialBalance,setInitialBalance]=useState('R$ 0,00');
  const [accountError,setAccountError]=useState('');
  const [accountSuccess,setAccountSuccess]=useState('');
  const [accountLoading,setAccountLoading]=useState(true);
  const [accountSaving,setAccountSaving]=useState(false);
  const loadAccounts=async()=>{setAccountLoading(true);try{const all:AccountDto[]=[];let page=0,totalPages=1;do{const result=await api.contas.list(page);all.push(...result.content);totalPages=result.totalPages;page++}while(page<totalPages);setAccounts(all);setAccountError('')}catch(e){setAccountError(e instanceof Error?e.message:'Não foi possível consultar as contas')}finally{setAccountLoading(false)}};
  useEffect(()=>{void loadAccounts()},[]);
- const saveAccount=async(e:React.FormEvent<HTMLFormElement>)=>{e.preventDefault();const saldo=Number(initialBalance);if(!accountName.trim()||!Number.isFinite(saldo)||saldo<0){setAccountError('Informe um nome e um saldo inicial válido.');return}setAccountSaving(true);setAccountError('');setAccountSuccess('');try{await api.contas.create({nome:accountName.trim(),saldo});setAccountName('');setInitialBalance('0');await loadAccounts();setAccountSuccess('Conta cadastrada com sucesso.')}catch(e){setAccountError(e instanceof Error?e.message:'Erro ao cadastrar conta')}finally{setAccountSaving(false)}};
+ const saveAccount=async(e:React.FormEvent<HTMLFormElement>)=>{e.preventDefault();const saldo=parseMoneyInput(initialBalance);if(!accountName.trim()||!Number.isFinite(saldo)||saldo<0){setAccountError('Informe um nome e um saldo inicial válido.');return}setAccountSaving(true);setAccountError('');setAccountSuccess('');try{await api.contas.create({nome:accountName.trim(),saldo});setAccountName('');setInitialBalance('R$ 0,00');await loadAccounts();setAccountSuccess('Conta cadastrada com sucesso.')}catch(e){setAccountError(e instanceof Error?e.message:'Erro ao cadastrar conta')}finally{setAccountSaving(false)}};
  const [zoom,setZoom]=useState(1),[modalStep,setModalStep]=useState<0|1|2|3>(0),[query,setQuery]=useState(''),[chosen,setChosen]=useState(''),[showAll,setShowAll]=useState(false);
  useEffect(()=>{const f=()=>setZoom(Math.max(1,window.innerWidth/1440));f();window.addEventListener('resize',f);return()=>window.removeEventListener('resize',f)},[]);
  const nav=[['Início','/dashboard','/Wrapper.svg'],['Movimentações','/movimentacoes','/Movimenta-es-icon.svg'],['Caixinhas','/caixinhas','/Archive-Caixinhas.svg'],['Categorias','/categorias','/Divider.svg'],['Contas conectadas','/contas-conectadas','/Contas-conectadas-icon.svg']];
@@ -69,7 +70,7 @@ export default function ContasConectadas(){
  <p className="text-[13px] text-[#5c5785] mt-2">Cadastre uma conta na Valora sem conectar seu banco pelo Open Finance.</p>
  <form onSubmit={saveAccount} className="flex flex-col gap-4 mt-6">
  <label className="text-[13px] font-medium flex flex-col gap-2">Nome da conta<input required maxLength={100} value={accountName} onChange={e=>setAccountName(e.target.value)} placeholder="Ex.: Nubank" className="h-[44px] border border-[#d6d1e8] rounded-[8px] px-3 text-[14px]"/></label>
- <label className="text-[13px] font-medium flex flex-col gap-2">Saldo inicial (R$)<input required type="number" min="0" step="0.01" value={initialBalance} onChange={e=>setInitialBalance(e.target.value)} className="h-[44px] border border-[#d6d1e8] rounded-[8px] px-3 text-[14px]"/></label>
+ <label className="text-[13px] font-medium flex flex-col gap-2">Saldo inicial (R$)<input required type="text" inputMode="numeric" value={initialBalance} onChange={e=>setInitialBalance(formatMoneyInput(e.target.value))} className="h-[44px] border border-[#d6d1e8] rounded-[8px] px-3 text-[14px]"/></label>
  {accountError&&<p role="alert" className="text-red-600 text-[12px]">{accountError}</p>}
  {accountSuccess&&<p role="status" className="text-green-700 text-[12px]">{accountSuccess}</p>}
  <button disabled={accountSaving} type="submit" className="h-[48px] rounded-[9px] bg-gradient-to-r from-[#4d0fd1] to-[#6e1af5] text-white font-semibold text-[14px] disabled:opacity-50">{accountSaving?'Salvando...':'Cadastrar conta'}</button>
