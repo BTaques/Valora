@@ -4,14 +4,14 @@ import {useNavigate} from 'react-router-dom';
 import Topbar5 from '../components/Topbar5';
 const pos=(x:number,y:number,w:number,h:number)=>({position:'absolute' as const,left:x,top:y,width:w,height:h});
 const banks=[
-{name:'Itaú',src:'/Clean-Banco-Itau-Valora.png'},
-{name:'Nubank',src:'/Official-bank-logo2@2x.png'},
-{name:'Santander',src:'/Clean-Banco-Santander-Valora.png'},
-{name:'Banco do Brasil',src:'/Clean-Banco-BB-Valora.png'},
-{name:'Bradesco',src:'/Banco-Bradesco-Valora.png'},
-{name:'Caixa',src:'/Banco-Caixa-Valora.png'},
+{name:'Itaú',src:'/logos/itau.png'},
+{name:'Nubank',src:'/logos/nubank.png'},
+{name:'Santander',src:'/logos/santander.png'},
+{name:'Banco do Brasil',src:'/logos/bb.png'},
+{name:'Bradesco',src:'/logos/bradesco.png'},
+{name:'Caixa',src:'/logos/caixa.png'},
 {name:'C6 Bank',src:'/Banco-C6-Valora.png'},
-{name:'Inter',src:'/Banco-Inter-Valora.png'},
+{name:'Inter',src:'/logos/inter.png'},
 ];
 function Icon({kind,size=23}:{kind:'transfer'|'eye'|'lock'|'bank'|'shield';size?:number}){const paths={transfer:<><path d="M4 7h16m-4-4 4 4-4 4M20 17H4m4-4-4 4 4 4"/></>,eye:<><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></>,lock:<><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></>,bank:<><path d="m2 9 10-6 10 6M4 10h16M5 19h14M3 22h18M7 10v9m5-9v9m5-9v9"/></>,shield:<><path d="M12 2 4 6v6c0 5 3.3 8.5 8 10 4.7-1.5 8-5 8-10V6l-8-4Z"/><path d="m9 12 2 2 4-4"/></>};return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">{paths[kind]}</svg>}
 export default function ContasConectadas(){
@@ -61,7 +61,7 @@ export default function ContasConectadas(){
  </div><p className="absolute left-0 right-0 bottom-[30px] text-center text-[11px] text-[#807a99]">Powered by <b className="text-[#14121f]">belvo.</b></p>
  </>}
  {modalStep===2&&<>
- <img src="/Clean-Banco-Itau-Valora.png" alt="Itaú" className="absolute left-[361px] top-[54px] w-[58px] h-[52px] object-contain rounded-[5px]"/>
+ <img src="/logos/itau.png" alt="Itaú" className="absolute left-[361px] top-[54px] w-[58px] h-[52px] object-contain rounded-[5px]"/>
  <p className="absolute top-[116px] left-0 w-full text-center text-[#241b37] font-semibold text-[17px]">Itaú</p>
  <h2 className="absolute top-[157px] left-0 w-full text-center text-[#241b37] font-bold text-[26px]">Autorizar no banco</h2>
  <p className="absolute top-[207px] left-[100px] w-[580px] text-center text-[#685e79] text-[15px] leading-[23px]">Você será redirecionado para o ambiente seguro do Itaú para autorizar o compartilhamento dos dados da sua conta e movimentações com a Valora através do Open Finance.</p>
