@@ -1,11 +1,14 @@
 import {useEffect,useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import Topbar5 from '../components/Topbar5';
-import { api, type CategoryDto, type MovementDto } from '../services/valoraApi';
+import { api, getLoginEmail, type CategoryDto, type MovementDto } from '../services/valoraApi';
 const abs=(x:number,y:number,w:number,h:number)=>({position:'absolute' as const,left:x,top:y,width:w,height:h});
 const money=(n:number)=>n.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
 type Cat={idCategoria?:number;name:string;color:string;bg:string;symbol:string;spent:number;percent:number};
-const fromApiCategory=(item:CategoryDto):Cat=>({idCategoria:item.idCategoria,name:item.nmCategoria,color:'#8159e0',bg:'#e9e3ff',symbol:'dots',spent:0,percent:0});
+const categoryColorKey=()=>`valora.categoryColors.${getLoginEmail()||'anonymous'}`;
+const savedColors=():Record<string,string>=>{try{return JSON.parse(localStorage.getItem(categoryColorKey())||'{}')}catch{return {}}};
+const persistColor=(id:number,color:string)=>{const colors=savedColors();colors[String(id)]=color;localStorage.setItem(categoryColorKey(),JSON.stringify(colors))};
+const fromApiCategory=(item:CategoryDto):Cat=>{const color=savedColors()[String(item.idCategoria)]||'#8159e0';return {idCategoria:item.idCategoria,name:item.nmCategoria,color,bg:color+'20',symbol:'dots',spent:0,percent:0}};
 function CategoryGlyph({name,size=18}:{name:string;size?:number}){
  const common={width:size,height:size,viewBox:'0 0 24 24',fill:'none',stroke:'currentColor',strokeWidth:1.8,strokeLinecap:'round' as const,strokeLinejoin:'round' as const};
  const shapes:Record<string,React.ReactNode>={
@@ -31,15 +34,14 @@ const now=new Date();
 const filteredMovements=movements.filter(m=>{if(m.tipo!=="DESPESA")return false;const date=new Date(m.dataMovimentacao+"T12:00:00");if(Number.isNaN(date.getTime()))return false;if(period==="Este mês")return date.getMonth()===now.getMonth()&&date.getFullYear()===now.getFullYear();if(period==="Mês passado"){const prev=new Date(now.getFullYear(),now.getMonth()-1,1);return date.getMonth()===prev.getMonth()&&date.getFullYear()===prev.getFullYear()}return date.getFullYear()===now.getFullYear()});
 const totalSpent=filteredMovements.reduce((s,m)=>s+Number(m.valor),0);
 const calculatedCats=cats.map(cat=>{const spent=filteredMovements.filter(m=>m.categoria===cat.name).reduce((s,m)=>s+Number(m.valor),0);return {...cat,spent,percent:totalSpent>0?Math.round(spent/totalSpent*100):0}});
-const palette=['#661fe8','#f59e0b','#3b82f6','#14b8a6','#ec4899','#8b5cf6'];
 const chartParts=calculatedCats.filter(cat=>cat.spent>0);
 let chartOffset=0;
-const chartGradient=chartParts.map((cat,i)=>{const start=chartOffset;chartOffset+=cat.spent/totalSpent*100;return `${palette[i%palette.length]} ${start}% ${chartOffset}%`}).join(', ');
+const chartGradient=chartParts.map((cat,i)=>{const start=chartOffset;chartOffset+=cat.spent/totalSpent*100;return `${cat.color} ${start}% ${chartOffset}%`}).join(', ');
 const nav=[['Início','/dashboard','/Wrapper.svg'],['Movimentações','/movimentacoes','/Movimenta-es-icon.svg'],['Caixinhas','/caixinhas','/Archive-Caixinhas.svg'],['Categorias','/categorias','/Divider.svg'],['Contas conectadas','/contas-conectadas','/Contas-conectadas-icon.svg']];
 const start=()=>{setEditing(null);setName('');setColor('#8159e0');setModal(true)};
 const edit=(i:number)=>{setEditing(i);setName(cats[i].name);setColor(cats[i].color);setModal(true)};
 const remove=async(i:number)=>{const item=cats[i];if(!item?.idCategoria)return;if(!window.confirm('Excluir a categoria '+item.name+'?'))return;try{await api.categorias.remove(item.idCategoria);setCats(old=>old.filter((_,j)=>j!==i));setApiError('')}catch(error){setApiError(error instanceof Error?error.message:'Não foi possível excluir a categoria')}};
-const save=async()=>{if(!name.trim())return;try{const result=editing===null?await api.categorias.create(name.trim()):await api.categorias.update(cats[editing].idCategoria!,name.trim());const normalized=fromApiCategory(result);setCats(old=>editing===null?[...old,normalized]:old.map((c,i)=>i===editing?{...normalized,color,bg:color+'20',symbol:c.symbol}:c));setModal(false);setApiError('')}catch(error){setApiError(error instanceof Error?error.message:'Não foi possível salvar a categoria')}};
+const save=async()=>{if(!name.trim())return;try{const result=editing===null?await api.categorias.create(name.trim()):await api.categorias.update(cats[editing].idCategoria!,name.trim());persistColor(result.idCategoria,color);const normalized=fromApiCategory(result);setCats(old=>editing===null?[...old,normalized]:old.map((c,i)=>i===editing?{...normalized,symbol:c.symbol}:c));setModal(false);setApiError('')}catch(error){setApiError(error instanceof Error?error.message:'Não foi possível salvar a categoria')}};
 return <div style={{zoom}} className="relative w-[1440px] min-h-[1024px] bg-[#f6f9fe] font-[Inter] text-[#140d40]">
 <aside style={abs(0,0,232,1024)} className="bg-[#130938] text-white">
 <div className="absolute left-[35px] top-[31px] flex items-center gap-[2px]"><img src="/logo-branco-3@2x.png" className="w-[40px] h-[33px] object-contain"/><b className="text-[27px]">Valora</b></div>
@@ -53,7 +55,7 @@ return <div style={{zoom}} className="relative w-[1440px] min-h-[1024px] bg-[#f6
 <b className="absolute left-[17px] top-[19px] text-[16px]">Gastos por categoria</b><select value={period} onChange={e=>setPeriod(e.target.value)} className="absolute right-[18px] top-[10px] h-[40px] w-[118px] border border-[#e3e5f2] rounded-[8px] bg-white px-3 text-[11px]">{['Este mês','Mês passado','Este ano'].map(x=><option key={x}>{x}</option>)}</select>
 <div aria-label={totalSpent>0?"Gráfico de gastos por categoria":"Nenhum gasto registrado"} className="absolute left-[19px] top-[57px] w-[216px] h-[216px] rounded-full" style={{background:totalSpent>0?`conic-gradient(${chartGradient})`:'#eceaf4'}}><div className="absolute inset-[24px] bg-white rounded-full"/></div>
 <b className="absolute left-[71px] top-[150px] text-[18px]">{money(totalSpent)}</b><span className="absolute left-[85px] top-[177px] text-[#595291] text-[11px]">Total de gastos</span>
-{calculatedCats.slice(0,5).map((c,i)=><div key={c.name} className="absolute left-[269px] right-[18px] h-[22px] flex items-center text-[12px]" style={{top:74+i*38}}><span className="w-[16px] h-[16px] rounded-full mr-[9px]" style={{background:palette[i%palette.length]}}/><span className="flex-1">{c.name}</span><span className="text-[11px] font-medium w-[105px]">{money(c.spent)}</span><span className="text-[11px] text-[#595291] w-[30px] text-right">{c.percent}%</span></div>)}
+{calculatedCats.slice(0,5).map((c,i)=><div key={c.name} className="absolute left-[269px] right-[18px] h-[22px] flex items-center text-[12px]" style={{top:74+i*38}}><span className="w-[16px] h-[16px] rounded-full mr-[9px]" style={{background:c.color}}/><span className="flex-1">{c.name}</span><span className="text-[11px] font-medium w-[105px]">{money(c.spent)}</span><span className="text-[11px] text-[#595291] w-[30px] text-right">{c.percent}%</span></div>)}
 {totalSpent===0&&<p className="absolute left-[75px] top-[273px] text-[11px] text-[#595291]">Nenhum gasto no período</p>}
 </section>
 <section style={abs(1015,183,405,302)} className="rounded-[9px] bg-white border border-[#e3e5f2]">
