@@ -325,6 +325,9 @@ export const api = {
       }
       return all;
     },
+    updateDetails(id: number, data: { descricao: string; dataMovimentacao: string }): Promise<MovementDto> {
+      return request<MovementDto>(`/api/movimentacao/atualizar/${id}`, { method: "PUT", body: data });
+    },
     transferCashbox(data: CashboxTransferCreate): Promise<MovementDto> {
       return request<MovementDto>("/api/movimentacao", {method:"POST",body:data});
     },
