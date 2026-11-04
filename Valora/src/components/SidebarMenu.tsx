@@ -1,5 +1,5 @@
 import {useNavigate} from 'react-router-dom';
-const items=[['Início','/dashboard','/Wrapper.svg'],['Movimentações','/movimentacoes','/Movimenta-es-icon.svg'],['Caixinhas','/caixinhas','/Archive-Caixinhas.svg'],['Categorias','/categorias','/Divider.svg'],['Contas conectadas','/contas-conectadas','/Contas-conectadas-icon.svg']] as const;
+const items=[['Início','/dashboard','/Wrapper.svg'],['Movimentações','/movimentacoes','/Movimenta-es-icon.svg'],['Caixinhas','/caixinhas','/Archive-Caixinhas.svg'],['Categorias','/categorias','/Divider.svg'],['Minhas contas','/minhas-contas','/Contas-conectadas-icon.svg']] as const;
 export default function SidebarMenu({active}:{active:string}){
  const navigate=useNavigate();
  return <div className="absolute left-0 top-0 w-[232px] text-white font-[Inter]">
