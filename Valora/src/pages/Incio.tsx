@@ -115,7 +115,7 @@ const Incio: FunctionComponent = () => {
               Categorias
             </div>
           </button>
-          <button onClick={() => navigate("/contas-conectadas")} className="cursor-pointer border-[rgba(219,209,245,0.28)] border-solid border-[1px] p-3.5 bg-[transparent] self-stretch h-[54px] rounded-[10px] box-border overflow-hidden shrink-0 flex items-start justify-center gap-5">
+          <button onClick={() => navigate("/minhas-contas")} className="cursor-pointer border-[rgba(219,209,245,0.28)] border-solid border-[1px] p-3.5 bg-[transparent] self-stretch h-[54px] rounded-[10px] box-border overflow-hidden shrink-0 flex items-start justify-center gap-5">
             <img
               className="h-6 w-6 relative"
               alt=""
@@ -123,7 +123,7 @@ const Incio: FunctionComponent = () => {
             />
             <div className="flex-1 flex items-start pt-[1.9px] px-0 pb-0">
               <div className="flex-1 relative text-sm font-[Inter] text-[#fff] text-left">
-                Contas conectadas
+                Minhas contas
               </div>
             </div>
           </button>
