@@ -213,6 +213,8 @@ export type RegisterPayload = {
   };
 };
 
+export type CashboxTransferCreate = { descricao:string; valor:number; tipo:"CAIXINHA_GUARDAR"|"CAIXINHA_RESGATE"; dataMovimentacao:string; idCategoria:number; idConta:number; idContaDestino:null; idCaixinha:number };
+
 export const api = {
   auth: {
     async login(email: string, senha: string): Promise<void> {
@@ -309,8 +311,6 @@ export const api = {
       return request<void>(`/api/caixinhas/${id}`, { method: "DELETE" });
     },
   },
-
-export type CashboxTransferCreate = { descricao:string; valor:number; tipo:"CAIXINHA_GUARDAR"|"CAIXINHA_RESGATE"; dataMovimentacao:string; idCategoria:number; idConta:number; idContaDestino:null; idCaixinha:number };
 
   movimentacoes: {
     list(page = 0, size = 100): Promise<PageDto<MovementDto>> {
