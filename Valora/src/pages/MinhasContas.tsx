@@ -11,7 +11,7 @@ const colors=['#5712d6','#b58aff','#4184d7','#36b3ac','#e09b4b','#e76ba5','#6670
 const safeAmount=(n:unknown)=>Number.isFinite(Number(n))?Number(n):0;
 function AccountIcon({name}:{name:string}){
  const key=name.toLocaleLowerCase('pt-BR').normalize('NFD').replace(/[\u0300-\u036f]/g,'');
- const img=(key.includes('nubank')||key.includes('nu pagamentos'))?'/Official-bank-logo2@2x.png':key.includes('brasil')?'/Clean-Banco-BB-Valora.png':key.includes('itau')?'/Clean-Banco-Itau-Valora.png':key.includes('santander')?'/Clean-Banco-Santander-Valora.png':key.includes('bradesco')?'/Banco-Bradesco-Valora.png':key.includes('caixa')?'/Banco-Caixa-Valora.png':key.includes('c6')?'/Banco-C6-Valora.png':key.includes('inter')?'/Banco-Inter-Valora.png':null;
+ const img=(key.includes('nubank')||key.includes('nu pagamentos'))?'/logos/nubank.png':key.includes('brasil')?'/logos/bb.png':key.includes('itau')?'/logos/itau.png':key.includes('santander')?'/logos/santander.png':key.includes('bradesco')?'/logos/bradesco.png':key.includes('caixa')?'/logos/caixa.png':key.includes('c6')?'/Banco-C6-Valora.png':key.includes('inter')?'/logos/inter.png':null;
  return <span className={"w-[48px] h-[48px] rounded-[12px] flex items-center justify-center shrink-0 "+(key.includes("brasil")?"bg-[#ffdf48]":"bg-[#f4f0ff]")}>{img?<img src={img} alt="" className="w-[38px] h-[38px] object-contain"/>:<svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#5712d6" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="m2 9 10-6 10 6M4 10h16M5 19h14M3 22h18M7 10v9m5-9v9m5-9v9"/></svg>}</span>;
 }
 function ActionIcon({kind}:{kind:'add'|'connect'|'manage'}){
