@@ -13,6 +13,7 @@ import Caixinhas from "./pages/Caixinhas";
 import DetalhesCaixinha from "./pages/DetalhesCaixinha";
 import Categorias from "./pages/Categorias";
 import ContasConectadas from "./pages/ContasConectadas";
+import MinhasContas from "./pages/MinhasContas";
 import { getAccessToken } from "./services/valoraApi";
 
 function Protected({ children }: { children: ReactNode }) {
@@ -35,7 +36,8 @@ function App() {
       "/movimentacoes": "Valora | Movimentações",
       "/caixinhas": "Valora | Caixinhas",
       "/categorias": "Valora | Categorias",
-      "/contas-conectadas": "Valora | Contas conectadas",
+      "/contas-conectadas": "Valora | Conectar banco",
+      "/minhas-contas": "Valora | Minhas contas",
     };
     document.title = titleByPath[pathname] || "Valora";
   }, [pathname]);
@@ -57,6 +59,8 @@ function App() {
       <Route path="/04-caixinhas" element={<Protected><Caixinhas /></Protected>} />
       <Route path="/categorias" element={<Protected><Categorias /></Protected>} />
       <Route path="/06-categorias" element={<Protected><Categorias /></Protected>} />
+      <Route path="/minhas-contas" element={<Protected><MinhasContas /></Protected>} />
+      <Route path="/12-minhas-contas" element={<Protected><MinhasContas /></Protected>} />
       <Route path="/contas-conectadas" element={<Protected><ContasConectadas /></Protected>} />
       <Route path="/07-conectar-conta" element={<Protected><ContasConectadas /></Protected>} />
       <Route path="/detalhes-caixinha" element={<Protected><DetalhesCaixinha /></Protected>} />
