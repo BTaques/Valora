@@ -1,7 +1,7 @@
 import {useEffect,useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import Topbar5 from '../components/Topbar5';
-import {GoalIcon} from '../components/GoalIcon';
+import {GoalIcon,getCashboxIcon} from '../components/GoalIcon';
 import {api, type CashboxDto} from '../services/valoraApi';
 import {formatMoneyInput,parseMoneyInput,moneyInputFromNumber} from '../utils/moneyInput';
 const pos=(x:number,y:number,w:number,h:number)=>({position:'absolute' as const,left:x,top:y,width:w,height:h});
@@ -30,7 +30,7 @@ const [cashbox,setCashbox]=useState<CashboxDto|null>(null),[apiError,setApiError
 const [monthly,setMonthly]=useState(moneyInputFromNumber(500)),[goalName,setGoalName]=useState(''),[nameEditing,setNameEditing]=useState(false),[draftName,setDraftName]=useState(''),[amount,setAmount]=useState(0),[movements,setMovements]=useState<Movement[]>([]),[deposit,setDeposit]=useState(''),[withdraw,setWithdraw]=useState(''),[period,setPeriod]=useState('Últimos 6 meses'),[more,setMore]=useState(false),[deleted,setDeleted]=useState(false);
 useEffect(()=>{if(!cashboxId){setApiError('Abra uma caixinha pela lista para visualizar os detalhes.');return}let active=true;api.caixinhas.get(cashboxId).then(item=>{if(!active)return;setCashbox(item);setGoalName(item.nmCaixinha);setDraftName(item.nmCaixinha);setAmount(Number(item.vlAtual));setMovements(readLocalMovements(item.idCaixinha))}).catch(error=>{if(active)setApiError(error instanceof Error?error.message:'Não foi possível carregar a caixinha')});return()=>{active=false}},[cashboxId]);
 const target=Number(cashbox?.vlMeta??0),pct=target>0?Math.round(amount/target*100):0;
-const icon=localStorage.getItem(`valora.cashbox.icon.${cashboxId}`)||'target';
+const icon=getCashboxIcon(cashboxId,goalName);
 const monthlyValue=parseMoneyInput(monthly);const remaining=Math.max(0,target-amount);const months=monthlyValue>0?Math.ceil(remaining/monthlyValue):null;const expected=months===null?'Informe um valor':months===0?'Meta atingida':new Intl.DateTimeFormat('pt-BR',{month:'long',year:'numeric'}).format(new Date(new Date().getFullYear(),new Date().getMonth()+months,1));
 const monthsCount=period==='Últimos 3 meses'?3:period==='Últimos 12 meses'?12:6;
 const chartDates=Array.from({length:monthsCount},(_,i)=>new Date(new Date().getFullYear(),new Date().getMonth()-(monthsCount-1-i),1));
