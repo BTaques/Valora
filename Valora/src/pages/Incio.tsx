@@ -13,7 +13,7 @@ const Incio: FunctionComponent = () => {
   const [loading,setLoading]=useState(true);
   const [error,setError]=useState("");
   const [displayName,setDisplayName]=useState(getStoredUser()?.nome||getLoginEmail()?.split("@")[0]||"");
-  useEffect(()=>{let active=true;Promise.all([api.movimentacoes.listAll(),api.caixinhas.list(),api.auth.me()]).then(([movs,boxes,user])=>{if(!active)return;setMovimentacoes(movs);setCaixinhas(boxes);setDisplayName(user.nome||user.email);setError("");}).catch(err=>{if(active)setError(err instanceof Error?err.message:"Erro ao carregar o resumo");}).finally(()=>{if(active)setLoading(false)});return()=>{active=false}},[]);
+  useEffect(()=>{let active=true;Promise.all([api.movimentacoes.listAll(),api.caixinhas.list()]).then(([movs,boxes])=>{if(!active)return;setMovimentacoes(movs);setCaixinhas(boxes);setError("");}).catch(err=>{if(active)setError(err instanceof Error?err.message:"Erro ao carregar o resumo");}).finally(()=>{if(active)setLoading(false)});return()=>{active=false}},[]);
   const now=new Date();
   const current=movimentacoes.filter(m=>m.dataMovimentacao.startsWith(`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,"0")}`));
   const entradas=current.filter(m=>m.tipo==="RECEITA").reduce((s,m)=>s+Number(m.valor),0);
