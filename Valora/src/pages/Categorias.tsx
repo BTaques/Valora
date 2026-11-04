@@ -50,7 +50,6 @@ return <div style={{zoom}} className="relative w-[1440px] min-h-[1024px] bg-[#f6
 </aside>
 <div style={abs(235,0,1205,74)}><Topbar5/></div>
 <h1 style={abs(254,102,600,44)} className="font-bold text-[32px]">Categorias</h1><p style={abs(254,144,650,24)} className="text-[#595291] text-[16px]">Organize e personalize suas categorias de gastos.</p>{apiError&&<p role="alert" className="absolute left-[254px] top-[164px] text-[11px] text-red-600">{apiError}</p>}
-<button style={abs(1232,106,188,48)} onClick={start} className="bg-[#5212d1] text-white rounded-[10px] text-[14px] font-medium flex items-center justify-center gap-[12px]"><span className="text-[22px] leading-none">＋</span>Nova categoria</button>
 <section style={abs(252,183,745,302)} className="rounded-[9px] bg-white border border-[#e3e5f2]">
 <b className="absolute left-[17px] top-[19px] text-[16px]">Gastos por categoria</b><select value={period} onChange={e=>setPeriod(e.target.value)} className="absolute right-[18px] top-[10px] h-[40px] w-[118px] border border-[#e3e5f2] rounded-[8px] bg-white px-3 text-[11px]">{['Este mês','Mês passado','Este ano'].map(x=><option key={x}>{x}</option>)}</select>
 <div aria-label={totalSpent>0?"Gráfico de gastos por categoria":"Nenhum gasto registrado"} className="absolute left-[19px] top-[57px] w-[216px] h-[216px] rounded-full" style={{background:totalSpent>0?`conic-gradient(${chartGradient})`:'#eceaf4'}}><div className="absolute inset-[24px] bg-white rounded-full"/></div>
@@ -61,7 +60,7 @@ return <div style={{zoom}} className="relative w-[1440px] min-h-[1024px] bg-[#f6
 <section style={abs(1015,183,405,302)} className="rounded-[9px] bg-white border border-[#e3e5f2]">
 <div className="absolute left-[35px] top-[17px] w-[62px] h-[62px] bg-[#e8e0ff] rounded-[12px] flex items-center justify-center"><img src="/Category-tag-badge.svg" className="w-[42px] h-[42px]"/></div>
 <h2 className="absolute left-[35px] top-[81px] font-bold text-[17px] leading-[24px]">Crie suas categorias<br/>personalizadas</h2><p className="absolute left-[33px] top-[138px] text-[13px] text-[#595291] leading-[20px]">Classifique seus gastos para<br/>entender melhor para onde<br/>seu dinheiro está indo.</p>
-<button onClick={start} className="absolute left-[19px] right-[19px] top-[233px] h-[46px] rounded-[10px] bg-[#5712d6] text-white text-[13px] font-medium">＋ &nbsp; Nova categoria</button>
+<button onClick={start} className="absolute left-[19px] right-[19px] top-[233px] h-[46px] rounded-[10px] bg-[#5712d6] text-white text-[15px] font-medium"><span className="text-[23px] align-middle">＋</span> &nbsp; Nova categoria</button>
 </section>
 <section style={abs(252,503,1168,486)} className="rounded-[9px] bg-white border border-[#e3e5f2] overflow-hidden">
 <b className="absolute left-[17px] top-[14px] text-[16px]">Suas categorias</b><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="⌕  Buscar categoria..." className="absolute right-[19px] top-[7px] w-[208px] h-[40px] rounded-[8px] border border-[#e3e5f2] px-[12px] text-[11px] placeholder:text-[#8078ab]"/>
