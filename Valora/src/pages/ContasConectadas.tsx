@@ -1,6 +1,7 @@
 import {useEffect,useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import Topbar5 from '../components/Topbar5';
+import {api,type AccountDto} from '../services/valoraApi';
 const pos=(x:number,y:number,w:number,h:number)=>({position:'absolute' as const,left:x,top:y,width:w,height:h});
 const banks=[
 {name:'Itaú',src:'/Clean-Banco-Itau-Valora.png'},
@@ -14,13 +15,24 @@ const banks=[
 ];
 function Icon({kind,size=23}:{kind:'transfer'|'eye'|'lock'|'bank'|'shield';size?:number}){const paths={transfer:<><path d="M4 7h16m-4-4 4 4-4 4M20 17H4m4-4-4 4 4 4"/></>,eye:<><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></>,lock:<><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></>,bank:<><path d="m2 9 10-6 10 6M4 10h16M5 19h14M3 22h18M7 10v9m5-9v9m5-9v9"/></>,shield:<><path d="M12 2 4 6v6c0 5 3.3 8.5 8 10 4.7-1.5 8-5 8-10V6l-8-4Z"/><path d="m9 12 2 2 4-4"/></>};return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">{paths[kind]}</svg>}
 export default function ContasConectadas(){
- const navigate=useNavigate();const [zoom,setZoom]=useState(1),[modalStep,setModalStep]=useState<0|1|2|3>(0),[query,setQuery]=useState(''),[chosen,setChosen]=useState(''),[showAll,setShowAll]=useState(false);
+ const navigate=useNavigate();
+ const [accounts,setAccounts]=useState<AccountDto[]>([]);
+ const [accountName,setAccountName]=useState('');
+ const [initialBalance,setInitialBalance]=useState('0');
+ const [accountError,setAccountError]=useState('');
+ const [accountSuccess,setAccountSuccess]=useState('');
+ const [accountLoading,setAccountLoading]=useState(true);
+ const [accountSaving,setAccountSaving]=useState(false);
+ const loadAccounts=async()=>{setAccountLoading(true);try{const all:AccountDto[]=[];let page=0,totalPages=1;do{const result=await api.contas.list(page);all.push(...result.content);totalPages=result.totalPages;page++}while(page<totalPages);setAccounts(all);setAccountError('')}catch(e){setAccountError(e instanceof Error?e.message:'Não foi possível consultar as contas')}finally{setAccountLoading(false)}};
+ useEffect(()=>{void loadAccounts()},[]);
+ const saveAccount=async(e:React.FormEvent<HTMLFormElement>)=>{e.preventDefault();const saldo=Number(initialBalance);if(!accountName.trim()||!Number.isFinite(saldo)||saldo<0){setAccountError('Informe um nome e um saldo inicial válido.');return}setAccountSaving(true);setAccountError('');setAccountSuccess('');try{await api.contas.create({nome:accountName.trim(),saldo});setAccountName('');setInitialBalance('0');await loadAccounts();setAccountSuccess('Conta cadastrada com sucesso.')}catch(e){setAccountError(e instanceof Error?e.message:'Erro ao cadastrar conta')}finally{setAccountSaving(false)}};
+ const [zoom,setZoom]=useState(1),[modalStep,setModalStep]=useState<0|1|2|3>(0),[query,setQuery]=useState(''),[chosen,setChosen]=useState(''),[showAll,setShowAll]=useState(false);
  useEffect(()=>{const f=()=>setZoom(Math.max(1,window.innerWidth/1440));f();window.addEventListener('resize',f);return()=>window.removeEventListener('resize',f)},[]);
  const nav=[['Início','/dashboard','/Wrapper.svg'],['Movimentações','/movimentacoes','/Movimenta-es-icon.svg'],['Caixinhas','/caixinhas','/Archive-Caixinhas.svg'],['Categorias','/categorias','/Divider.svg'],['Contas conectadas','/contas-conectadas','/Contas-conectadas-icon.svg']];
  const connect=(name='')=>{setQuery('');setChosen(name);setModalStep(name==='Itaú'?2:1)};
  const close=()=>setModalStep(0);
- return <div style={{zoom}} className="relative w-[1440px] min-h-[1024px] bg-[#f6f9fe] font-[Inter] text-[#0e0b2e]">
- <aside style={pos(0,0,232,1024)} className="bg-[#130930] text-white">
+ return <div style={{zoom}} className="relative w-[1440px] min-h-[1320px] bg-[#f6f9fe] font-[Inter] text-[#0e0b2e]">
+ <aside style={pos(0,0,232,1320)} className="bg-[#130930] text-white">
  <div className="absolute left-[34px] top-[27px] flex items-center gap-[3px]"><img src="/logo-branco-3@2x.png" className="w-[40px] h-[33px] object-contain"/><b className="text-[25px]">Valora</b></div>
  {nav.map(([label,href,icon],i)=><button key={label} onClick={()=>navigate(href)} style={pos(14,113+i*58,204,48)} className={'rounded-[9px] border border-[#452985] flex items-center gap-[19px] px-[15px] text-[14px] text-[#f2f0ff] '+(label==='Contas conectadas'?'bg-[#631ee4]':'bg-transparent')}><img src={icon} className="w-[24px] h-[24px] object-contain"/>{label}</button>)}
  <div style={pos(17,726,198,242)} className="overflow-hidden rounded-[12px]"><img src="/Promo-Tela7-Valora.png" className="absolute inset-0 w-full h-full object-cover object-[67%_center]" alt="Planejamento de objetivos"/><div className="absolute inset-0 bg-gradient-to-b from-[#130930]/75 via-transparent to-transparent"/><p className="absolute left-[13px] top-[11px] text-[8px] font-semibold tracking-[2px] text-[#b285ff]">ORGANIZAÇÃO —</p><p className="absolute left-[13px] top-[29px] text-[10px] font-semibold leading-[15px]">O primeiro passo<br/>para conquistar<br/>seus <span className="text-[#b285ff]">objetivos.</span></p></div>
@@ -48,6 +60,18 @@ export default function ContasConectadas(){
  <section style={pos(270,730,1140,264)} className="bg-white border border-[#e0e3f2] rounded-[12px]">
  <h2 className="absolute left-[19px] top-[17px] text-[18px] font-semibold">Instituições disponíveis</h2><p className="absolute left-[19px] top-[45px] text-[12px] text-[#5c5785]">Conecte sua conta nos principais bancos do Brasil.</p><button onClick={()=>setShowAll(!showAll)} className="absolute right-[18px] top-[27px] text-[12px] text-[#4d0fd1] font-semibold">Ver todas &nbsp; →</button>
  <div className="absolute left-[19px] top-[81px] flex gap-[12px]">{banks.map((bank)=><button key={bank.name} onClick={()=>connect(bank.name)} className="w-[126px] h-[142px] rounded-[10px] border border-[#d6d1e8] bg-white hover:border-[#6e1af5] hover:shadow-sm flex flex-col items-center pt-[14px]"><div className="w-[48px] h-[48px] flex items-center justify-center">{bank.src?<img src={bank.src} alt="" className="max-w-[48px] max-h-[48px] object-contain"/>:<span className="text-[#541feb]"><Icon kind="bank" size={40}/></span>}</div><span className="text-[11px] mt-[13px] text-center">{bank.name}</span></button>)}</div>
+ </section>
+ <section style={pos(270,1020,1140,260)} className="bg-white border border-[#e0e3f2] rounded-[12px] p-5">
+ <h2 className="text-[19px] font-semibold">Minhas contas cadastradas manualmente</h2>
+ <p className="text-[12px] text-[#5c5785] mt-1">Contas registradas na Valora, sem conexão automática com o banco.</p>
+ <form onSubmit={saveAccount} className="flex items-end gap-3 mt-5">
+ <label className="text-[12px] font-medium flex flex-col gap-1">Nome da conta<input required maxLength={100} value={accountName} onChange={e=>setAccountName(e.target.value)} placeholder="Ex.: Nubank" className="w-[260px] h-[40px] border border-[#d6d1e8] rounded-[8px] px-3 text-[14px]"/></label>
+ <label className="text-[12px] font-medium flex flex-col gap-1">Saldo inicial (R$)<input required type="number" min="0" step="0.01" value={initialBalance} onChange={e=>setInitialBalance(e.target.value)} className="w-[190px] h-[40px] border border-[#d6d1e8] rounded-[8px] px-3 text-[14px]"/></label>
+ <button disabled={accountSaving} type="submit" className="h-[40px] px-5 rounded-[8px] bg-[#541feb] text-white font-semibold text-[13px] disabled:opacity-50">{accountSaving?'Salvando...':'Cadastrar conta'}</button>
+ </form>
+ {accountError&&<p role="alert" className="text-red-600 text-[12px] mt-2">{accountError}</p>}
+ {accountSuccess&&<p role="status" className="text-green-700 text-[12px] mt-2">{accountSuccess}</p>}
+ <div className="mt-4 flex gap-3 flex-wrap">{accountLoading?<p className="text-[12px] text-[#5c5785]">Carregando contas...</p>:accounts.length===0?<p className="text-[12px] text-[#5c5785]">Nenhuma conta cadastrada.</p>:accounts.map(account=><div key={account.id} className="border border-[#e0e3f2] rounded-lg px-4 py-2 min-w-[180px]"><b className="text-[13px]">{account.nome}</b><p className="text-[12px] text-[#5c5785] mt-1">{Number(account.saldo).toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}</p></div>)}</div>
  </section>
  {showAll&&<div style={pos(1050,956,360,65)} className="z-20 bg-white shadow-md border rounded-lg p-3 text-[12px] flex gap-3 items-center"><img src="/Banco-Inter-Valora.png" alt="" className="w-10 h-10 object-contain"/><button onClick={()=>connect('Inter')}>Banco Inter — selecionar</button><button onClick={()=>setShowAll(false)} className="ml-auto">✕</button></div>}
  {modalStep>0&&<div className="absolute inset-0 z-[300] bg-[rgba(22,15,52,0.58)]" onMouseDown={close}>
