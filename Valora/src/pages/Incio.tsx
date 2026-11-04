@@ -4,7 +4,7 @@ import ParceriasValora1 from "../components/ParceriasValora1";
 import Topbar5 from "../components/Topbar5";
 import EntradasESadas from "../components/EntradasESadas";
 import MinhasCaixinhas from "../components/MinhasCaixinhas";
-import { api, getStoredUser, getLoginEmail, type MovementDto, type CashboxDto, type AccountDto } from "../services/valoraApi";
+import { api, getStoredUser, getLoginEmail, type MovementDto, type CashboxDto, type AccountDto, type CategoryDto } from "../services/valoraApi";
 
 const Incio: FunctionComponent = () => {
   const navigate = useNavigate();
@@ -13,6 +13,31 @@ const Incio: FunctionComponent = () => {
   const [contas,setContas]=useState<AccountDto[]>([]);
   const [loading,setLoading]=useState(true);
   const [error,setError]=useState("");
+  const [quickMode,setQuickMode]=useState<"Entrada"|"Saída"|null>(null);
+  const [quickDescription,setQuickDescription]=useState("");
+  const [quickValue,setQuickValue]=useState("");
+  const [quickCategory,setQuickCategory]=useState("");
+  const [quickAccount,setQuickAccount]=useState("");
+  const [quickCategories,setQuickCategories]=useState<CategoryDto[]>([]);
+  const [quickError,setQuickError]=useState("");
+  const [quickSaving,setQuickSaving]=useState(false);
+  const openQuick=async(mode:"Entrada"|"Saída",salary=false)=>{
+    setQuickMode(mode);setQuickDescription(salary?"Salário":"");setQuickValue("");setQuickCategory("");setQuickAccount("");setQuickError("");
+    try{const [categories,accounts]=await Promise.all([api.categorias.list(),(async()=>{const all:AccountDto[]=[];let p=0,total=1;do{const r=await api.contas.list(p);all.push(...r.content);total=r.totalPages;p++}while(p<total);return all})()]);setQuickCategories(categories);setContas(accounts)}
+    catch(e){setQuickError(e instanceof Error?e.message:"Não foi possível carregar contas e categorias")}
+  };
+  const saveQuick=async(e:React.FormEvent<HTMLFormElement>)=>{
+    e.preventDefault();const value=Number(quickValue);
+    if(!quickDescription.trim()||!Number.isFinite(value)||value<=0||!quickCategory||!quickAccount||!quickMode){setQuickError("Preencha todos os campos com valores válidos.");return}
+    setQuickSaving(true);setQuickError("");
+    try{
+      const now=new Date();const date=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,"0")}-${String(now.getDate()).padStart(2,"0")}`;
+      await api.movimentacoes.create({descricao:quickDescription.trim(),valor:value,tipo:quickMode==="Entrada"?"RECEITA":"DESPESA",dataMovimentacao:date,idCategoria:Number(quickCategory),idConta:Number(quickAccount),idContaDestino:null,idCaixinha:null});
+      const [movs,accounts]=await Promise.all([api.movimentacoes.listAll(),(async()=>{const all:AccountDto[]=[];let p=0,total=1;do{const r=await api.contas.list(p);all.push(...r.content);total=r.totalPages;p++}while(p<total);return all})()]);
+      setMovimentacoes(movs);setContas(accounts);setQuickMode(null);
+    }catch(err){setQuickError(err instanceof Error?err.message:"Não foi possível registrar a movimentação")}
+    finally{setQuickSaving(false)}
+  };
   const [displayName,setDisplayName]=useState(getStoredUser()?.nome||getLoginEmail()?.split("@")[0]||"");
   useEffect(()=>{let active=true;Promise.all([api.movimentacoes.listAll(),api.caixinhas.list(),(async()=>{const all:AccountDto[]=[];let page=0,totalPages=1;do{const result=await api.contas.list(page);all.push(...result.content);totalPages=result.totalPages;page++}while(page<totalPages);return all})()]).then(([movs,boxes,accounts])=>{if(!active)return;setMovimentacoes(movs);setCaixinhas(boxes);setContas(accounts);setError("");}).catch(err=>{if(active)setError(err instanceof Error?err.message:"Erro ao carregar o resumo");}).finally(()=>{if(active)setLoading(false)});return()=>{active=false}},[]);
   const now=new Date();
@@ -153,7 +178,7 @@ const Incio: FunctionComponent = () => {
             </div>
             <div className="self-stretch flex items-center flex-wrap content-center p-[15px] gap-[13px] text-center text-[11px] text-[#130e33]">
               <div className="flex-1 flex flex-col items-start gap-2 min-w-[81px]">
-                <button className="cursor-pointer [border:none] py-[8.9px] px-0 bg-[#f0e8ff] self-stretch h-16 rounded-[9px] overflow-hidden shrink-0 flex items-start justify-center box-border hover:bg-[#d6cfe6]">
+                <button onClick={()=>void openQuick("Saída")} className="cursor-pointer [border:none] py-[8.9px] px-0 bg-[#f0e8ff] self-stretch h-16 rounded-[9px] overflow-hidden shrink-0 flex items-start justify-center box-border hover:bg-[#d6cfe6]">
                   <h2 className="m-0 relative text-[25px] font-bold font-[Inter] text-[#4f13d4] text-left mq450:text-xl">
                     −
                   </h2>
@@ -163,7 +188,7 @@ const Incio: FunctionComponent = () => {
                 </div>
               </div>
               <div className="flex-1 flex flex-col items-start gap-2 min-w-[92px]">
-                <button className="cursor-pointer [border:none] py-[8.9px] px-0 bg-[#f0e8ff] self-stretch h-16 rounded-[9px] overflow-hidden shrink-0 flex items-start justify-center box-border hover:bg-[#d6cfe6]">
+                <button onClick={()=>void openQuick("Entrada")} className="cursor-pointer [border:none] py-[8.9px] px-0 bg-[#f0e8ff] self-stretch h-16 rounded-[9px] overflow-hidden shrink-0 flex items-start justify-center box-border hover:bg-[#d6cfe6]">
                   <h2 className="m-0 relative text-[25px] font-bold font-[Inter] text-[#4f13d4] text-left mq450:text-xl">
                     +
                   </h2>
@@ -172,7 +197,7 @@ const Incio: FunctionComponent = () => {
                   Registrar entrada
                 </div>
               </div>
-              <div className="cursor-pointer flex-1 flex flex-col items-center gap-2 min-w-[95px]">
+              <button type="button" onClick={()=>void openQuick("Entrada",true)} className="cursor-pointer flex-1 flex flex-col items-center gap-2 min-w-[95px]">
                 <img
                   className="self-stretch h-16 relative rounded-[9px] max-w-full overflow-hidden shrink-0"
                   loading="lazy"
@@ -180,7 +205,7 @@ const Incio: FunctionComponent = () => {
                   src="/Sal-rio.svg"
                 />
                 <div className="relative font-semibold">Salário</div>
-              </div>
+              </button>
               <div className="cursor-pointer flex-1 flex flex-col items-start gap-2 min-w-[95px]">
                 <img
                   className="self-stretch h-16 relative rounded-[9px] max-w-full overflow-hidden shrink-0"
@@ -194,6 +219,7 @@ const Incio: FunctionComponent = () => {
               </div>
             </div>
           </section>
+          {quickMode&&<div className="fixed inset-0 z-[400] flex items-center justify-center bg-black/50"><form onSubmit={saveQuick} className="w-[420px] rounded-2xl bg-white p-7 shadow-xl flex flex-col gap-4 text-[#191236]"><div className="flex justify-between items-center"><h2 className="text-xl font-bold">{quickDescription==="Salário"?"Registrar salário":quickMode==="Entrada"?"Registrar entrada":"Registrar gasto"}</h2><button type="button" onClick={()=>setQuickMode(null)}>✕</button></div><input required className="border rounded-lg p-3" placeholder="Descrição" value={quickDescription} onChange={e=>setQuickDescription(e.target.value)}/><input required className="border rounded-lg p-3" placeholder="Valor (R$)" type="number" min="0.01" step="0.01" value={quickValue} onChange={e=>setQuickValue(e.target.value)}/><input disabled className="border rounded-lg p-3 bg-[#f8f8fc]" value={quickMode}/><select required className="border rounded-lg p-3" value={quickCategory} onChange={e=>setQuickCategory(e.target.value)}><option value="">Selecione a categoria</option>{quickCategories.map(c=><option key={c.idCategoria} value={c.idCategoria}>{c.nmCategoria}</option>)}</select><select required className="border rounded-lg p-3" value={quickAccount} onChange={e=>setQuickAccount(e.target.value)}><option value="">Selecione a conta</option>{contas.map(c=><option key={c.id} value={c.id}>{c.nome}</option>)}</select>{quickError&&<p role="alert" className="text-xs text-red-600">{quickError}</p>}<button disabled={quickSaving||!quickCategories.length||!contas.length} className="bg-[#5212d6] disabled:opacity-50 text-white rounded-lg p-3">{quickSaving?"Salvando...":"Salvar movimentação"}</button>{(!quickCategories.length||!contas.length)&&<p className="text-xs text-red-600">Cadastre uma conta e uma categoria para continuar.</p>}</form></div>}
           <EntradasESadas movimentacoes={movimentacoes} />
           <MinhasCaixinhas caixinhas={caixinhas} loading={loading} />
           <section className="absolute top-[408px] left-[19.95px] rounded-xl bg-[#fff] border-[#e3e6f2] border-solid border-[1px] box-border w-[773px] overflow-hidden flex flex-col items-start pt-[17px] px-[11px] pb-[30px] max-w-full text-left text-lg text-[#130e33] font-[Inter]">
