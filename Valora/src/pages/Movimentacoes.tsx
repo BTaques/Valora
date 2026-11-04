@@ -1,6 +1,6 @@
 import SidebarMenu from '../components/SidebarMenu';
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import Topbar5 from "../components/Topbar5";
 import { api, type AccountDto, type CategoryDto, type MovementDto } from "../services/valoraApi";
 import {formatMoneyInput,parseMoneyInput} from "../utils/moneyInput";
@@ -12,11 +12,13 @@ const filteredRowsForTotals=(rows:Row[])=>rows;
 const Arrow=()=> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>;
 export default function Movimentacoes(){
  const navigate=useNavigate();
+ const [searchParams]=useSearchParams();
+ const initialAccount=searchParams.get("conta");
  const [zoom,setZoom]=useState(1);
  useEffect(()=>{const update=()=>setZoom(Math.max(1,innerWidth/1440));update();window.addEventListener("resize",update);return()=>window.removeEventListener("resize",update)},[]);
  const [page,setPage]=useState(1);
  const [rows,setRows]=useState<Row[]>([]),[categories,setCategories]=useState<CategoryDto[]>([]),[accounts,setAccounts]=useState<AccountDto[]>([]);
- const [search,setSearch]=useState(""),[account,setAccount]=useState("Todas as contas"),[category,setCategory]=useState("Todas as categorias"),[type,setType]=useState("Todos os tipos"),[origin,setOrigin]=useState("Todas as origens"),[modal,setModal]=useState(false),[draft,setDraft]=useState({description:"",value:"",category:"",account:"",type:"Saída" as "Entrada"|"Saída"}),[selected,setSelected]=useState<number[]>([]);
+ const [search,setSearch]=useState(""),[account,setAccount]=useState(initialAccount||"Todas as contas"),[date,setDate]=useState("Todas as datas"),[category,setCategory]=useState("Todas as categorias"),[type,setType]=useState("Todos os tipos"),[origin,setOrigin]=useState("Todas as origens"),[modal,setModal]=useState(false),[draft,setDraft]=useState({description:"",value:"",category:"",account:"",type:"Saída" as "Entrada"|"Saída"}),[selected,setSelected]=useState<number[]>([]);
  const [error,setError]=useState(""),[formError,setFormError]=useState(""),[saving,setSaving]=useState(false),[loading,setLoading]=useState(true);
  const load=async()=>{setLoading(true);try{const [movs,cats,contas]=await Promise.all([api.movimentacoes.listAll(),api.categorias.list(),(async()=>{const all:AccountDto[]=[];let p=0,total=1;do{const result=await api.contas.list(p);all.push(...result.content);total=result.totalPages;p++}while(p<total);return all})()]);setRows(movs.filter(m=>m.tipo==="DESPESA"||m.tipo==="RECEITA").map(toRow));setCategories(cats);setAccounts(contas);setError("");}catch(e){setError(e instanceof Error?e.message:"Erro ao carregar movimentações");}finally{setLoading(false)}};
  useEffect(()=>{void load()},[]);
@@ -24,7 +26,10 @@ export default function Movimentacoes(){
  const totalEntradas=filteredRowsForTotals(rows).filter(r=>r.type==="Entrada").reduce((sum,r)=>sum+r.amount,0);
  const totalSaidas=filteredRowsForTotals(rows).filter(r=>r.type==="Saída").reduce((sum,r)=>sum+r.amount,0);
  const pageSize=8;
- const filtered=rows.filter(r=>(r.description+" "+r.value+" "+r.category).toLowerCase().includes(search.toLowerCase())&&(account==="Todas as contas"||r.account===account)&&(category==="Todas as categorias"||r.category===category)&&(type==="Todos os tipos"||r.type===type)&&(origin==="Todas as origens"||r.origin===origin));
+ const availableDates=Array.from(new Set(rows.filter(r=>account==="Todas as contas"||r.account===account).map(r=>r.date))).sort((a,b)=>{const parse=(d:string)=>d.split("/").reverse().join("-");return parse(b).localeCompare(parse(a))});
+ useEffect(()=>{setPage(1);setSelected([])},[account,date,category,type,origin,search]);
+ useEffect(()=>{setAccount(initialAccount||"Todas as contas");setDate("Todas as datas")},[initialAccount]);
+ const filtered=rows.filter(r=>(r.description+" "+r.value+" "+r.category).toLowerCase().includes(search.toLowerCase())&&(account==="Todas as contas"||r.account===account)&&(date==="Todas as datas"||r.date===date)&&(category==="Todas as categorias"||r.category===category)&&(type==="Todos os tipos"||r.type===type)&&(origin==="Todas as origens"||r.origin===origin));
  const pageCount=Math.max(1,Math.ceil(filtered.length/pageSize));
  const paged=filtered.slice((page-1)*pageSize,page*pageSize);
  const filter=(value:string,options:string[],change:(v:string)=>void)=> <div className="relative h-full"><select value={value} onChange={e=>change(e.target.value)} className="w-full h-full appearance-none bg-white border border-[#e0dceb] rounded-[8px] pl-[14px] pr-10 text-[12px] text-[#191236] cursor-pointer">{options.map(o=><option key={o}>{o}</option>)}</select><span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[#6637cf]"><Arrow/></span></div>;
@@ -46,8 +51,8 @@ export default function Movimentacoes(){
  <p style={px(270,149,520,20)} className="text-[14px] text-[#675f7d]">Todas as suas entradas e saídas em um só lugar.</p>
  <button style={px(1130,110,250,48)} className="bg-[#5212d6] text-white rounded-[9px] text-[14px] font-semibold" onClick={()=>{setFormError("");setModal(true)}}>＋&nbsp; Registrar movimentação</button>
  <input style={px(270,195,600,48)} className="bg-white border border-[#e0dceb] rounded-[9px] px-[17px] text-[13px] outline-none" placeholder="⌕  Buscar por descrição, valor, categoria..." value={search} onChange={e=>setSearch(e.target.value)}/>
- <div style={px(890,195,490,48)} className="bg-white border border-[#e0dceb] rounded-[9px] flex items-center justify-between px-[19px] text-[13px]">▣ &nbsp;Todas as datas <Arrow/></div>
- <div style={px(270,259,260,44)}>{filter(account,["Todas as contas",...accounts.map(a=>a.nome)],setAccount)}</div>
+ <div style={px(890,195,490,48)}>{filter(date,["Todas as datas",...availableDates],setDate)}</div>
+ <div style={px(270,259,260,44)}>{filter(account,["Todas as contas",...accounts.map(a=>a.nome)],v=>{setAccount(v);setDate("Todas as datas")})}</div>
  <div style={px(548,259,260,44)}>{filter(category,["Todas as categorias",...categories.map(c=>c.nmCategoria)],setCategory)}</div>
  <div style={px(826,259,260,44)}>{filter(type,["Todos os tipos","Entrada","Saída"],setType)}</div>
  <div style={px(1104,259,260,44)}>{filter(origin,["Todas as origens","Automática","Manual"],setOrigin)}</div>
