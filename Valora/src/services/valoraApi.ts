@@ -264,12 +264,14 @@ export const api = {
     get(id: number): Promise<CashboxDto> {
       return request<CashboxDto>(`/api/caixinhas/${id}`);
     },
-    create(data: { nome: string; meta: number; valorAtual: number }): Promise<CashboxDto> {
+    async create(data: { nome: string; meta: number; valorAtual: number }): Promise<CashboxDto> {
+      const user = getStoredUser() ?? await fetchCurrentUser();
+      if (!Number.isInteger(user.id) || user.id <= 0) throw new Error("Não foi possível identificar o usuário. Entre novamente na sua conta.");
       return request<CashboxDto>("/api/caixinhas", {
         method: "POST",
         body: {
           idCaixinha: null,
-          idUsuario: null,
+          idUsuario: user.id,
           nmCaixinha: data.nome,
           vlMeta: data.meta,
           vlAtual: data.valorAtual,
