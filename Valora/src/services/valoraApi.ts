@@ -335,5 +335,8 @@ export const api = {
     create(data: { nome: string; saldo: number }): Promise<AccountDto> {
       return request<AccountDto>("/api/conta", { method: "POST", body: data });
     },
+    updateName(id: number, nome: string): Promise<AccountDto> {
+      return request<AccountDto>("/api/conta/atualizar", { method: "PUT", body: { id, nome } });
+    },
   },
 };
