@@ -4,21 +4,23 @@ import ParceriasValora1 from "../components/ParceriasValora1";
 import Topbar5 from "../components/Topbar5";
 import EntradasESadas from "../components/EntradasESadas";
 import MinhasCaixinhas from "../components/MinhasCaixinhas";
-import { api, getStoredUser, getLoginEmail, type MovementDto, type CashboxDto } from "../services/valoraApi";
+import { api, getStoredUser, getLoginEmail, type MovementDto, type CashboxDto, type AccountDto } from "../services/valoraApi";
 
 const Incio: FunctionComponent = () => {
   const navigate = useNavigate();
   const [movimentacoes,setMovimentacoes]=useState<MovementDto[]>([]);
   const [caixinhas,setCaixinhas]=useState<CashboxDto[]>([]);
+  const [contas,setContas]=useState<AccountDto[]>([]);
   const [loading,setLoading]=useState(true);
   const [error,setError]=useState("");
   const [displayName,setDisplayName]=useState(getStoredUser()?.nome||getLoginEmail()?.split("@")[0]||"");
-  useEffect(()=>{let active=true;Promise.all([api.movimentacoes.listAll(),api.caixinhas.list()]).then(([movs,boxes])=>{if(!active)return;setMovimentacoes(movs);setCaixinhas(boxes);setError("");}).catch(err=>{if(active)setError(err instanceof Error?err.message:"Erro ao carregar o resumo");}).finally(()=>{if(active)setLoading(false)});return()=>{active=false}},[]);
+  useEffect(()=>{let active=true;Promise.all([api.movimentacoes.listAll(),api.caixinhas.list(),(async()=>{const all:AccountDto[]=[];let page=0,totalPages=1;do{const result=await api.contas.list(page);all.push(...result.content);totalPages=result.totalPages;page++}while(page<totalPages);return all})()]).then(([movs,boxes,accounts])=>{if(!active)return;setMovimentacoes(movs);setCaixinhas(boxes);setContas(accounts);setError("");}).catch(err=>{if(active)setError(err instanceof Error?err.message:"Erro ao carregar o resumo");}).finally(()=>{if(active)setLoading(false)});return()=>{active=false}},[]);
   const now=new Date();
   const current=movimentacoes.filter(m=>m.dataMovimentacao.startsWith(`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,"0")}`));
   const entradas=current.filter(m=>m.tipo==="RECEITA").reduce((s,m)=>s+Number(m.valor),0);
   const gastos=current.filter(m=>m.tipo==="DESPESA").reduce((s,m)=>s+Number(m.valor),0);
-  const saldo=entradas-gastos;
+  const saldoMovimentacoes=entradas-gastos;
+  const saldo=contas.reduce((total,conta)=>total+Number(conta.saldo),0);
   const money=(n:number)=>n.toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
   const recent=[...movimentacoes].filter(m=>m.tipo==="DESPESA"||m.tipo==="RECEITA").sort((a,b)=>b.dataMovimentacao.localeCompare(a.dataMovimentacao)).slice(0,8);
   const [dashboardZoom, setDashboardZoom] = useState(1);
@@ -229,7 +231,7 @@ const Incio: FunctionComponent = () => {
               </h3>
               <div className="self-stretch rounded-[14px] bg-white p-4 text-[12px]">
                 <p className="font-semibold text-[#636391]">Saldo de movimentações do mês</p>
-                <b className="block text-[18px] text-[#4f13d4] mt-2">{error?"Indisponível":money(saldo)}</b>
+                <b className="block text-[18px] text-[#4f13d4] mt-2">{error?"Indisponível":money(saldoMovimentacoes)}</b>
                 <p className="mt-3 text-[#636391]">Caixinhas cadastradas: {caixinhas.length}</p>
                 <p className="mt-1 text-[#636391]">Gastos do mês: {money(gastos)}</p>
               </div>
