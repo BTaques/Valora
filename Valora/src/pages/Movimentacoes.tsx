@@ -8,7 +8,7 @@ import {formatMoneyInput,parseMoneyInput} from "../utils/moneyInput";
 type Row={id:number;date:string;description:string;category:string;account:string;type:"Entrada"|"Saída"|"Guardar"|"Resgate"|"Transferência";value:string;amount:number;origin:string};
 const money=(n:number)=>n.toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
 const movementLabel=(tipo:MovementDto["tipo"]):Row["type"]=>({RECEITA:"Entrada",DESPESA:"Saída",CAIXINHA_GUARDAR:"Guardar",CAIXINHA_RESGATE:"Resgate",TRANSFERENCIA_ENTRE_CONTAS:"Transferência"})[tipo];
-const toRow=(m:MovementDto):Row=>({id:m.id,date:m.dataMovimentacao.split("-").reverse().join("/"),description:m.descricao,category:m.categoria||"Sem categoria",account:m.conta||"Sem conta",type:movementLabel(m.tipo),value:(m.tipo==="RECEITA"?"+ ":m.tipo==="DESPESA"?"- ":"")+money(Number(m.valor)),amount:Number(m.valor),origin:"Manual"});
+const toRow=(m:MovementDto):Row=>({id:m.id,date:m.dataMovimentacao.split("-").reverse().join("/"),description:m.descricao,category:m.categoria||"Sem categoria",account:m.conta||"Sem conta",type:movementLabel(m.tipo),value:(m.tipo==="RECEITA"?"+ ":m.tipo==="DESPESA"?"- ":"↔ ")+money(Number(m.valor)),amount:Number(m.valor),origin:"Manual"});
 const filteredRowsForTotals=(rows:Row[])=>rows;
 const Arrow=()=> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>;
 export default function Movimentacoes(){
