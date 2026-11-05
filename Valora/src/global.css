@@ -1294,3 +1294,55 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed !important; }
     box-sizing:border-box !important;
   }
 }
+
+
+/* Tela 4 tablet: duas colunas preenchendo a área útil; dica abaixo do histórico. */
+@media (min-width:700px) and (max-width:1023px) {
+  .valora-caixinhas-page:not(.valora-caixinhas-overlay-root) > [data-caix="totals"] {
+    width:1173px !important; max-width:1173px !important;
+  }
+  .valora-caixinhas-page:not(.valora-caixinhas-overlay-root) > [data-caix="totals"] > div:nth-child(2) { left:380px !important; }
+  .valora-caixinhas-page:not(.valora-caixinhas-overlay-root) > [data-caix="totals"] > div:nth-child(3) { left:430px !important; }
+  .valora-caixinhas-page:not(.valora-caixinhas-overlay-root) > [data-caix="totals"] > div:nth-child(4) { left:765px !important; }
+  .valora-caixinhas-page:not(.valora-caixinhas-overlay-root) > [data-caix="totals"] > img { left:810px !important; }
+  .valora-caixinhas-page:not(.valora-caixinhas-overlay-root) > [data-caix="totals"] > div:nth-child(6) { left:870px !important; }
+  .valora-caixinhas-page:not(.valora-caixinhas-overlay-root) > [data-caix="goal"] {
+    width:576px !important; min-width:576px !important; max-width:576px !important;
+    height:102px !important;
+  }
+  .valora-caixinhas-page:not(.valora-caixinhas-overlay-root) > [data-caix="goal"] > b:nth-child(2) {
+    max-width:425px !important; white-space:nowrap !important;
+    overflow:hidden !important; text-overflow:ellipsis !important;
+  }
+  .valora-caixinhas-page:not(.valora-caixinhas-overlay-root) > [data-caix="goal"] > div:nth-child(5) {
+    width:340px !important;
+  }
+  .valora-caixinhas-page:not(.valora-caixinhas-overlay-root) > [data-caix="goal"] > b:nth-child(6) {
+    left:447px !important; right:auto !important;
+  }
+  .valora-caixinhas-page:not(.valora-caixinhas-overlay-root) > [data-caix="goal"] > span:last-child {
+    left:auto !important; right:15px !important;
+  }
+  .valora-caixinhas-page:not(.valora-caixinhas-overlay-root) > [data-caix="history"] {
+    width:1173px !important; max-width:1173px !important;
+  }
+  .valora-caixinhas-page:not(.valora-caixinhas-overlay-root) > [data-caix="history"] [data-caix="history-scroll"] > div {
+    width:100% !important; min-width:0 !important;
+  }
+  .valora-caixinhas-page:not(.valora-caixinhas-overlay-root) > [data-caix="history"] [data-caix="history-scroll"] .grid {
+    grid-template-columns: 180px 240px minmax(250px,1fr) 160px 140px !important;
+  }
+  .valora-caixinhas-page:not(.valora-caixinhas-overlay-root) > [data-caix="tip"] {
+    left:253px !important; width:1173px !important;
+    max-width:1173px !important;
+  }
+  /* Arraste da alça no tablet desloca o modal e fecha após 90px. */
+  body > .valora-caixinhas-overlay-root > [data-caix="form"] {
+    transform:translate(-50%,calc(-50% + var(--sheet-drag,0px))) !important;
+    touch-action:pan-y;
+  }
+  body > .valora-caixinhas-overlay-root > [data-caix="form"] > [data-caix="handle"] {
+    z-index:10 !important; cursor:grab !important;
+    touch-action:none !important; user-select:none !important;
+  }
+}
