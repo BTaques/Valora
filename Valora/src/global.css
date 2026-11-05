@@ -1157,35 +1157,6 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed !important; }
    Desfaz as regras de grid que cortavam sidebar, topo e cartões. */
 
 
-/* Tablet: preservar a geometria desktop; escala aplicada no componente. */
-@media (min-width:700px) and (max-width:1023px) {
-  .valora-caixinhas-page:not(.valora-caixinhas-overlay-root) {
-    display:block !important; position:relative !important;
-    width:1440px !important; min-width:1440px !important;
-    max-width:none !important; padding:0 !important; margin:0 !important;
-    overflow:visible !important; box-sizing:border-box;
-  }
-  .valora-caixinhas-page:not(.valora-caixinhas-overlay-root) > [data-caix="sidebar"] {
-    position:absolute !important; left:0 !important; top:0 !important;
-    width:232px !important; height:1024px !important;
-    display:block !important; overflow:hidden !important;
-  }
-  .valora-caixinhas-page:not(.valora-caixinhas-overlay-root) > [data-caix="topbar"] {
-    position:absolute !important; left:235px !important; top:0 !important;
-    width:1205px !important; height:74px !important; margin:0 !important;
-  }
-  .valora-caixinhas-page:not(.valora-caixinhas-overlay-root) > [data-caix="goal"] {
-    width:400px !important; height:102px !important; overflow:hidden !important;
-  }
-  .valora-caixinhas-page:not(.valora-caixinhas-overlay-root) > [data-caix="totals"] {
-    width:797px !important; height:112px !important;
-  }
-  .valora-caixinhas-page:not(.valora-caixinhas-overlay-root) > [data-caix="history"] {
-    width:797px !important; height:306px !important;
-  }
-}
-
-
 /* Tablet: modal central ampliado, backdrop em toda a viewport e clique fora para fechar. */
 @media (min-width:700px) and (max-width:1023px) {
   body > .valora-caixinhas-overlay-root {
@@ -1263,5 +1234,46 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed !important; }
   body > .valora-caixinhas-overlay-root > [data-caix="form"] {
     pointer-events:auto !important;
     z-index:2 !important;
+  }
+}
+
+
+/* Tela 4 — tablet conforme o frame 04 do Figma (768px):
+   geometria desktop original, reduzida uniformemente.
+   Regras mobile só são aplicadas abaixo de 700px. */
+@media (min-width:700px) and (max-width:1023px) {
+  .valora-caixinhas-page:not(.valora-caixinhas-overlay-root) {
+    display:block !important; position:relative !important;
+    width:1440px !important; min-width:1440px !important;
+    max-width:1440px !important; height:auto !important;
+    margin:0 !important; padding:0 !important;
+    overflow:visible !important;
+    transform-origin:top left !important;
+  }
+  .valora-caixinhas-page:not(.valora-caixinhas-overlay-root) > [data-caix] {
+    margin:0 !important; grid-column:auto !important; grid-row:auto !important;
+  }
+  .valora-caixinhas-page:not(.valora-caixinhas-overlay-root) > [data-caix="sidebar"] {
+    position:absolute !important; left:0 !important; top:0 !important;
+    width:232px !important; height:1024px !important;
+    padding:0 12px !important;
+  }
+  .valora-caixinhas-page:not(.valora-caixinhas-overlay-root) > [data-caix="topbar"] {
+    position:absolute !important; left:235px !important; top:0 !important;
+    width:1205px !important; height:74px !important;
+  }
+  .valora-caixinhas-page:not(.valora-caixinhas-overlay-root) > [data-caix="goal"] {
+    width:400px !important; height:102px !important;
+    min-width:400px !important; max-width:400px !important;
+    overflow:hidden !important;
+  }
+  .valora-caixinhas-page:not(.valora-caixinhas-overlay-root) > [data-caix="totals"] {
+    width:797px !important; height:112px !important;
+  }
+  .valora-caixinhas-page:not(.valora-caixinhas-overlay-root) > [data-caix="history"] {
+    width:797px !important; height:306px !important;
+  }
+  .valora-caixinhas-page:not(.valora-caixinhas-overlay-root) > [data-caix="tip"] {
+    width:356px !important; height:263px !important;
   }
 }
