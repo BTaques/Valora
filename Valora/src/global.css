@@ -1184,3 +1184,55 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed !important; }
     width:797px !important; height:306px !important;
   }
 }
+
+
+/* Tablet: modal central ampliado, backdrop em toda a viewport e clique fora para fechar. */
+@media (min-width:700px) and (max-width:1023px) {
+  body > .valora-caixinhas-overlay-root {
+    position:fixed !important; inset:0 !important;
+    width:100vw !important; height:100dvh !important;
+    min-width:0 !important; max-width:none !important;
+    margin:0 !important; padding:0 !important;
+    transform:none !important; zoom:1 !important;
+    display:block !important; z-index:9999 !important;
+    overflow:visible !important; pointer-events:none !important;
+  }
+  body > .valora-caixinhas-overlay-root > [data-caix="backdrop"] {
+    display:block !important; position:fixed !important;
+    inset:0 !important; top:0 !important; left:0 !important;
+    width:100vw !important; height:100dvh !important;
+    transform:none !important; margin:0 !important;
+    border:0 !important; background:rgba(16,8,38,.55) !important;
+    z-index:1 !important; pointer-events:auto !important;
+  }
+  body > .valora-caixinhas-overlay-root > [data-caix="form"] {
+    display:block !important; position:fixed !important;
+    top:50% !important; left:50% !important;
+    right:auto !important; bottom:auto !important;
+    width:min(500px,calc(100vw - 36px)) !important;
+    height:min(740px,90dvh) !important;
+    max-height:90dvh !important;
+    transform:translate(-50%,-50%) !important;
+    overflow-x:hidden !important; overflow-y:auto !important;
+    border-radius:20px !important;
+    background:#fff !important; z-index:2 !important;
+    pointer-events:auto !important;
+    box-shadow:0 18px 60px rgba(20,10,45,.25) !important;
+  }
+  body > .valora-caixinhas-overlay-root > [data-caix="form"] > :not([data-caix="handle"]) {
+    transform:translateX(65px);
+  }
+  body > .valora-caixinhas-overlay-root > [data-caix="form"] > input,
+  body > .valora-caixinhas-overlay-root > [data-caix="form"] > button[type="submit"] {
+    width:calc(100% - 130px) !important; max-width:none !important;
+  }
+  body > .valora-caixinhas-overlay-root > [data-caix="form"] > [data-caix="handle"] {
+    display:flex !important; position:absolute !important;
+    top:0 !important; left:0 !important; width:100% !important;
+    height:35px !important; justify-content:center !important;
+    align-items:center !important; touch-action:none !important;
+  }
+  body > .valora-caixinhas-overlay-root > [data-caix="form"] > [data-caix="close"] {
+    display:none !important;
+  }
+}
