@@ -48,7 +48,7 @@ const Incio: FunctionComponent = () => {
   const saldoMovimentacoes=entradas-gastos;
   const saldo=contas.reduce((total,conta)=>total+Number(conta.saldo),0);
   const money=(n:number)=>n.toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
-  const recent=[...movimentacoes].filter(m=>m.tipo==="DESPESA"||m.tipo==="RECEITA").sort((a,b)=>b.dataMovimentacao.localeCompare(a.dataMovimentacao)).slice(0,8);
+  const recent=[...movimentacoes].filter(m=>m.tipo==="DESPESA"||m.tipo==="RECEITA").sort((a,b)=>b.dataMovimentacao.localeCompare(a.dataMovimentacao)||b.id-a.id).slice(0,8);
   const [dashboardZoom, setDashboardZoom] = useState(1);
   useEffect(() => {
     const updateZoom = () => setDashboardZoom(Math.max(1, window.innerWidth / 1440));
