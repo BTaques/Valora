@@ -1,3 +1,4 @@
+import PageLoading from "../components/PageLoading";
 import SidebarMenu from '../components/SidebarMenu';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -12,11 +13,12 @@ const money=(n:number)=>n.toLocaleString('pt-BR',{style:'currency',currency:'BRL
 const pos=(x:number,y:number,w:number,h:number)=>({position:'absolute' as const,left:x,top:y,width:w,height:h});
 export default function Caixinhas(){
  const navigate=useNavigate();const [zoom,setZoom]=useState(1);useEffect(()=>{const f=()=>setZoom(Math.max(1,window.innerWidth/1440));f();window.addEventListener('resize',f);return()=>window.removeEventListener('resize',f)},[]);
-useEffect(()=>{let active=true;api.caixinhas.list().then(items=>{if(active)setGoals(items.map(fromApiCashbox))}).catch(error=>{if(active)setApiError(error instanceof Error?error.message:'Erro ao carregar caixinhas')});return()=>{active=false}},[]);
- const [goals,setGoals]=useState<Goal[]>([]);const [showAllGoals,setShowAllGoals]=useState(false);const [showMoreIcons,setShowMoreIcons]=useState(false);const [tipOpen,setTipOpen]=useState(true);const [formOpen,setFormOpen]=useState(true);const [name,setName]=useState('');const [target,setTarget]=useState('');const [start,setStart]=useState('');const [chosenIcon,setChosenIcon]=useState('car');const [chosenColor,setChosenColor]=useState('#5212d6'),[apiError,setApiError]=useState('');
+useEffect(()=>{let active=true;api.caixinhas.list().then(items=>{if(active){setGoals(items.map(fromApiCashbox));setLoading(false)}}).catch(error=>{if(active){setApiError(error instanceof Error?error.message:'Erro ao carregar caixinhas');setLoading(false)}});return()=>{active=false}},[]);
+ const [loading,setLoading]=useState(true);const [goals,setGoals]=useState<Goal[]>([]);const [showAllGoals,setShowAllGoals]=useState(false);const [showMoreIcons,setShowMoreIcons]=useState(false);const [tipOpen,setTipOpen]=useState(true);const [formOpen,setFormOpen]=useState(true);const [name,setName]=useState('');const [target,setTarget]=useState('');const [start,setStart]=useState('');const [chosenIcon,setChosenIcon]=useState('car');const [chosenColor,setChosenColor]=useState('#5212d6'),[apiError,setApiError]=useState('');
  const nav=[['Início','/dashboard','/Wrapper.svg'],['Movimentações','/movimentacoes','/Movimenta-es-icon.svg'],['Caixinhas','/caixinhas','/Archive-Caixinhas.svg'],['Categorias','/categorias','/Divider.svg'],['Contas conectadas','/contas-conectadas','/Contas-conectadas-icon.svg']];
  const cards=showAllGoals?goals:goals.slice(0,5);const hasMore=goals.length>5;const goalRows=Math.ceil((cards.length+(hasMore&&!showAllGoals?1:0))/2);const historyTop=Math.max(675,310+goalRows*118+22);const sum=goals.reduce((n,g)=>n+g.amount,0);const total=goals.reduce((n,g)=>n+g.target,0);
  return <div style={{zoom,minHeight:Math.max(1024,historyTop+340)}} className="relative w-[1440px] bg-[#f9f9fe] font-[Inter] text-[#140f33]">
+ {loading && <PageLoading label="Carregando caixinhas..." />}
  <aside style={pos(0,0,232,1024)} className="bg-[#160b30] px-3">
  <SidebarMenu active="Caixinhas"/>
  <div style={pos(20,725,198,242)} className="rounded-[12px] overflow-hidden"><img src="/Carro1-Valora.png" alt="" className="absolute w-full h-full object-cover object-[60%_center]"/><div className="absolute inset-0 bg-[#5212d6]/[.05]"/><p className="absolute left-[21px] top-[25px] text-[#b285ff] font-semibold text-[14px]">Seus sonhos</p><p className="absolute left-[21px] top-[42px] text-white font-semibold text-[12px]">mais próximos de você.</p></div><p style={pos(41,735,160,12)} className="text-[#b285ff] font-semibold text-[8px] tracking-[2px]">CONQUISTE —</p>
