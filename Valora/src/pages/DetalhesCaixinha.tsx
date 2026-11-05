@@ -57,7 +57,7 @@ async function register(kind:'Entrada'|'Saída',raw:string){
 async function saveGoalName(){if(!cashbox||!draftName.trim())return;try{const updated=await api.caixinhas.update(cashbox.idCaixinha,{nome:draftName.trim(),meta:Number(cashbox.vlMeta),valorAtual:amount});setCashbox(updated);setGoalName(updated.nmCaixinha);setNameEditing(false);setApiError('')}catch(error){setApiError(error instanceof Error?error.message:'Não foi possível atualizar a caixinha')}}
 const longTitle=('Caixinha: '+goalName).length>27;
 const contentPos=(x:number,y:number,w:number,h:number)=>pos(x,y+(longTitle?48:0),w,h);
-const nav=[['Início','/dashboard','/Wrapper.svg'],['Movimentações','/movimentacoes','/Movimenta-es-icon.svg'],['Caixinhas','/caixinhas','/Archive-Caixinhas.svg'],['Categorias','/categorias','/Divider.svg'],['Contas conectadas','/contas-conectadas','/Contas-conectadas-icon.svg']];
+const nav=[['Início','/dashboard','/Wrapper.svg'],['Movimentações','/movimentacoes','/Movimenta-es-icon.svg'],['Caixinhas','/caixinhas','/Archive-Caixinhas.svg'],['Categorias','/categorias','/Divider.svg'],['Minhas contas','/minhas-contas','/Contas-conectadas-icon.svg']];
 return <div style={{zoom}} className="relative w-[1440px] min-h-[1024px] bg-[#f9f9fe] font-[Inter] text-[#120d38]">
 <aside style={pos(0,0,232,1024)} className="bg-[#130a2e] px-3">
 <div className="flex items-center gap-1 pt-[34px] pb-[43px] pl-3 text-white text-[27px] font-bold"><img src="/logo-branco-3@2x.png" className="w-10 h-[33px] object-contain"/>Valora</div>
