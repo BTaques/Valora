@@ -1277,3 +1277,20 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed !important; }
     width:356px !important; height:263px !important;
   }
 }
+
+
+/* Tablet Tela 4: escala obrigatória baseada na largura REAL do viewport.
+   A regra inline de zoom dependia do tamanho da janela, não do viewport responsivo. */
+@media (min-width:700px) and (max-width:1023px) {
+  html:has(.valora-caixinhas-page:not(.valora-caixinhas-overlay-root)),
+  body:has(.valora-caixinhas-page:not(.valora-caixinhas-overlay-root)) {
+    overflow-x:clip !important;
+    max-width:100% !important;
+  }
+  .valora-caixinhas-page:not(.valora-caixinhas-overlay-root) {
+    zoom: calc(100vw / 1440px) !important;
+    width:1440px !important; min-width:1440px !important;
+    max-width:1440px !important;
+    box-sizing:border-box !important;
+  }
+}
