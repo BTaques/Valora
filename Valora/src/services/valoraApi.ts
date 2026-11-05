@@ -217,6 +217,9 @@ export type CashboxTransferCreate = { descricao:string; valor:number; tipo:"CAIX
 
 export const api = {
   belvo: {
+    concluir(linkId: string): Promise<{linkId:string;status:string}> {
+      return request(`/api/belvo/links/${encodeURIComponent(linkId)}/concluir`, {method:"POST"});
+    },
     widgetSession(): Promise<{widgetUrl: string}> {
       return request<{widgetUrl: string}>("/api/belvo/widget-session", {method:"POST"});
     },
