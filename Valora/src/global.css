@@ -256,3 +256,35 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed !important; }
   .valora-login-form > button:last-child { height: 42px; padding: 8px 12px; }
   .valora-login-form > button:last-child span { text-align: center; }
 }
+
+
+/* Login mobile: bottom sheet com puxador e fundo preservado. */
+.valora-login-mobile-backdrop { display: none; }
+@media (max-width: 699px) {
+  .valora-login-mobile-backdrop {
+    display: block; position: fixed; inset: 0; z-index: 29;
+    background: rgba(31,9,77,.15);
+    cursor: default !important;
+  }
+  .valora-login-panel.valora-login-panel-open {
+    transform: translateY(var(--valora-drag-y, 0px));
+    transition: transform .18s ease-out;
+    z-index: 30;
+    padding-top: 30px !important;
+  }
+  .valora-login-mobile-close {
+    touch-action: none; cursor: grab !important;
+    margin: -26px 0 28px;
+    height: 22px;
+  }
+  .valora-login-mobile-close:active { cursor: grabbing !important; }
+  .valora-login-form > div:first-child > div:first-child > div {
+    transform: scale(.8);
+    transform-origin: center;
+    margin: -4px 0 0;
+  }
+  .valora-login-form > div:nth-child(2) { padding-top: 30px !important; }
+  @media (prefers-reduced-motion: reduce) {
+    .valora-login-panel.valora-login-panel-open { transition: none; }
+  }
+}
