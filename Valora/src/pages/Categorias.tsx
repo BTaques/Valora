@@ -1,3 +1,4 @@
+import PageLoading from "../components/PageLoading";
 import SidebarMenu from '../components/SidebarMenu';
 import {useEffect,useState} from 'react';
 import {useNavigate} from 'react-router-dom';
@@ -29,9 +30,9 @@ function Icon({item,size=28}:{item:Cat;size?:number}){return <span className="in
 export default function Categorias(){
 const navigate=useNavigate();const [zoom,setZoom]=useState(1);
 useEffect(()=>{const f=()=>setZoom(Math.max(1,innerWidth/1440));f();window.addEventListener('resize',f);return()=>window.removeEventListener('resize',f)},[]);
-useEffect(()=>{let active=true;Promise.all([api.categorias.list(),api.movimentacoes.listAll()]).then(([items,movements])=>{if(!active)return;setCats(items.map(fromApiCategory));setMovements(movements);setApiError('')}).catch(error=>{if(active)setApiError(error instanceof Error?error.message:'Erro ao carregar categorias e gastos')});return()=>{active=false}},[]);
+useEffect(()=>{let active=true;Promise.all([api.categorias.list(),api.movimentacoes.listAll()]).then(([items,movements])=>{if(!active)return;setCats(items.map(fromApiCategory));setMovements(movements);setApiError('');setLoading(false)}).catch(error=>{if(active){setApiError(error instanceof Error?error.message:'Erro ao carregar categorias e gastos');setLoading(false)}});return()=>{active=false}},[]);
 const [showMoreColors,setShowMoreColors]=useState(false);
-const [movements,setMovements]=useState<MovementDto[]>([]);const [cats,setCats]=useState<Cat[]>([]),[query,setQuery]=useState(''),[period,setPeriod]=useState('Este mês'),[editing,setEditing]=useState<number|null>(null),[modal,setModal]=useState(false),[name,setName]=useState(''),[color,setColor]=useState('#8159e0'),[apiError,setApiError]=useState('');
+const [loading,setLoading]=useState(true);const [movements,setMovements]=useState<MovementDto[]>([]);const [cats,setCats]=useState<Cat[]>([]),[query,setQuery]=useState(''),[period,setPeriod]=useState('Este mês'),[editing,setEditing]=useState<number|null>(null),[modal,setModal]=useState(false),[name,setName]=useState(''),[color,setColor]=useState('#8159e0'),[apiError,setApiError]=useState('');
 const now=new Date();
 const filteredMovements=movements.filter(m=>{if(m.tipo!=="DESPESA")return false;const date=new Date(m.dataMovimentacao+"T12:00:00");if(Number.isNaN(date.getTime()))return false;if(period==="Este mês")return date.getMonth()===now.getMonth()&&date.getFullYear()===now.getFullYear();if(period==="Mês passado"){const prev=new Date(now.getFullYear(),now.getMonth()-1,1);return date.getMonth()===prev.getMonth()&&date.getFullYear()===prev.getFullYear()}return date.getFullYear()===now.getFullYear()});
 const totalSpent=filteredMovements.reduce((s,m)=>s+Number(m.valor),0);
@@ -45,6 +46,7 @@ const edit=(i:number)=>{setShowMoreColors(false);setEditing(i);setName(cats[i].n
 const remove=async(i:number)=>{const item=cats[i];if(!item?.idCategoria)return;if(!window.confirm('Excluir a categoria '+item.name+'?'))return;try{await api.categorias.remove(item.idCategoria);setCats(old=>old.filter((_,j)=>j!==i));setApiError('')}catch(error){setApiError(error instanceof Error?error.message:'Não foi possível excluir a categoria')}};
 const save=async()=>{if(!name.trim())return;try{const result=editing===null?await api.categorias.create(name.trim()):await api.categorias.update(cats[editing].idCategoria!,name.trim());persistColor(result.idCategoria,color);const normalized=fromApiCategory(result);setCats(old=>editing===null?[...old,normalized]:old.map((c,i)=>i===editing?{...normalized,symbol:c.symbol}:c));setModal(false);setApiError('')}catch(error){setApiError(error instanceof Error?error.message:'Não foi possível salvar a categoria')}};
 return <div style={{zoom}} className="relative w-[1440px] min-h-[1024px] bg-[#f6f9fe] font-[Inter] text-[#140d40]">
+ {loading && <PageLoading label="Carregando categorias e gastos..." />}
 <aside style={abs(0,0,232,1024)} className="bg-[#130938] text-white"><SidebarMenu active="Categorias"/>
  <div style={abs(18,716,198,252)} className="overflow-hidden rounded-[10px] border border-[#452985]"><img src="/Promo2@3x.png" className="absolute inset-0 w-full h-full object-cover"/><div className="absolute inset-0 bg-gradient-to-b from-[#130938]/75 via-transparent to-transparent"/><p className="absolute left-[10px] top-[12px] text-[8px] tracking-[2px] font-semibold text-[#b285ff]">CONTROLE —</p><p className="absolute left-[10px] top-[26px] text-[12px] font-semibold leading-[16px]">Entenda melhor como<br/><span className="text-[#b285ff]">você gasta.</span></p><p className="absolute left-[10px] top-[56px] text-[10px]">Organize seus gastos.</p></div>
 </aside>
