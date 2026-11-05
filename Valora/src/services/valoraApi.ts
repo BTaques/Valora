@@ -216,6 +216,11 @@ export type RegisterPayload = {
 export type CashboxTransferCreate = { descricao:string; valor:number; tipo:"CAIXINHA_GUARDAR"|"CAIXINHA_RESGATE"; dataMovimentacao:string; idCategoria:number; idConta:number; idContaDestino:null; idCaixinha:number };
 
 export const api = {
+  belvo: {
+    widgetSession(): Promise<{widgetUrl: string}> {
+      return request<{widgetUrl: string}>("/api/belvo/widget-session", {method:"POST"});
+    },
+  },
   auth: {
     async login(email: string, senha: string): Promise<void> {
       clearSession();
