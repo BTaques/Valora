@@ -1,8 +1,10 @@
 import { FunctionComponent, useCallback, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import CadastroModal from "../components/CadastroModal";
 import FormContent from "../components/FormContent";
 
 const Login: FunctionComponent = () => {
+  const navigate = useNavigate();
   const [cadastroAberto, setCadastroAberto] = useState(false);
   const fecharCadastro = useCallback(() => setCadastroAberto(false), []);
   return (
@@ -128,7 +130,7 @@ const Login: FunctionComponent = () => {
         Ainda não tem conta? Criar conta
       </div>
     </div>
-    {cadastroAberto && <CadastroModal onClose={fecharCadastro} />}
+    {cadastroAberto && <CadastroModal onClose={fecharCadastro} onRegistered={() => { fecharCadastro(); navigate("/dashboard", { replace: true }); }} />}
     </>
   );
 };

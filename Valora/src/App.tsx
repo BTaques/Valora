@@ -1,5 +1,6 @@
-import { useEffect } from "react";
+import { ReactNode, useEffect } from "react";
 import {
+  Navigate,
   Routes,
   Route,
   useNavigationType,
@@ -12,6 +13,12 @@ import Caixinhas from "./pages/Caixinhas";
 import DetalhesCaixinha from "./pages/DetalhesCaixinha";
 import Categorias from "./pages/Categorias";
 import ContasConectadas from "./pages/ContasConectadas";
+import MinhasContas from "./pages/MinhasContas";
+import { getAccessToken } from "./services/valoraApi";
+
+function Protected({ children }: { children: ReactNode }) {
+  return getAccessToken() ? <>{children}</> : <Navigate to="/" replace />;
+}
 
 function App() {
   const action = useNavigationType();
@@ -19,52 +26,48 @@ function App() {
   const pathname = location.pathname;
 
   useEffect(() => {
-    if (action !== "POP") {
-      window.scrollTo(0, 0);
-    }
+    if (action !== "POP") window.scrollTo(0, 0);
   }, [action, pathname]);
 
   useEffect(() => {
-    let title = "";
-    let metaDescription = "";
-
-    switch (pathname) {
-      case "/":
-        title = "";
-        metaDescription = "";
-        break;
-    }
-
-    if (title) {
-      document.title = title;
-    }
-
-    if (metaDescription) {
-      const metaDescriptionTag: HTMLMetaElement | null = document.querySelector(
-        'head > meta[name="description"]',
-      );
-      if (metaDescriptionTag) {
-        metaDescriptionTag.content = metaDescription;
-      }
-    }
+    const titleByPath: Record<string, string> = {
+      "/": "Valora | Entrar",
+      "/dashboard": "Valora | Início",
+      "/movimentacoes": "Valora | Movimentações",
+      "/caixinhas": "Valora | Caixinhas",
+      "/categorias": "Valora | Categorias",
+      "/contas-conectadas": "Valora | Conectar banco",
+      "/minhas-contas": "Valora | Minhas contas",
+    };
+    document.title = titleByPath[pathname] || "Valora";
   }, [pathname]);
+
+  useEffect(() => {
+    const onExpired = () => window.location.replace("/");
+    window.addEventListener("valora:session-expired", onExpired);
+    return () => window.removeEventListener("valora:session-expired", onExpired);
+  }, []);
 
   return (
     <Routes>
       <Route path="/" element={<Login />} />
-      <Route path="/dashboard" element={<Incio />} />
-      <Route path="/02-incio" element={<Incio />} />
-      <Route path="/movimentacoes" element={<Movimentacoes />} />
-      <Route path="/03-movimentacoes" element={<Movimentacoes />} />
-      <Route path="/caixinhas" element={<Caixinhas />} />
-      <Route path="/04-caixinhas" element={<Caixinhas />} />
-      <Route path="/categorias" element={<Categorias />} />
-      <Route path="/06-categorias" element={<Categorias />} />
-      <Route path="/contas-conectadas" element={<ContasConectadas />} />
-      <Route path="/07-conectar-conta" element={<ContasConectadas />} />
-      <Route path="/detalhes-caixinha" element={<DetalhesCaixinha />} />
-      <Route path="/05-detalhes-da-caixinha" element={<DetalhesCaixinha />} />
+      <Route path="/dashboard" element={<Protected><Incio /></Protected>} />
+      <Route path="/02-incio" element={<Protected><Incio /></Protected>} />
+      <Route path="/movimentacoes" element={<Protected><Movimentacoes /></Protected>} />
+      <Route path="/03-movimentacoes" element={<Protected><Movimentacoes /></Protected>} />
+      <Route path="/caixinhas" element={<Protected><Caixinhas /></Protected>} />
+      <Route path="/04-caixinhas" element={<Protected><Caixinhas /></Protected>} />
+      <Route path="/categorias" element={<Protected><Categorias /></Protected>} />
+      <Route path="/06-categorias" element={<Protected><Categorias /></Protected>} />
+      <Route path="/minhas-contas" element={<Protected><MinhasContas /></Protected>} />
+      <Route path="/12-minhas-contas" element={<Protected><MinhasContas /></Protected>} />
+      <Route path="/contas-conectadas" element={<Protected><ContasConectadas /></Protected>} />
+      <Route path="/07-conectar-conta" element={<Protected><ContasConectadas /></Protected>} />
+      <Route path="/detalhes-caixinha" element={<Protected><DetalhesCaixinha /></Protected>} />
+      <Route path="/05-detalhes-da-caixinha" element={<Protected><DetalhesCaixinha /></Protected>} />
+      <Route path="*" element={<Navigate to="/dashboard" replace />} />
     </Routes>
   );
 }
+
 export default App;

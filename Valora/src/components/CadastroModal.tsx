@@ -1,11 +1,16 @@
 import { FormEvent, useEffect, useRef, useState } from "react";
 import "./CadastroModal.css";
+import { api, type RegisterPayload } from "../services/valoraApi";
 
-type CadastroModalProps = { onClose: () => void };
+type CadastroModalProps = {
+  onClose: () => void;
+  onRegistered?: () => void;
+};
 
-export default function CadastroModal({ onClose }: CadastroModalProps) {
+export default function CadastroModal({ onClose, onRegistered }: CadastroModalProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [feedback, setFeedback] = useState("");
+  const [loading, setLoading] = useState(false);
   const dialogRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -30,15 +35,16 @@ export default function CadastroModal({ onClose }: CadastroModalProps) {
       }
     };
     window.addEventListener("keydown", onKeyDown);
-    dialogRef.current?.querySelector<HTMLElement>("button")?.focus();
+    dialogRef.current?.querySelector<HTMLElement>("input")?.focus();
     return () => {
       document.body.style.overflow = previousOverflow;
       window.removeEventListener("keydown", onKeyDown);
     };
   }, [onClose]);
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    setFeedback("");
     const data = new FormData(event.currentTarget);
     const senha = String(data.get("senha") ?? "");
     const confirmar = String(data.get("confirmarSenha") ?? "");
@@ -46,7 +52,35 @@ export default function CadastroModal({ onClose }: CadastroModalProps) {
       setFeedback("As senhas precisam ser iguais.");
       return;
     }
-    setFeedback("Cadastro visual validado! O envio será habilitado quando conectarmos o backend.");
+
+    const payload: RegisterPayload = {
+      nome: String(data.get("nome") ?? "").trim(),
+      email: String(data.get("email") ?? "").trim(),
+      telefone: String(data.get("telefone") ?? "").trim(),
+      cpf: String(data.get("cpf") ?? "").replace(/\D/g, ""),
+      dataNascimento: String(data.get("nascimento") ?? ""),
+      senha,
+      endereco: {
+        logradouro: String(data.get("logradouro") ?? "").trim(),
+        bairro: String(data.get("bairro") ?? "").trim(),
+        cep: String(data.get("cep") ?? "").trim(),
+        cidade: String(data.get("cidade") ?? "").trim(),
+        uf: String(data.get("uf") ?? "").trim().toUpperCase(),
+        numero: String(data.get("numero") ?? "").trim(),
+        complemento: String(data.get("complemento") ?? "").trim(),
+      },
+    };
+
+    setLoading(true);
+    try {
+      await api.auth.register(payload);
+      setFeedback("Conta criada! Entrando na Valora...");
+      onRegistered?.();
+    } catch (error) {
+      setFeedback(error instanceof Error ? error.message : "Não foi possível concluir o cadastro.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -61,17 +95,33 @@ export default function CadastroModal({ onClose }: CadastroModalProps) {
         </div>
         <form className="valora-cadastro-form" onSubmit={handleSubmit}>
           <label>Nome completo<input name="nome" placeholder="Digite seu nome completo" autoComplete="name" required /></label>
-          <label>E-mail<input name="email" type="email" placeholder="seuemail@exemplo.com" autoComplete="email" required /></label>
           <div className="valora-cadastro-row">
-            <label>CPF<input name="cpf" placeholder="000.000.000-00" inputMode="numeric" maxLength={11} onChange={(e) => { e.target.value = e.target.value.replace(/\D/g, "").slice(0, 11); }} required /></label>
+            <label>E-mail<input name="email" type="email" placeholder="seuemail@exemplo.com" autoComplete="email" required /></label>
+            <label>Telefone<input name="telefone" type="tel" placeholder="(11) 99999-9999" autoComplete="tel" required /></label>
+          </div>
+          <div className="valora-cadastro-row">
+            <label>CPF<input name="cpf" placeholder="00000000000" inputMode="numeric" maxLength={14} onChange={(event) => { event.currentTarget.value = event.currentTarget.value.replace(/\D/g, "").slice(0, 11); }} required /></label>
             <label>Data de nascimento<input name="nascimento" type="date" autoComplete="bday" required /></label>
           </div>
+          <div className="valora-cadastro-row">
+            <label>CEP<input name="cep" placeholder="00000-000" inputMode="numeric" required /></label>
+            <label>UF<input name="uf" placeholder="SP" maxLength={2} required /></label>
+          </div>
+          <label>Logradouro<input name="logradouro" placeholder="Rua, avenida..." required /></label>
+          <div className="valora-cadastro-row">
+            <label>Número<input name="numero" placeholder="Número" /></label>
+            <label>Bairro<input name="bairro" placeholder="Bairro" required /></label>
+          </div>
+          <div className="valora-cadastro-row">
+            <label>Cidade<input name="cidade" placeholder="Cidade" required /></label>
+            <label>Complemento<input name="complemento" placeholder="Opcional" /></label>
+          </div>
           <label>Senha
-            <div className="valora-cadastro-password"><input name="senha" type={showPassword ? "text" : "password"} placeholder="Crie uma senha" autoComplete="new-password" minLength={8} required /><button type="button" onClick={() => setShowPassword(v => !v)}>{showPassword ? "Ocultar" : "Mostrar"}</button></div>
+            <div className="valora-cadastro-password"><input name="senha" type={showPassword ? "text" : "password"} placeholder="Crie uma senha" autoComplete="new-password" minLength={8} maxLength={20} required /><button type="button" onClick={() => setShowPassword((value) => !value)}>{showPassword ? "Ocultar" : "Mostrar"}</button></div>
           </label>
-          <label>Confirmar senha<input name="confirmarSenha" type="password" placeholder="Repita sua senha" autoComplete="new-password" minLength={8} required /></label>
+          <label>Confirmar senha<input name="confirmarSenha" type="password" placeholder="Repita sua senha" autoComplete="new-password" minLength={8} maxLength={20} required /></label>
           {feedback && <p className="valora-cadastro-feedback" role="status">{feedback}</p>}
-          <button type="submit" className="valora-cadastro-submit">Criar minha conta <span aria-hidden="true">→</span></button>
+          <button type="submit" className="valora-cadastro-submit" disabled={loading}>{loading ? "Criando conta..." : "Criar minha conta"} <span aria-hidden="true">→</span></button>
         </form>
         <p className="valora-cadastro-footer">Já tem uma conta? <button type="button" onClick={onClose}>Entrar</button></p>
       </div>

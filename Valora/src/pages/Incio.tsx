@@ -1,12 +1,55 @@
+import PageLoading from "../components/PageLoading";
 import { FunctionComponent, useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ParceriasValora1 from "../components/ParceriasValora1";
 import Topbar5 from "../components/Topbar5";
 import EntradasESadas from "../components/EntradasESadas";
 import MinhasCaixinhas from "../components/MinhasCaixinhas";
+import { api, getStoredUser, getLoginEmail, type MovementDto, type CashboxDto, type AccountDto, type CategoryDto } from "../services/valoraApi";
+import {formatMoneyInput,parseMoneyInput} from '../utils/moneyInput';
 
 const Incio: FunctionComponent = () => {
   const navigate = useNavigate();
+  const [movimentacoes,setMovimentacoes]=useState<MovementDto[]>([]);
+  const [caixinhas,setCaixinhas]=useState<CashboxDto[]>([]);
+  const [contas,setContas]=useState<AccountDto[]>([]);
+  const [loading,setLoading]=useState(true);
+  const [error,setError]=useState("");
+  const [quickMode,setQuickMode]=useState<"Entrada"|"Saída"|null>(null);
+  const [quickDescription,setQuickDescription]=useState("");
+  const [quickValue,setQuickValue]=useState("");
+  const [quickCategory,setQuickCategory]=useState("");
+  const [quickAccount,setQuickAccount]=useState("");
+  const [quickCategories,setQuickCategories]=useState<CategoryDto[]>([]);
+  const [quickError,setQuickError]=useState("");
+  const [quickSaving,setQuickSaving]=useState(false);
+  const openQuick=async(mode:"Entrada"|"Saída",salary=false)=>{
+    setQuickMode(mode);setQuickDescription(salary?"Salário":"");setQuickValue("");setQuickCategory("");setQuickAccount("");setQuickError("");
+    try{const [categories,accounts]=await Promise.all([api.categorias.list(),(async()=>{const all:AccountDto[]=[];let p=0,total=1;do{const r=await api.contas.list(p);all.push(...r.content);total=r.totalPages;p++}while(p<total);return all})()]);setQuickCategories(categories);setContas(accounts)}
+    catch(e){setQuickError(e instanceof Error?e.message:"Não foi possível carregar contas e categorias")}
+  };
+  const saveQuick=async(e:React.FormEvent<HTMLFormElement>)=>{
+    e.preventDefault();const value=parseMoneyInput(quickValue);
+    if(!quickDescription.trim()||!Number.isFinite(value)||value<=0||!quickCategory||!quickAccount||!quickMode){setQuickError("Preencha todos os campos com valores válidos.");return}
+    setQuickSaving(true);setQuickError("");
+    try{
+      const now=new Date();const date=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,"0")}-${String(now.getDate()).padStart(2,"0")}`;
+      await api.movimentacoes.create({descricao:quickDescription.trim(),valor:value,tipo:quickMode==="Entrada"?"RECEITA":"DESPESA",dataMovimentacao:date,idCategoria:Number(quickCategory),idConta:Number(quickAccount),idContaDestino:null,idCaixinha:null});
+      const [movs,accounts]=await Promise.all([api.movimentacoes.listAll(),(async()=>{const all:AccountDto[]=[];let p=0,total=1;do{const r=await api.contas.list(p);all.push(...r.content);total=r.totalPages;p++}while(p<total);return all})()]);
+      setMovimentacoes(movs);setContas(accounts);setQuickMode(null);
+    }catch(err){setQuickError(err instanceof Error?err.message:"Não foi possível registrar a movimentação")}
+    finally{setQuickSaving(false)}
+  };
+  const [displayName,setDisplayName]=useState(getStoredUser()?.nome||getLoginEmail()?.split("@")[0]||"");
+  useEffect(()=>{let active=true;Promise.all([api.movimentacoes.listAll(),api.caixinhas.list(),(async()=>{const all:AccountDto[]=[];let page=0,totalPages=1;do{const result=await api.contas.list(page);all.push(...result.content);totalPages=result.totalPages;page++}while(page<totalPages);return all})()]).then(([movs,boxes,accounts])=>{if(!active)return;setMovimentacoes(movs);setCaixinhas(boxes);setContas(accounts);setError("");}).catch(err=>{if(active)setError(err instanceof Error?err.message:"Erro ao carregar o resumo");}).finally(()=>{if(active)setLoading(false)});return()=>{active=false}},[]);
+  const now=new Date();
+  const current=movimentacoes.filter(m=>m.dataMovimentacao.startsWith(`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,"0")}`));
+  const entradas=current.filter(m=>m.tipo==="RECEITA").reduce((s,m)=>s+Number(m.valor),0);
+  const gastos=current.filter(m=>m.tipo==="DESPESA").reduce((s,m)=>s+Number(m.valor),0);
+  const saldoMovimentacoes=entradas-gastos;
+  const saldo=contas.reduce((total,conta)=>total+Number(conta.saldo),0);
+  const money=(n:number)=>n.toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+  const recent=[...movimentacoes].filter(m=>m.tipo==="DESPESA"||m.tipo==="RECEITA").sort((a,b)=>b.dataMovimentacao.localeCompare(a.dataMovimentacao)||b.id-a.id).slice(0,8);
   const [dashboardZoom, setDashboardZoom] = useState(1);
   useEffect(() => {
     const updateZoom = () => setDashboardZoom(Math.max(1, window.innerWidth / 1440));
@@ -21,6 +64,7 @@ const Incio: FunctionComponent = () => {
 
   return (
     <div data-valora-dashboard style={{ zoom: dashboardZoom }} className="w-full relative bg-[#f6f8fe] flex items-start flex-nowrap content-start gap-0 min-w-[1440px] leading-[normal] tracking-[normal]">
+ {loading && <PageLoading label="Carregando seu resumo financeiro..." />}
       <section className="h-[1024px] w-[232px] bg-[#160b30] overflow-hidden shrink-0 flex flex-col items-center py-[33.9px] px-3 box-border relative isolate gap-[41.1px] text-left text-[27px] text-[#fff] font-[Inter] mq450:pt-[22px] mq450:pb-[22px] mq450:box-border mq450:pt-5 mq450:pb-5 mq450:box-border">
         <div className="flex items-center py-0 pl-0 pr-10 box-border gap-px max-w-[165.3px]">
           <button className="cursor-pointer [border:none] pt-0 px-0 pb-[3.9px] bg-[transparent] h-[36.9px] flex items-start box-border">
@@ -73,7 +117,7 @@ const Incio: FunctionComponent = () => {
               Categorias
             </div>
           </button>
-          <button onClick={() => navigate("/contas-conectadas")} className="cursor-pointer border-[rgba(219,209,245,0.28)] border-solid border-[1px] p-3.5 bg-[transparent] self-stretch h-[54px] rounded-[10px] box-border overflow-hidden shrink-0 flex items-start justify-center gap-5">
+          <button onClick={() => navigate("/minhas-contas")} className="cursor-pointer border-[rgba(219,209,245,0.28)] border-solid border-[1px] p-3.5 bg-[transparent] self-stretch h-[54px] rounded-[10px] box-border overflow-hidden shrink-0 flex items-start justify-center gap-5">
             <img
               className="h-6 w-6 relative"
               alt=""
@@ -81,7 +125,7 @@ const Incio: FunctionComponent = () => {
             />
             <div className="flex-1 flex items-start pt-[1.9px] px-0 pb-0">
               <div className="flex-1 relative text-sm font-[Inter] text-[#fff] text-left">
-                Contas conectadas
+                Minhas contas
               </div>
             </div>
           </button>
@@ -97,8 +141,9 @@ const Incio: FunctionComponent = () => {
         <Topbar5 />
         <section className="w-full h-[885px] relative max-w-[1205px] text-left text-[32px] text-[#130e33] font-[Inter] lg:max-w-full mq450:h-auto mq450:min-h-[885px]">
           <h2 className="m-0 absolute top-[0px] left-[19.95px] text-[length:inherit] font-bold font-[inherit] whitespace-nowrap mq450:text-[26px] mq450:text-[19px]">
-            Olá, Marina 👋
+            Olá{displayName?`, ${displayName.split(" ")[0]}`:""} 👋
           </h2>
+          {error&&<p role="alert" className="absolute top-[46px] left-[380px] text-xs text-red-600">{error}</p>}
           <h3 className="m-0 absolute top-[40px] left-[19.95px] text-[17px] font-normal font-[inherit] text-[#636391]">
             Que bom te ver por aqui!
           </h3>
@@ -108,7 +153,7 @@ const Incio: FunctionComponent = () => {
                 <b className="relative mq450:text-[22px]">▣</b>
                 <div className="flex-1 flex flex-col items-start pt-[1.9px] px-0 pb-0 box-border gap-[5px] min-w-[242px] max-w-full text-base">
                   <h3 className="m-0 self-stretch relative text-[length:inherit] font-bold font-[inherit]">
-                    Resumo de setembro
+                    Resumo de {now.toLocaleDateString("pt-BR",{month:"long"})}
                   </h3>
                   <div className="self-stretch relative text-xs">
                     Controle seus gastos e acompanhe seus objetivos
@@ -121,13 +166,13 @@ const Incio: FunctionComponent = () => {
                     Saldo registrado
                   </h3>
                   <h1 className="m-0 self-stretch relative text-[39px] font-bold font-[inherit] mq450:text-[31px] mq450:text-[23px]">
-                    R$ 1.500,00
+                    {loading?"Carregando...":error?"Indisponível":money(saldo)}
                   </h1>
                   <div className="self-stretch relative text-xs font-semibold whitespace-pre-wrap">
-                    Entradas R$ 3.500,00 | Gastos R$ 2.000,00
+                    Entradas {money(entradas)} | Gastos {money(gastos)}
                   </div>
                 </div>
-                <button className="cursor-pointer border-[#fff] border-solid border-[1px] py-[12.5px] pl-[18px] pr-3.5 bg-[rgba(89,28,199,0.3)] h-[42px] rounded-[10px] box-border overflow-hidden flex items-center justify-center hover:bg-[rgba(128,66,237,0.3)] hover:border-[#e6e6e6] hover:border-solid hover:hover:border-[1px] hover:box-border">
+                <button onClick={()=>navigate("/movimentacoes")} className="cursor-pointer border-[#fff] border-solid border-[1px] py-[12.5px] pl-[18px] pr-3.5 bg-[rgba(89,28,199,0.3)] h-[42px] rounded-[10px] box-border overflow-hidden flex items-center justify-center hover:bg-[rgba(128,66,237,0.3)] hover:border-[#e6e6e6] hover:border-solid hover:hover:border-[1px] hover:box-border">
                   <div className="relative text-xs font-semibold font-[Inter] text-[#fff] whitespace-pre-wrap text-left">
                     Ver detalhes →
                   </div>
@@ -136,7 +181,7 @@ const Incio: FunctionComponent = () => {
             </div>
             <div className="self-stretch flex items-center flex-wrap content-center p-[15px] gap-[13px] text-center text-[11px] text-[#130e33]">
               <div className="flex-1 flex flex-col items-start gap-2 min-w-[81px]">
-                <button className="cursor-pointer [border:none] py-[8.9px] px-0 bg-[#f0e8ff] self-stretch h-16 rounded-[9px] overflow-hidden shrink-0 flex items-start justify-center box-border hover:bg-[#d6cfe6]">
+                <button onClick={()=>void openQuick("Saída")} className="cursor-pointer [border:none] py-[8.9px] px-0 bg-[#f0e8ff] self-stretch h-16 rounded-[9px] overflow-hidden shrink-0 flex items-start justify-center box-border hover:bg-[#d6cfe6]">
                   <h2 className="m-0 relative text-[25px] font-bold font-[Inter] text-[#4f13d4] text-left mq450:text-xl">
                     −
                   </h2>
@@ -146,7 +191,7 @@ const Incio: FunctionComponent = () => {
                 </div>
               </div>
               <div className="flex-1 flex flex-col items-start gap-2 min-w-[92px]">
-                <button className="cursor-pointer [border:none] py-[8.9px] px-0 bg-[#f0e8ff] self-stretch h-16 rounded-[9px] overflow-hidden shrink-0 flex items-start justify-center box-border hover:bg-[#d6cfe6]">
+                <button onClick={()=>void openQuick("Entrada")} className="cursor-pointer [border:none] py-[8.9px] px-0 bg-[#f0e8ff] self-stretch h-16 rounded-[9px] overflow-hidden shrink-0 flex items-start justify-center box-border hover:bg-[#d6cfe6]">
                   <h2 className="m-0 relative text-[25px] font-bold font-[Inter] text-[#4f13d4] text-left mq450:text-xl">
                     +
                   </h2>
@@ -155,7 +200,7 @@ const Incio: FunctionComponent = () => {
                   Registrar entrada
                 </div>
               </div>
-              <div className="cursor-pointer flex-1 flex flex-col items-center gap-2 min-w-[95px]">
+              <button type="button" onClick={()=>void openQuick("Entrada",true)} className="cursor-pointer flex-1 flex flex-col items-center gap-2 min-w-[95px]">
                 <img
                   className="self-stretch h-16 relative rounded-[9px] max-w-full overflow-hidden shrink-0"
                   loading="lazy"
@@ -163,7 +208,7 @@ const Incio: FunctionComponent = () => {
                   src="/Sal-rio.svg"
                 />
                 <div className="relative font-semibold">Salário</div>
-              </div>
+              </button>
               <div className="cursor-pointer flex-1 flex flex-col items-start gap-2 min-w-[95px]">
                 <img
                   className="self-stretch h-16 relative rounded-[9px] max-w-full overflow-hidden shrink-0"
@@ -177,16 +222,15 @@ const Incio: FunctionComponent = () => {
               </div>
             </div>
           </section>
-          <EntradasESadas />
-          <MinhasCaixinhas />
+          {quickMode&&<div className="fixed inset-0 z-[400] flex items-center justify-center bg-black/50"><form onSubmit={saveQuick} className="w-[420px] rounded-2xl bg-white p-7 shadow-xl flex flex-col gap-4 text-[14px] leading-normal font-normal text-[#191236]"><div className="flex justify-between items-center"><h2 className="text-[20px] leading-7 font-bold">{quickDescription==="Salário"?"Registrar salário":quickMode==="Entrada"?"Registrar entrada":"Registrar gasto"}</h2><button type="button" onClick={()=>setQuickMode(null)}>✕</button></div><input required className="border rounded-lg p-3" placeholder="Descrição" value={quickDescription} onChange={e=>setQuickDescription(e.target.value)}/><input required className="border rounded-lg p-3" placeholder="Valor (R$)" type="text" inputMode="numeric" value={quickValue} onChange={e=>setQuickValue(formatMoneyInput(e.target.value))}/><input disabled className="border rounded-lg p-3 bg-[#f8f8fc]" value={quickMode}/><select required className="border rounded-lg p-3" value={quickCategory} onChange={e=>setQuickCategory(e.target.value)}><option value="">Selecione a categoria</option>{quickCategories.map(c=><option key={c.idCategoria} value={c.idCategoria}>{c.nmCategoria}</option>)}</select><select required className="border rounded-lg p-3" value={quickAccount} onChange={e=>setQuickAccount(e.target.value)}><option value="">Selecione a conta</option>{contas.map(c=><option key={c.id} value={c.id}>{c.nome}</option>)}</select>{quickError&&<p role="alert" className="text-xs text-red-600">{quickError}</p>}<button disabled={quickSaving||!quickCategories.length||!contas.length} className="bg-[#5212d6] disabled:opacity-50 text-white rounded-lg p-3">{quickSaving?"Salvando...":"Salvar movimentação"}</button>{(!quickCategories.length||!contas.length)&&<p className="text-xs text-red-600">Cadastre uma conta e uma categoria para continuar.</p>}</form></div>}
+          <EntradasESadas movimentacoes={movimentacoes} />
+          <MinhasCaixinhas caixinhas={caixinhas} loading={loading} />
           <section className="absolute top-[408px] left-[19.95px] rounded-xl bg-[#fff] border-[#e3e6f2] border-solid border-[1px] box-border w-[773px] overflow-hidden flex flex-col items-start pt-[17px] px-[11px] pb-[30px] max-w-full text-left text-lg text-[#130e33] font-[Inter]">
             <div className="self-stretch flex items-center flex-wrap content-center py-0 pl-[5px] pr-[19px] box-border gap-2 max-w-full">
               <h2 className="m-0 flex-1 relative text-[length:inherit] font-bold font-[inherit] inline-block min-w-[185px] max-w-full">
                 Transações recentes
               </h2>
-              <div className="cursor-pointer relative text-xs font-medium text-[#4f13d4]">
-                Ver todas →
-              </div>
+              <button onClick={()=>navigate("/movimentacoes")} className="cursor-pointer relative text-xs font-medium text-[#4f13d4]">Ver todas →</button>
             </div>
             <div className="self-stretch h-[406px] overflow-x-auto shrink-0 flex flex-col items-start py-[22px] pl-1 pr-0.5 box-border gap-3 text-[11px] text-[#636391]">
               <div className="w-[742px] flex items-start min-w-[345px] [row-gap:20px] mq450:flex-wrap">
@@ -206,166 +250,7 @@ const Incio: FunctionComponent = () => {
                   Valor
                 </div>
               </div>
-              <div className="w-[742px] flex flex-col items-start pt-1 px-0 pb-0 box-border gap-[15px] min-w-[345px]">
-                <div className="self-stretch flex items-start [row-gap:20px] mq450:flex-wrap">
-                  <div className="flex-1 relative inline-block min-w-[69px] max-w-[122px]">
-                    12/09/2025
-                  </div>
-                  <div className="flex-1 relative text-xs font-medium text-[#130e33] inline-block min-w-[85px] max-w-[205px]">
-                    Restaurante
-                  </div>
-                  <div className="flex-1 relative inline-block min-w-[65px] max-w-[192px]">
-                    Alimentação
-                  </div>
-                  <div className="flex-1 relative inline-block min-w-[41px] max-w-[136px]">
-                    Gasto
-                  </div>
-                  <b className="flex-1 relative text-xs inline-block text-[#f01424] min-w-[85px] max-w-[87px]">
-                    - R$ 102,50
-                  </b>
-                </div>
-                <div className="w-full h-px relative border-[#e3e6f2] border-solid border-t-[1px] box-border max-w-[736px] mq450:max-w-full" />
-              </div>
-              <div className="w-[742px] flex flex-col items-start gap-[15px] min-w-[345px]">
-                <div className="self-stretch flex items-start [row-gap:20px] mq450:flex-wrap">
-                  <div className="flex-1 relative inline-block min-w-[69px] max-w-[122px]">
-                    11/09/2025
-                  </div>
-                  <div className="flex-1 relative text-xs font-medium text-[#130e33] inline-block min-w-[85px] max-w-[205px]">
-                    Salário
-                  </div>
-                  <div className="flex-1 relative inline-block min-w-[65px] max-w-[192px]">
-                    Trabalho
-                  </div>
-                  <div className="flex-1 relative inline-block min-w-[41px] max-w-[136px]">
-                    Entrada
-                  </div>
-                  <b className="flex-1 relative text-xs inline-block text-[#059e57] min-w-[85px] max-w-[87px]">
-                    + R$ 3.500,00
-                  </b>
-                </div>
-                <div className="w-full h-px relative border-[#e3e6f2] border-solid border-t-[1px] box-border max-w-[736px] mq450:max-w-full" />
-              </div>
-              <div className="w-[742px] flex flex-col items-start gap-[15px] min-w-[345px]">
-                <div className="self-stretch flex items-start [row-gap:20px] mq450:flex-wrap">
-                  <div className="flex-1 relative inline-block min-w-[69px] max-w-[122px]">
-                    10/09/2025
-                  </div>
-                  <div className="flex-1 relative text-xs font-medium text-[#130e33] inline-block min-w-[85px] max-w-[205px]">
-                    Uber
-                  </div>
-                  <div className="flex-1 relative inline-block min-w-[65px] max-w-[192px]">
-                    Transporte
-                  </div>
-                  <div className="flex-1 relative inline-block min-w-[41px] max-w-[136px]">
-                    Gasto
-                  </div>
-                  <b className="flex-1 relative text-xs inline-block text-[#f01424] min-w-[85px] max-w-[87px]">
-                    - R$ 45,00
-                  </b>
-                </div>
-                <div className="w-full h-px relative border-[#e3e6f2] border-solid border-t-[1px] box-border max-w-[736px] mq450:max-w-full" />
-              </div>
-              <div className="w-[742px] flex flex-col items-start gap-[15px] min-w-[345px]">
-                <div className="self-stretch flex items-start [row-gap:20px] mq450:flex-wrap">
-                  <div className="flex-1 relative inline-block min-w-[69px] max-w-[122px]">
-                    10/09/2025
-                  </div>
-                  <div className="flex-1 relative text-xs font-medium text-[#130e33] inline-block min-w-[85px] max-w-[205px]">
-                    Netflix
-                  </div>
-                  <div className="flex-1 relative inline-block min-w-[65px] max-w-[192px]">
-                    Lazer
-                  </div>
-                  <div className="flex-1 relative inline-block min-w-[41px] max-w-[136px]">
-                    Gasto
-                  </div>
-                  <b className="flex-1 relative text-xs inline-block text-[#f01424] min-w-[85px] max-w-[87px]">
-                    - R$ 39,90
-                  </b>
-                </div>
-                <div className="w-full h-px relative border-[#e3e6f2] border-solid border-t-[1px] box-border max-w-[736px] mq450:max-w-full" />
-              </div>
-              <div className="w-[742px] flex flex-col items-start gap-[15px] min-w-[345px]">
-                <div className="self-stretch flex items-start [row-gap:20px] mq450:flex-wrap">
-                  <div className="flex-1 relative inline-block min-w-[69px] max-w-[122px]">
-                    09/09/2025
-                  </div>
-                  <div className="flex-1 relative text-xs font-medium text-[#130e33] inline-block min-w-[85px] max-w-[205px]">
-                    Supermercado
-                  </div>
-                  <div className="flex-1 relative inline-block min-w-[65px] max-w-[192px]">
-                    Alimentação
-                  </div>
-                  <div className="flex-1 relative inline-block min-w-[41px] max-w-[136px]">
-                    Gasto
-                  </div>
-                  <b className="flex-1 relative text-xs inline-block text-[#f01424] min-w-[85px] max-w-[87px]">
-                    - R$ 85,90
-                  </b>
-                </div>
-                <div className="w-full h-px relative border-[#e3e6f2] border-solid border-t-[1px] box-border max-w-[736px] mq450:max-w-full" />
-              </div>
-              <div className="w-[742px] flex flex-col items-start gap-[15px] min-w-[345px]">
-                <div className="self-stretch flex items-start [row-gap:20px] mq450:flex-wrap">
-                  <div className="flex-1 relative inline-block min-w-[69px] max-w-[122px]">
-                    08/09/2025
-                  </div>
-                  <div className="flex-1 relative text-xs font-medium text-[#130e33] inline-block min-w-[85px] max-w-[205px]">
-                    Academia
-                  </div>
-                  <div className="flex-1 relative inline-block min-w-[65px] max-w-[192px]">
-                    Saúde
-                  </div>
-                  <div className="flex-1 relative inline-block min-w-[41px] max-w-[136px]">
-                    Gasto
-                  </div>
-                  <b className="flex-1 relative text-xs inline-block text-[#f01424] min-w-[85px] max-w-[87px]">
-                    - R$ 60,00
-                  </b>
-                </div>
-                <div className="w-full h-px relative border-[#e3e6f2] border-solid border-t-[1px] box-border max-w-[736px] mq450:max-w-full" />
-              </div>
-              <div className="w-[742px] flex flex-col items-start gap-[15px] min-w-[345px]">
-                <div className="self-stretch flex items-start [row-gap:20px] mq450:flex-wrap">
-                  <div className="flex-1 relative inline-block min-w-[69px] max-w-[122px]">
-                    07/09/2025
-                  </div>
-                  <div className="flex-1 relative text-xs font-medium text-[#130e33] inline-block min-w-[85px] max-w-[205px]">
-                    Freelance
-                  </div>
-                  <div className="flex-1 relative inline-block min-w-[65px] max-w-[192px]">
-                    Trabalho
-                  </div>
-                  <div className="flex-1 relative inline-block min-w-[41px] max-w-[136px]">
-                    Entrada
-                  </div>
-                  <b className="flex-1 relative text-xs inline-block text-[#059e57] min-w-[85px] max-w-[87px]">
-                    + R$ 500,00
-                  </b>
-                </div>
-                <div className="w-full h-px relative border-[#e3e6f2] border-solid border-t-[1px] box-border max-w-[736px] mq450:max-w-full" />
-              </div>
-              <div className="w-[742px] flex flex-col items-start gap-[15px] min-w-[345px]">
-                <div className="self-stretch flex items-start [row-gap:20px] mq450:flex-wrap">
-                  <div className="flex-1 relative inline-block min-w-[69px] max-w-[122px]">
-                    06/09/2025
-                  </div>
-                  <div className="flex-1 relative text-xs font-medium text-[#130e33] inline-block min-w-[85px] max-w-[205px]">
-                    Petshop
-                  </div>
-                  <div className="flex-1 relative inline-block min-w-[65px] max-w-[192px]">
-                    Pets
-                  </div>
-                  <div className="flex-1 relative inline-block min-w-[41px] max-w-[136px]">
-                    Gasto
-                  </div>
-                  <b className="flex-1 relative text-xs inline-block text-[#f01424] min-w-[85px] max-w-[87px]">
-                    - R$ 120,00
-                  </b>
-                </div>
-                <div className="w-full h-px relative border-[#e3e6f2] border-solid border-t-[1px] box-border max-w-[736px] mq450:max-w-full" />
-              </div>
+              {loading?<p className="text-sm text-[#636391]">Carregando transações...</p>:error?<p role="alert" className="text-sm text-red-600">{error}</p>:recent.length===0?<p className="text-sm text-[#636391]">Nenhuma transação registrada.</p>:recent.map(m=><div key={m.id} className="w-[742px] flex flex-col gap-3"><div className="self-stretch flex items-start text-xs"><div className="flex-1 max-w-[122px]">{m.dataMovimentacao.split("-").reverse().join("/")}</div><div className="flex-1 max-w-[205px] font-medium text-[#130e33]">{m.descricao}</div><div className="flex-1 max-w-[192px]">{m.categoria||"Sem categoria"}</div><div className="flex-1 max-w-[136px]">{m.tipo==="RECEITA"?"Entrada":"Gasto"}</div><b className={`flex-1 max-w-[87px] ${m.tipo==="RECEITA"?"text-[#059e57]":"text-[#f01424]"}`}>{m.tipo==="RECEITA"?"+ ":"- "}{money(Number(m.valor))}</b></div><div className="border-t border-[#e3e6f2]"/></div>)}
             </div>
           </section>
           <section className="absolute top-[494px] left-[805.05px] w-[375px] flex flex-col items-start gap-[9px] max-w-full text-left text-base text-[#1f1a29] font-[Inter]">
@@ -373,39 +258,11 @@ const Incio: FunctionComponent = () => {
               <h3 className="m-0 w-full relative text-[length:inherit] font-semibold font-[inherit] inline-block max-w-[351px]">
                 Resumo do orçamento
               </h3>
-              <div className="self-stretch rounded-[14px] bg-[#fff] overflow-hidden flex flex-col items-start pt-[13px] px-4 pb-2 gap-2 text-[11px]">
-                <div className="self-stretch flex items-start py-0.5 px-0 gap-[25px] mq450:flex-wrap">
-                  <div className="relative font-semibold">
-                    Dinheiro restante para gastos
-                  </div>
-                  <div className="relative font-semibold">
-                    Gastos extras realizados
-                  </div>
-                </div>
-                <div className="self-stretch h-px relative bg-[#e8e6f0]" />
-                <div className="self-stretch flex items-start pt-0 px-0 pb-1.5 gap-[89px] text-base text-[#4f13d4] mq450:flex-wrap">
-                  <div className="relative font-semibold inline-block min-w-[95px]">
-                    R$ 1.500,00
-                  </div>
-                  <div className="relative font-semibold">R$ 453,30</div>
-                </div>
-                <div className="self-stretch h-px relative bg-[#e8e6f0]" />
-                <div className="self-stretch flex items-start justify-between pt-0.5 pb-[3px] pl-0.5 pr-[68px] gap-0 [row-gap:20px] mq450:flex-wrap mq450:gap-0">
-                  <div className="w-[182px] relative font-semibold inline-block min-w-[62px]">
-                    Caixinha Carro
-                  </div>
-                  <div className="relative font-semibold">Caixinha Viagem</div>
-                </div>
-                <div className="self-stretch h-px relative bg-[#e8e6f0]" />
-                <div className="self-stretch flex items-start pt-0 px-0 pb-[9px] gap-[94px] text-xs text-[#615c6e] mq450:flex-wrap">
-                  <div className="relative font-medium inline-block min-w-[90px]">
-                    R$ 500,00/mês
-                  </div>
-                  <div className="relative font-medium inline-block min-w-[90px]">
-                    R$ 350,00/mês
-                  </div>
-                </div>
-                <div className="self-stretch h-px relative bg-[#e8e6f0]" />
+              <div className="self-stretch rounded-[14px] bg-white p-4 text-[12px]">
+                <p className="font-semibold text-[#636391]">Saldo de movimentações do mês</p>
+                <b className="block text-[18px] text-[#4f13d4] mt-2">{error?"Indisponível":money(saldoMovimentacoes)}</b>
+                <p className="mt-3 text-[#636391]">Caixinhas cadastradas: {caixinhas.length}</p>
+                <p className="mt-1 text-[#636391]">Gastos do mês: {money(gastos)}</p>
               </div>
             </div>
             <div className="self-stretch rounded-2xl overflow-hidden flex flex-col items-start bg-[url('/Conquiste-seus-sonhos@3x.png')] bg-cover bg-no-repeat bg-[top] text-[9px] text-[#e0c9ff]">

@@ -1,6 +1,7 @@
 import { FunctionComponent, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
+import { clearSession, getLoginEmail, getStoredUser, getAccessToken } from "../services/valoraApi";
 
 export type Topbar5Type = {
   className?: string;
@@ -11,6 +12,9 @@ const Topbar5: FunctionComponent<Topbar5Type> = ({ className = "" }) => {
   const [anchor,setAnchor]=useState({top:72,right:16});
   const profileRef=useRef<HTMLButtonElement>(null);
   const navigate=useNavigate();
+  const email=getLoginEmail() || (()=>{try{const token=getAccessToken();if(!token)return null;const p=token.split(".")[1].replace(/-/g,"+").replace(/_/g,"/");return (JSON.parse(atob(p)) as {sub?:string}).sub||null}catch{return null}})();
+  const user=getStoredUser();
+  const displayName=user?.nome || email || "Minha conta";
   const toggle=()=>{if(!opened&&profileRef.current){const rect=profileRef.current.getBoundingClientRect();setAnchor({top:rect.bottom+9,right:Math.max(8,window.innerWidth-rect.right)});}setOpened(!opened)};
   useEffect(()=>{if(!opened)return;const onKey=(e:KeyboardEvent)=>{if(e.key==='Escape')setOpened(false)};window.addEventListener('keydown',onKey);return()=>window.removeEventListener('keydown',onKey)},[opened]);
   return (
@@ -39,21 +43,21 @@ const Topbar5: FunctionComponent<Topbar5Type> = ({ className = "" }) => {
         </button>
       </div>
       <button ref={profileRef} type="button" onClick={toggle} aria-expanded={opened} aria-label="Abrir menu do perfil" className="h-11 flex-[1.0715] flex items-center gap-[15.9px] min-w-[169px] max-w-[221px] text-sm text-[#130e33] cursor-pointer text-left bg-transparent border-none p-0">
-        <img src="/Marina-Silva-Perfil.jpg" alt="Marina Silva" className="h-11 w-11 rounded-full object-cover shrink-0"/>
-        <span className="flex-1 flex flex-col items-start gap-[5px]"><b>Marina Silva</b><span className="text-xs text-[#636391]">Configurações</span></span>
+        <span aria-hidden="true" className="h-11 w-11 rounded-full bg-[#e8e0ff] text-[#5212d6] flex items-center justify-center font-bold shrink-0">{displayName.charAt(0).toUpperCase()}</span>
+        <span className="flex-1 flex flex-col items-start gap-[5px]"><b className="truncate max-w-[165px]">{displayName}</b><span className="text-xs text-[#636391]">Configurações</span></span>
         <span className="text-xl text-[#130e33]">⌄</span>
       </button>
     </header>
     {opened&&createPortal(<>
       <div className="fixed inset-0 z-[900]" onMouseDown={()=>setOpened(false)} aria-hidden="true" />
       <div role="dialog" aria-label="Menu de perfil" className="fixed z-[901] w-[260px] rounded-[9px] border border-[#e0dfed] bg-white shadow-[0_12px_35px_rgba(22,13,57,0.14)] p-[12px] text-[#1f1747] font-[Inter]" style={{top:anchor.top,right:anchor.right}}>
-        <div className="flex gap-[10px] items-center px-[3px] pt-[4px] pb-[17px]"><img src="/Marina-Silva-Perfil.jpg" alt="" className="h-[37px] w-[37px] rounded-full object-cover"/><div><b className="block text-[11px]">Marina Silva</b><span className="block text-[9px] text-[#7b7699] mt-[3px]">marina@email.com</span></div></div>
-        <div className="flex items-center gap-2 text-[10px] px-[8px] py-[10px]"><span className="text-[#5520c9]">♙</span>Agência 0123 · Conta 0001</div>
+        <div className="flex gap-[10px] items-center px-[3px] pt-[4px] pb-[17px]"><span aria-hidden="true" className="h-[37px] w-[37px] rounded-full bg-[#e8e0ff] text-[#5212d6] flex items-center justify-center font-bold">{displayName.charAt(0).toUpperCase()}</span><div><b className="block text-[11px]">{displayName}</b><span className="block text-[9px] text-[#7b7699] mt-[3px]">{email || "Conta autenticada"}</span></div></div>
+        
         <button type="button" className="w-full h-[44px] bg-[#f0eaff] text-[#5122c8] rounded-[6px] flex items-center justify-between px-[12px] text-[10px] font-semibold cursor-pointer" onClick={()=>setOpened(false)}><span>♛　 Conta Valora</span><span>›</span></button>
         <div className="mt-[9px]">
         {([['♙','Meus dados','Nome, telefone e e-mail'],['♙','Segurança','Senha, biometria e acesso'],['♧','Notificações','Gerencie seus alertas'],['☼','Preferências','Tema, idioma e visualização']] as const).map(([icon,title,description])=><button key={title} type="button" onClick={()=>setOpened(false)} className="w-full flex items-center gap-[10px] px-[8px] h-[51px] border-b border-[#eceaf4] text-left cursor-pointer hover:bg-[#f8f6ff]"><span className="text-[#5420b6] text-[16px] w-[17px] text-center">{icon}</span><span className="flex-1"><span className="block text-[10px] font-medium">{title}</span><span className="block text-[8px] text-[#7b7699] mt-[3px]">{description}</span></span><span className="text-[#301a66]">›</span></button>)}
         </div>
-        <button type="button" onClick={()=>{setOpened(false);navigate('/')}} className="mt-[12px] h-[34px] flex items-center gap-[11px] px-[8px] text-[10px] text-[#e9263c] cursor-pointer"><span className="text-[17px]">⇥</span>Sair da conta</button>
+        <button type="button" onClick={()=>{clearSession();setOpened(false);navigate('/')}} className="mt-[12px] h-[34px] flex items-center gap-[11px] px-[8px] text-[10px] text-[#e9263c] cursor-pointer"><span className="text-[17px]">⇥</span>Sair da conta</button>
       </div>
     </>,document.body)}
     </>
