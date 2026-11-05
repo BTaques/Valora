@@ -33,6 +33,10 @@ const Login: FunctionComponent = () => {
     <div className="valora-login w-full relative bg-[#f9f8fc] overflow-hidden flex items-start py-0 pl-0 pr-9 box-border leading-[normal] tracking-[normal] text-left text-sm text-[#6e6980] font-[Inter]">
       <main className="valora-login-layout h-[1024px] flex-1 flex items-start justify-between flex-wrap content-start gap-0 max-w-[1404px] [row-gap:20px] mq1400:gap-0 mq1400:max-w-full">
         <main className="valora-login-hero h-[1024px] flex-1 overflow-hidden flex flex-col items-center py-[5.8px] px-[30px] box-border bg-[url('/Brand@3x.png')] bg-cover bg-no-repeat bg-[top] min-w-[310px] max-w-[760px] min-h-[1024px] text-left text-[29px] text-[#fff] font-[Inter] mq825:max-w-full mq825:flex-1">
+              <div className="valora-login-mobile-actions">
+                <button type="button" onClick={() => setLoginAberto(true)}>Fazer login</button>
+                <button type="button" onClick={() => setCadastroAberto(true)}>Criar conta</button>
+              </div>
           <div className="w-full flex-1 flex flex-col items-start max-w-[700px] mq825:max-w-full">
             <div className="w-full flex-1 flex flex-col items-center gap-[82px] max-w-[515px] mq825:gap-[41px] mq825:max-w-full mq450:gap-5">
               <div className="w-full flex items-start py-[40.1px] px-0 box-border gap-[7px] max-w-[468.8px] z-[3] mq825:max-w-full mq450:flex-wrap">
@@ -46,10 +50,6 @@ const Login: FunctionComponent = () => {
                     Valora
                   </div>
                 </div>
-              </div>
-              <div className="valora-login-mobile-actions">
-                <button type="button" onClick={() => setLoginAberto(true)}>Fazer login</button>
-                <button type="button" onClick={() => setCadastroAberto(true)}>Criar conta</button>
               </div>
               <section className="w-full flex flex-col items-start py-0 px-2 box-border gap-4 max-w-[468.8px] z-[1] text-left text-[13px] text-[#c7b3f2] font-[Inter] mq825:max-w-full">
                 <div className="self-stretch flex items-start pt-0 px-0 pb-2 box-border max-w-full">
