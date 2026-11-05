@@ -1,3 +1,4 @@
+import PageLoading from "../components/PageLoading";
 import {useEffect,useMemo,useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import SidebarMenu from '../components/SidebarMenu';
@@ -48,6 +49,7 @@ export default function MinhasContas(){
  const saveEdit=async(e:React.FormEvent)=>{e.preventDefault();if(!editing)return;const nome=editName.trim();if(!nome||nome.length>100){setEditError('Informe um nome válido com até 100 caracteres.');return}setEditSaving(true);setEditError('');try{await api.contas.updateName(editing.id,nome);setEditing(null);await load()}catch(err){setEditError(err instanceof Error?err.message:'Não foi possível atualizar o nome')}finally{setEditSaving(false)}};
  const save=async(e:React.FormEvent)=>{e.preventDefault();const saldo=parseMoneyInput(balance);if(!name.trim()||saldo<0||!Number.isFinite(saldo)){setFormError('Informe nome e saldo válidos.');return}setSaving(true);setFormError('');try{await api.contas.create({nome:name.trim(),saldo});setModal(false);setName('');setBalance('R$ 0,00');await load()}catch(e){setFormError(e instanceof Error?e.message:'Não foi possível cadastrar a conta')}finally{setSaving(false)}};
  return <div style={{zoom}} className="relative w-[1440px] min-h-[1024px] bg-[#f6f9fe] font-[Inter] text-[#140d40]">
+ {loading && <PageLoading label="Carregando contas..." />}
  <aside style={pos(0,0,232,1024)} className="bg-[#130938] text-white"><SidebarMenu active="Minhas contas"/>
  <div style={pos(18,727,195,235)} className="overflow-hidden rounded-[12px] border border-[#452985] bg-[#260754]">
  <div className="absolute inset-0 bg-gradient-to-br from-[#230543] via-[#41057e] to-[#13052c]"/>
