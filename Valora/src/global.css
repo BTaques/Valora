@@ -1236,3 +1236,32 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed !important; }
     display:none !important;
   }
 }
+
+
+/* Modal tablet/mobile: a própria camada cobre o viewport inteiro.
+   Não usar um backdrop filho que herda regras de tamanho da página. */
+@media (max-width:1023px) {
+  html:has(.valora-caixinhas-overlay-root),
+  body:has(.valora-caixinhas-overlay-root) {
+    overflow-x:hidden !important;
+  }
+  body > .valora-caixinhas-overlay-root {
+    display:block !important; position:fixed !important;
+    inset:0 !important; top:0 !important; left:0 !important;
+    right:0 !important; bottom:0 !important;
+    width:100vw !important; height:100dvh !important;
+    min-width:0 !important; min-height:0 !important;
+    max-width:none !important; max-height:none !important;
+    margin:0 !important; padding:0 !important;
+    border:0 !important; border-radius:0 !important;
+    transform:none !important; zoom:1 !important;
+    overflow:visible !important; box-sizing:border-box !important;
+    background:rgba(16,8,38,.55) !important;
+    z-index:2147483000 !important;
+    pointer-events:auto !important;
+  }
+  body > .valora-caixinhas-overlay-root > [data-caix="form"] {
+    pointer-events:auto !important;
+    z-index:2 !important;
+  }
+}
