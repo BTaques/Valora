@@ -63,9 +63,9 @@ const Incio: FunctionComponent = () => {
   }, [navigate]);
 
   return (
-    <div data-valora-dashboard style={{ zoom: dashboardZoom }} className="w-full relative bg-[#f6f8fe] flex items-start flex-nowrap content-start gap-0 min-w-[1440px] leading-[normal] tracking-[normal]">
+    <div data-valora-dashboard style={{ zoom: dashboardZoom }} className="valora-inicio w-full relative bg-[#f6f8fe] flex items-start flex-nowrap content-start gap-0 min-w-[1440px] leading-[normal] tracking-[normal]">
  {loading && <PageLoading label="Carregando seu resumo financeiro..." />}
-      <section className="h-[1024px] w-[232px] bg-[#160b30] overflow-hidden shrink-0 flex flex-col items-center py-[33.9px] px-3 box-border relative isolate gap-[41.1px] text-left text-[27px] text-[#fff] font-[Inter] mq450:pt-[22px] mq450:pb-[22px] mq450:box-border mq450:pt-5 mq450:pb-5 mq450:box-border">
+      <section className="valora-inicio-sidebar h-[1024px] w-[232px] bg-[#160b30] overflow-hidden shrink-0 flex flex-col items-center py-[33.9px] px-3 box-border relative isolate gap-[41.1px] text-left text-[27px] text-[#fff] font-[Inter] mq450:pt-[22px] mq450:pb-[22px] mq450:box-border mq450:pt-5 mq450:pb-5 mq450:box-border">
         <div className="flex items-center py-0 pl-0 pr-10 box-border gap-px max-w-[165.3px]">
           <button className="cursor-pointer [border:none] pt-0 px-0 pb-[3.9px] bg-[transparent] h-[36.9px] flex items-start box-border">
             <img
@@ -137,9 +137,9 @@ const Incio: FunctionComponent = () => {
         />
         <ParceriasValora1 />
       </section>
-      <main className="h-[1024px] w-[1208px] flex-none flex flex-col items-center gap-[18.1px] min-w-[1208px] min-h-[1024px] max-w-full">
+      <main className="valora-inicio-main h-[1024px] w-[1208px] flex-none flex flex-col items-center gap-[18.1px] min-w-[1208px] min-h-[1024px] max-w-full">
         <Topbar5 />
-        <section className="w-full h-[885px] relative max-w-[1205px] text-left text-[32px] text-[#130e33] font-[Inter] lg:max-w-full mq450:h-auto mq450:min-h-[885px]">
+        <section className="valora-inicio-content w-full h-[885px] relative max-w-[1205px] text-left text-[32px] text-[#130e33] font-[Inter] lg:max-w-full mq450:h-auto mq450:min-h-[885px]">
           <h2 className="m-0 absolute top-[0px] left-[19.95px] text-[length:inherit] font-bold font-[inherit] whitespace-nowrap mq450:text-[26px] mq450:text-[19px]">
             Olá{displayName?`, ${displayName.split(" ")[0]}`:""} 👋
           </h2>
@@ -147,7 +147,7 @@ const Incio: FunctionComponent = () => {
           <h3 className="m-0 absolute top-[40px] left-[19.95px] text-[17px] font-normal font-[inherit] text-[#636391]">
             Que bom te ver por aqui!
           </h3>
-          <section className="absolute top-[74px] left-[19.95px] rounded-xl bg-[#fff] w-[450px] overflow-hidden flex flex-col items-start pt-0 px-0 pb-1 box-border max-w-full text-left text-[28px] text-[#fff] font-[Inter]">
+          <section className="valora-inicio-summary absolute top-[74px] left-[19.95px] rounded-xl bg-[#fff] w-[450px] overflow-hidden flex flex-col items-start pt-0 px-0 pb-1 box-border max-w-full text-left text-[28px] text-[#fff] font-[Inter]">
             <div className="self-stretch rounded-xl [background:linear-gradient(90deg,_#1b0641,_#300963)] overflow-hidden flex flex-col items-start py-[14.1px] pl-[25px] pr-3 box-border gap-[14.2px] max-w-full">
               <div className="self-stretch flex items-start py-[8.9px] px-0 box-border gap-[15.9px] max-w-full mq450:flex-wrap">
                 <b className="relative mq450:text-[22px]">▣</b>
@@ -223,9 +223,9 @@ const Incio: FunctionComponent = () => {
             </div>
           </section>
           {quickMode&&<div className="fixed inset-0 z-[400] flex items-center justify-center bg-black/50"><form onSubmit={saveQuick} className="w-[420px] rounded-2xl bg-white p-7 shadow-xl flex flex-col gap-4 text-[14px] leading-normal font-normal text-[#191236]"><div className="flex justify-between items-center"><h2 className="text-[20px] leading-7 font-bold">{quickDescription==="Salário"?"Registrar salário":quickMode==="Entrada"?"Registrar entrada":"Registrar gasto"}</h2><button type="button" onClick={()=>setQuickMode(null)}>✕</button></div><input required className="border rounded-lg p-3" placeholder="Descrição" value={quickDescription} onChange={e=>setQuickDescription(e.target.value)}/><input required className="border rounded-lg p-3" placeholder="Valor (R$)" type="text" inputMode="numeric" value={quickValue} onChange={e=>setQuickValue(formatMoneyInput(e.target.value))}/><input disabled className="border rounded-lg p-3 bg-[#f8f8fc]" value={quickMode}/><select required className="border rounded-lg p-3" value={quickCategory} onChange={e=>setQuickCategory(e.target.value)}><option value="">Selecione a categoria</option>{quickCategories.map(c=><option key={c.idCategoria} value={c.idCategoria}>{c.nmCategoria}</option>)}</select><select required className="border rounded-lg p-3" value={quickAccount} onChange={e=>setQuickAccount(e.target.value)}><option value="">Selecione a conta</option>{contas.map(c=><option key={c.id} value={c.id}>{c.nome}</option>)}</select>{quickError&&<p role="alert" className="text-xs text-red-600">{quickError}</p>}<button disabled={quickSaving||!quickCategories.length||!contas.length} className="bg-[#5212d6] disabled:opacity-50 text-white rounded-lg p-3">{quickSaving?"Salvando...":"Salvar movimentação"}</button>{(!quickCategories.length||!contas.length)&&<p className="text-xs text-red-600">Cadastre uma conta e uma categoria para continuar.</p>}</form></div>}
-          <EntradasESadas movimentacoes={movimentacoes} />
-          <MinhasCaixinhas caixinhas={caixinhas} loading={loading} />
-          <section className="absolute top-[408px] left-[19.95px] rounded-xl bg-[#fff] border-[#e3e6f2] border-solid border-[1px] box-border w-[773px] overflow-hidden flex flex-col items-start pt-[17px] px-[11px] pb-[30px] max-w-full text-left text-lg text-[#130e33] font-[Inter]">
+          <EntradasESadas className="valora-inicio-chart" movimentacoes={movimentacoes} />
+          <MinhasCaixinhas className="valora-inicio-boxes" caixinhas={caixinhas} loading={loading} />
+          <section className="valora-inicio-recent absolute top-[408px] left-[19.95px] rounded-xl bg-[#fff] border-[#e3e6f2] border-solid border-[1px] box-border w-[773px] overflow-hidden flex flex-col items-start pt-[17px] px-[11px] pb-[30px] max-w-full text-left text-lg text-[#130e33] font-[Inter]">
             <div className="self-stretch flex items-center flex-wrap content-center py-0 pl-[5px] pr-[19px] box-border gap-2 max-w-full">
               <h2 className="m-0 flex-1 relative text-[length:inherit] font-bold font-[inherit] inline-block min-w-[185px] max-w-full">
                 Transações recentes
@@ -253,7 +253,7 @@ const Incio: FunctionComponent = () => {
               {loading?<p className="text-sm text-[#636391]">Carregando transações...</p>:error?<p role="alert" className="text-sm text-red-600">{error}</p>:recent.length===0?<p className="text-sm text-[#636391]">Nenhuma transação registrada.</p>:recent.map(m=><div key={m.id} className="w-[742px] flex flex-col gap-3"><div className="self-stretch flex items-start text-xs"><div className="flex-1 max-w-[122px]">{m.dataMovimentacao.split("-").reverse().join("/")}</div><div className="flex-1 max-w-[205px] font-medium text-[#130e33]">{m.descricao}</div><div className="flex-1 max-w-[192px]">{m.categoria||"Sem categoria"}</div><div className="flex-1 max-w-[136px]">{m.tipo==="RECEITA"?"Entrada":"Gasto"}</div><b className={`flex-1 max-w-[87px] ${m.tipo==="RECEITA"?"text-[#059e57]":"text-[#f01424]"}`}>{m.tipo==="RECEITA"?"+ ":"- "}{money(Number(m.valor))}</b></div><div className="border-t border-[#e3e6f2]"/></div>)}
             </div>
           </section>
-          <section className="absolute top-[494px] left-[805.05px] w-[375px] flex flex-col items-start gap-[9px] max-w-full text-left text-base text-[#1f1a29] font-[Inter]">
+          <section className="valora-inicio-budget absolute top-[494px] left-[805.05px] w-[375px] flex flex-col items-start gap-[9px] max-w-full text-left text-base text-[#1f1a29] font-[Inter]">
             <div className="self-stretch h-[186px] flex flex-col items-center max-w-full">
               <h3 className="m-0 w-full relative text-[length:inherit] font-semibold font-[inherit] inline-block max-w-[351px]">
                 Resumo do orçamento
@@ -292,6 +292,19 @@ const Incio: FunctionComponent = () => {
           </section>
         </section>
       </main>
+      <nav className="valora-inicio-bottom-nav" aria-label="Navegação principal">
+        {([
+          ["/dashboard", "/Wrapper.svg", "Início"],
+          ["/movimentacoes", "/Movimenta-es-icon.svg", "Movimentações"],
+          ["/caixinhas", "/Archive-Caixinhas.svg", "Caixinhas"],
+          ["/categorias", "/Frame13.svg", "Categorias"],
+          ["/minhas-contas", "/Contas-conectadas-icon.svg", "Minhas contas"],
+        ] as const).map(([path,icon,label]) => (
+          <button key={path} type="button" aria-current={path === "/dashboard" ? "page" : undefined} onClick={() => navigate(path)}>
+            <img src={icon} alt="" /><span>{label}</span>
+          </button>
+        ))}
+      </nav>
     </div>
   );
 };
