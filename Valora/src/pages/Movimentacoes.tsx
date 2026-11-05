@@ -1,3 +1,4 @@
+import PageLoading from "../components/PageLoading";
 import SidebarMenu from '../components/SidebarMenu';
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -41,6 +42,7 @@ export default function Movimentacoes(){
  const nav=[["Início","/dashboard","/Wrapper.svg"],["Movimentações","/movimentacoes","/Movimenta-es-icon.svg"],["Caixinhas","/caixinhas","/Archive-Caixinhas.svg"],["Categorias","/categorias","/Divider.svg"],["Contas conectadas","/contas-conectadas","/Contas-conectadas-icon.svg"]];
  const px=(x:number,y:number,w:number,h:number)=>({position:"absolute" as const,left:x,top:y,width:w,height:h});
  return <div style={{zoom}} className="relative w-[1440px] min-h-[1024px] bg-[#f8f8fc] font-[Inter] text-[#191236]">
+ {loading && <PageLoading label="Carregando movimentações..." />}
  <aside className="absolute left-0 top-0 w-[232px] h-[1024px] bg-[#160b30] px-3">
   <SidebarMenu active="Movimentações"/>
  <div className="absolute left-[18px] top-[727px] w-[195px] h-[235px] overflow-hidden rounded-[12px] border border-[#382175]">
