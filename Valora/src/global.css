@@ -879,3 +879,95 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed !important; }
   }
   .valora-caixinhas-bottom-nav img { width: 22px; height: 22px; object-fit: contain; }
 }
+
+
+/* Caixinhas — correções isoladas: cartões, histórico e modal. */
+.valora-caixinhas-page > [data-caix="backdrop"],
+.valora-caixinhas-page [data-caix="handle"] { display: none; }
+@media (max-width: 1023px) {
+  .valora-caixinhas-page > [data-caix="backdrop"] {
+    display: block !important; position: fixed !important;
+    inset: 0 !important; width: 100vw !important; height: 100dvh !important;
+    z-index: 190; border: 0; background: rgba(18,10,42,.44);
+  }
+  .valora-caixinhas-page > [data-caix="form"] {
+    position: fixed !important; z-index: 200 !important;
+    top: auto !important; bottom: 0 !important;
+    left: 50% !important; right: auto !important;
+    transform: translateX(-50%) translateY(var(--sheet-drag,0px)) !important;
+    width: min(390px,100vw) !important; max-width: 100vw !important;
+    height: min(650px,88dvh) !important; max-height: 88dvh !important;
+    overflow-x: hidden; overflow-y: auto;
+    border-radius: 24px 24px 0 0 !important;
+    box-shadow: 0 -12px 36px rgba(18,10,42,.2);
+  }
+  .valora-caixinhas-page [data-caix="handle"] {
+    display: flex !important; position: absolute;
+    top: 0; left: 0; width: 100%; height: 34px;
+    align-items: center; justify-content: center;
+    background: transparent; z-index: 2;
+    touch-action: none; cursor: grab;
+  }
+  .valora-caixinhas-page [data-caix="handle"] span {
+    width: 44px; height: 5px; border-radius: 8px; background: #c7c3d3;
+  }
+  .valora-caixinhas-page > [data-caix="form"] > b:first-of-type { top: 40px !important; }
+  .valora-caixinhas-page > [data-caix="form"] > button[type="button"]:not([data-caix="handle"]) {
+    top: 35px !important; left: auto !important; right: 15px !important;
+  }
+  .valora-caixinhas-page > [data-caix="form"] > label:first-of-type { top: 88px !important; }
+  .valora-caixinhas-page > [data-caix="form"] > input:first-of-type { top: 110px !important; }
+  .valora-caixinhas-page > [data-caix="form"] > label:nth-of-type(2) { top: 176px !important; }
+  .valora-caixinhas-page > [data-caix="form"] > div:nth-of-type(1) { top: 201px !important; }
+  .valora-caixinhas-page > [data-caix="form"] > div:nth-of-type(2) { top: 243px !important; }
+  .valora-caixinhas-page > [data-caix="form"] > label:nth-of-type(3) { top: 271px !important; }
+  .valora-caixinhas-page > [data-caix="form"] > input:nth-of-type(2) { top: 293px !important; }
+  .valora-caixinhas-page > [data-caix="form"] > label:nth-of-type(4) { top: 361px !important; }
+  .valora-caixinhas-page > [data-caix="form"] > input:nth-of-type(3) { top: 383px !important; }
+  .valora-caixinhas-page > [data-caix="form"] > label:nth-of-type(5) { top: 451px !important; }
+  .valora-caixinhas-page > [data-caix="form"] > div:last-of-type { top: 476px !important; }
+  .valora-caixinhas-page > [data-caix="form"] > button[type="submit"] { top: 544px !important; }
+  .valora-caixinhas-page > [data-caix="form"] input,
+  .valora-caixinhas-page > [data-caix="form"] > button[type="submit"] {
+    width: calc(100% - 34px) !important; max-width: calc(100% - 34px) !important;
+  }
+  .valora-caixinhas-page > [data-caix="history"] { overflow: hidden !important; }
+  .valora-caixinhas-page [data-caix="history-scroll"] {
+    overflow-x: auto !important; overflow-y: auto !important;
+    scrollbar-width: thin;
+  }
+  .valora-caixinhas-page > [data-caix="goal"] {
+    min-width: 0 !important; width: 100% !important;
+    max-width: 100% !important; overflow: hidden;
+  }
+  .valora-caixinhas-page > [data-caix="goal"] > b:nth-child(2) {
+    left: 80px !important; max-width: calc(100% - 110px) !important;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .valora-caixinhas-page > [data-caix="goal"] > b:nth-child(3) {
+    left: 80px !important; top: 43px !important;
+  }
+  .valora-caixinhas-page > [data-caix="goal"] > span:nth-child(4) {
+    left: 80px !important; top: 60px !important;
+    max-width: calc(100% - 100px); overflow: hidden;
+    text-overflow: ellipsis; white-space: nowrap;
+  }
+  .valora-caixinhas-page > [data-caix="goal"] > div:nth-child(5) {
+    left: 80px !important; top: 88px !important;
+    width: calc(100% - 128px) !important;
+  }
+  .valora-caixinhas-page > [data-caix="goal"] > b:nth-child(6) {
+    left: auto !important; right: 12px !important; top: 86px !important;
+  }
+  .valora-caixinhas-page > [data-caix="goal"] > span:last-child {
+    left: auto !important; right: 9px !important;
+  }
+  .valora-caixinhas-page > [data-caix="goal"] > div:first-child {
+    left: 12px !important; width: 54px; height: 54px;
+  }
+}
+@media (max-width: 699px) {
+  .valora-caixinhas-page { width: 100% !important; overflow-x: clip; }
+  .valora-caixinhas-page > [data-caix="goal"] { height: 122px !important; }
+  .valora-caixinhas-page > [data-caix="history"] { width: 100% !important; }
+}
