@@ -6,6 +6,7 @@ import FormContent from "../components/FormContent";
 const Login: FunctionComponent = () => {
   const navigate = useNavigate();
   const [cadastroAberto, setCadastroAberto] = useState(false);
+  const [loginAberto, setLoginAberto] = useState(false);
   const fecharCadastro = useCallback(() => setCadastroAberto(false), []);
   return (
     <>
@@ -25,6 +26,10 @@ const Login: FunctionComponent = () => {
                     Valora
                   </div>
                 </div>
+              </div>
+              <div className="valora-login-mobile-actions">
+                <button type="button" onClick={() => setLoginAberto(true)}>Fazer login</button>
+                <button type="button" onClick={() => setCadastroAberto(true)}>Criar conta</button>
               </div>
               <section className="w-full flex flex-col items-start py-0 px-2 box-border gap-4 max-w-[468.8px] z-[1] text-left text-[13px] text-[#c7b3f2] font-[Inter] mq825:max-w-full">
                 <div className="self-stretch flex items-start pt-0 px-0 pb-2 box-border max-w-full">
@@ -114,7 +119,7 @@ const Login: FunctionComponent = () => {
             </div>
           </div>
         </main>
-        <section className="valora-login-panel flex-[1.0857] flex flex-col items-start py-[29.9px] px-0 box-border gap-[21px] min-w-[310px] max-w-[519px] text-left text-[11px] text-[#736b8f] font-[Inter] lg:pt-5 lg:pb-5 lg:box-border mq825:max-w-full">
+        <section className={`valora-login-panel ${loginAberto ? "valora-login-panel-open" : ""} flex-[1.0857] flex flex-col items-start py-[29.9px] px-0 box-border gap-[21px] min-w-[310px] max-w-[519px] text-left text-[11px] text-[#736b8f] font-[Inter] lg:pt-5 lg:pb-5 lg:box-border mq825:max-w-full`}>
           <div className="self-stretch flex items-center justify-end gap-9 mq450:gap-[18px] mq450:flex-wrap">
             <div className="relative">Ainda não tem uma conta?</div>
             <button type="button" onClick={() => setCadastroAberto(true)} className="cursor-pointer border-[#4d21b3] border-solid border-[1.5px] py-[11px] pl-[25px] pr-[22px] bg-[transparent] h-10 rounded-[10px] box-border overflow-hidden flex items-center justify-center hover:bg-[rgba(115,71,217,0.09)] hover:border-[#7347d9] hover:border-solid hover:hover:border-[1.5px] hover:box-border">
@@ -123,6 +128,7 @@ const Login: FunctionComponent = () => {
               </div>
             </button>
           </div>
+          <button type="button" className="valora-login-mobile-close" aria-label="Fechar login" onClick={() => setLoginAberto(false)}><span /></button>
           <FormContent />
         </section>
       </main>
