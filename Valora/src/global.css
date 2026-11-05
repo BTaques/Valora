@@ -648,3 +648,82 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed !important; }
   }
   .valora-mov-bottom-nav img { width: 22px; height: 22px; object-fit: contain; }
 }
+
+
+/* Tela 03: os totais estavam posicionados em relação à página, não ao cartão. */
+@media (max-width: 1023px) {
+  .valora-mov-page > [data-mov="totals"] {
+    position: relative !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr) minmax(0, 1fr) auto;
+    grid-template-rows: 20px 26px;
+    align-content: center;
+    align-items: center;
+    column-gap: 10px;
+    padding: 10px 14px;
+    overflow: visible;
+  }
+  .valora-mov-page > [data-mov="totals"] > b:first-child {
+    position: static !important; grid-column: 1; grid-row: 1/3;
+    font-size: 13px; white-space: normal;
+  }
+  .valora-mov-page > [data-mov="totals"] > span:nth-child(2),
+  .valora-mov-page > [data-mov="totals"] > span:nth-child(4),
+  .valora-mov-page > [data-mov="totals"] > b:nth-child(3),
+  .valora-mov-page > [data-mov="totals"] > b:nth-child(5) {
+    position: static !important; width: auto !important;
+    white-space: nowrap; min-width: 0;
+  }
+  .valora-mov-page > [data-mov="totals"] > span:nth-child(2) { grid-column: 2; grid-row: 1; }
+  .valora-mov-page > [data-mov="totals"] > b:nth-child(3) { grid-column: 2; grid-row: 2; }
+  .valora-mov-page > [data-mov="totals"] > span:nth-child(4) { grid-column: 3; grid-row: 1; }
+  .valora-mov-page > [data-mov="totals"] > b:nth-child(5) { grid-column: 3; grid-row: 2; }
+  .valora-mov-page > [data-mov="totals"] > button {
+    position: static !important; grid-column: 4; grid-row: 1/3;
+    height: 40px !important; width: auto !important;
+    min-width: 96px; padding: 0 12px;
+  }
+  .valora-mov-page > [data-mov="table"] > b:first-child { position: absolute; left: 17px; top: 14px; }
+  .valora-mov-page [data-mov="pagination"] { position: absolute !important; top: 472px !important; left: 17px !important; }
+}
+@media (max-width: 699px) {
+  .valora-mov-page > [data-mov="totals"] {
+    height: auto !important; min-height: 136px;
+    grid-template-columns: repeat(2,minmax(0,1fr));
+    grid-template-rows: 26px 19px 24px;
+    gap: 4px 12px; padding: 12px 14px;
+  }
+  .valora-mov-page > [data-mov="totals"] > b:first-child {
+    grid-column: 1; grid-row: 1; align-self: start;
+  }
+  .valora-mov-page > [data-mov="totals"] > button {
+    grid-column: 2; grid-row: 1; justify-self: end;
+    min-width: 105px; height: 30px !important;
+  }
+  .valora-mov-page > [data-mov="totals"] > span:nth-child(2) { grid-column: 1; grid-row: 2; }
+  .valora-mov-page > [data-mov="totals"] > b:nth-child(3) { grid-column: 1; grid-row: 3; }
+  .valora-mov-page > [data-mov="totals"] > span:nth-child(4) { grid-column: 2; grid-row: 2; }
+  .valora-mov-page > [data-mov="totals"] > b:nth-child(5) { grid-column: 2; grid-row: 3; }
+}
+/* Tela 02: os quatro atalhos financeiros com dimensões equivalentes. */
+@media (max-width: 1023px) {
+  .valora-inicio-summary > div:nth-child(2) {
+    grid-template-columns: repeat(4,minmax(0,1fr)) !important;
+    align-items: start;
+  }
+  .valora-inicio-summary > div:nth-child(2) > * {
+    width: 100% !important; min-width: 0 !important;
+    max-width: 100%; flex: none !important;
+    align-self: start;
+  }
+  .valora-inicio-summary > div:nth-child(2) > * > button,
+  .valora-inicio-summary > div:nth-child(2) > * > img {
+    width: 100% !important; height: 64px !important;
+    min-height: 64px; max-height: 64px;
+    object-fit: cover; border-radius: 9px;
+  }
+  .valora-inicio-summary > div:nth-child(2) > * > div {
+    width: 100%; text-align: center;
+    font-size: 10px; overflow-wrap: anywhere;
+  }
+}
