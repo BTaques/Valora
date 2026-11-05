@@ -313,3 +313,17 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed !important; }
     touch-action: manipulation;
   }
 }
+
+
+/* Botões do topo: neutraliza a regra genérica que forçava width:100%
+   em todas as divs filhas do hero e empurrava os botões para a esquerda. */
+@media (max-width: 699px) {
+  .valora-login-hero > .valora-login-mobile-actions {
+    width: max-content !important;
+    max-width: calc(100% - 40px) !important;
+    left: auto !important;
+    right: 20px !important;
+    top: 43px !important;
+    justify-content: flex-end !important;
+  }
+}
