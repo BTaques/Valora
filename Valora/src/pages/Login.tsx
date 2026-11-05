@@ -33,7 +33,7 @@ const Login: FunctionComponent = () => {
     <div className="valora-login w-full relative bg-[#f9f8fc] overflow-hidden flex items-start py-0 pl-0 pr-9 box-border leading-[normal] tracking-[normal] text-left text-sm text-[#6e6980] font-[Inter]">
       <main className="valora-login-layout h-[1024px] flex-1 flex items-start justify-between flex-wrap content-start gap-0 max-w-[1404px] [row-gap:20px] mq1400:gap-0 mq1400:max-w-full">
         <main className="valora-login-hero h-[1024px] flex-1 overflow-hidden flex flex-col items-center py-[5.8px] px-[30px] box-border bg-[url('/Brand@3x.png')] bg-cover bg-no-repeat bg-[top] min-w-[310px] max-w-[760px] min-h-[1024px] text-left text-[29px] text-[#fff] font-[Inter] mq825:max-w-full mq825:flex-1">
-              <div className="valora-login-mobile-actions">
+              <div className="valora-login-mobile-actions" style={{ position: "absolute", top: 43, right: 20, left: "auto", zIndex: 50 }}>
                 <button type="button" onClick={() => setLoginAberto(true)}>Fazer login</button>
                 <button type="button" onClick={() => setCadastroAberto(true)}>Criar conta</button>
               </div>
