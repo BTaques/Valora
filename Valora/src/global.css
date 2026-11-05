@@ -288,3 +288,28 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed !important; }
     .valora-login-panel.valora-login-panel-open { transition: none; }
   }
 }
+
+
+/* Correção da área clicável: botões mobile acima do cabeçalho e seções. */
+@media (max-width: 699px) {
+  .valora-login-hero > .valora-login-mobile-actions {
+    position: absolute !important;
+    top: 40px !important;
+    right: 20px !important;
+    z-index: 50 !important;
+    display: flex !important;
+    align-items: stretch;
+    pointer-events: auto;
+  }
+  .valora-login-hero > .valora-login-mobile-actions > button {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+    min-height: 34px;
+    padding: 0 11px;
+    pointer-events: auto;
+    touch-action: manipulation;
+  }
+}
