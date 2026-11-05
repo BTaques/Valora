@@ -13,6 +13,7 @@ import Caixinhas from "./pages/Caixinhas";
 import DetalhesCaixinha from "./pages/DetalhesCaixinha";
 import Categorias from "./pages/Categorias";
 import ContasConectadas from "./pages/ContasConectadas";
+import BelvoRetorno from "./pages/BelvoRetorno";
 import MinhasContas from "./pages/MinhasContas";
 import { getAccessToken } from "./services/valoraApi";
 
@@ -37,6 +38,7 @@ function App() {
       "/caixinhas": "Valora | Caixinhas",
       "/categorias": "Valora | Categorias",
       "/contas-conectadas": "Valora | Conectar banco",
+      "/belvo/retorno": "Valora | Confirmação bancária",
       "/minhas-contas": "Valora | Minhas contas",
     };
     document.title = titleByPath[pathname] || "Valora";
@@ -61,6 +63,7 @@ function App() {
       <Route path="/06-categorias" element={<Protected><Categorias /></Protected>} />
       <Route path="/minhas-contas" element={<Protected><MinhasContas /></Protected>} />
       <Route path="/12-minhas-contas" element={<Protected><MinhasContas /></Protected>} />
+      <Route path="/belvo/retorno" element={<Protected><BelvoRetorno /></Protected>} />
       <Route path="/contas-conectadas" element={<Protected><ContasConectadas /></Protected>} />
       <Route path="/07-conectar-conta" element={<Protected><ContasConectadas /></Protected>} />
       <Route path="/detalhes-caixinha" element={<Protected><DetalhesCaixinha /></Protected>} />
