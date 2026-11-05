@@ -47,3 +47,98 @@ button:disabled { cursor: not-allowed; }
 /* Indicador visual de interacao: sem alterar layout ou comportamento. */
 button, a, select, summary, label[for], [role="button"], [role="link"], [role="menuitem"], [role="tab"], [aria-haspopup], input[type="button"], input[type="submit"], input[type="checkbox"], input[type="radio"] { cursor: pointer !important; }
 button:disabled, [aria-disabled="true"] { cursor: not-allowed !important; }
+
+
+/* Tela 01 — Login tablet: adaptação do layout e componentes existentes.
+   Referência: Figma 388:2 (768 × 546). Desktop e mobile permanecem intactos. */
+@media (min-width: 700px) and (max-width: 1000px) {
+  .valora-login { min-height: 100dvh; overflow-x: hidden; }
+  .valora-login-layout {
+    grid-template-columns: minmax(0, 52.7778fr) minmax(0, 47.2222fr) !important;
+    min-height: 100dvh;
+    align-items: stretch !important;
+  }
+  .valora-login-hero {
+    min-height: 100dvh !important;
+    padding: 16px clamp(18px, 4.3vw, 38px) 24px !important;
+    background-position: center;
+  }
+  .valora-login-hero > div,
+  .valora-login-hero > div > div { max-width: 100%; }
+  .valora-login-hero > div > div { gap: clamp(20px, 4vh, 42px) !important; }
+  .valora-login-hero > div > div > div:first-child {
+    padding: 0 !important;
+    flex-wrap: nowrap !important;
+    align-items: center;
+  }
+  .valora-login-hero > div > div > div:first-child img { width: 20px; height: 18px; }
+  .valora-login-hero > div > div > div:first-child > div { height: auto; padding: 0; }
+  .valora-login-hero > div > div > div:first-child > div > div {
+    font-size: 16px; min-width: 0;
+  }
+  .valora-login-hero section:first-of-type { padding: 0 !important; gap: 10px; }
+  .valora-login-hero section:first-of-type > div:first-child { padding-bottom: 0 !important; }
+  .valora-login-hero section:first-of-type > div:first-child div {
+    font-size: 8px; letter-spacing: .22em;
+  }
+  .valora-login-hero section:first-of-type > div:nth-child(2) {
+    font-size: clamp(22px, 3.2vw, 30px) !important;
+    line-height: 1.12 !important;
+  }
+  .valora-login-hero section:first-of-type > div:nth-child(3) {
+    font-size: clamp(10px, 1.3vw, 12px);
+    line-height: 1.45;
+  }
+  .valora-login-hero section:last-of-type { gap: 15px; }
+  .valora-login-hero section:last-of-type > div { gap: 10px; flex-wrap: nowrap; }
+  .valora-login-hero section:last-of-type img { width: 29px; height: 29px; flex-shrink: 0; }
+  .valora-login-hero section:last-of-type > div > div {
+    padding-top: 0 !important; min-width: 0 !important; gap: 3px;
+  }
+  .valora-login-hero section:last-of-type > div > div > div:first-child { font-size: 10px; }
+  .valora-login-hero section:last-of-type > div > div > div:last-child { font-size: 9px; }
+  .valora-login-panel {
+    min-height: 100dvh;
+    padding: 16px clamp(20px, 5.2vw, 45px) 25px !important;
+  }
+  .valora-login-panel > div:first-child {
+    gap: 10px !important; flex-wrap: nowrap !important;
+    margin-bottom: 12px !important; font-size: 8px;
+    white-space: nowrap;
+  }
+  .valora-login-panel > div:first-child button {
+    height: 26px; padding: 5px 10px; border-radius: 7px;
+  }
+  .valora-login-panel > div:first-child button div { font-size: 9px; }
+  .valora-login-form { max-width: 100%; gap: 10px !important; }
+  .valora-login-form > div:first-child { padding: 0 !important; gap: 3px; }
+  .valora-login-form > div:first-child > div:first-child { justify-content: center; padding: 0 !important; }
+  .valora-login-form > div:first-child > div:first-child > div {
+    transform: scale(.58); transform-origin: center; margin: -14px 0;
+  }
+  .valora-login-form h2 { font-size: clamp(17px, 2.4vw, 21px) !important; }
+  .valora-login-form > div:first-child > div:last-child { font-size: 10px; }
+  .valora-login-form > div:nth-child(2) { padding: 12px 0 4px !important; gap: 6px; }
+  .valora-login-form > div:nth-child(3) { gap: 6px; padding-bottom: 0 !important; }
+  .valora-login-form label { font-size: 10px; }
+  .valora-login-form input { min-width: 0 !important; font-size: 11px; }
+  .valora-login-form > div:nth-child(2) > div,
+  .valora-login-form > div:nth-child(3) > div:first-of-type > div {
+    height: 36px; padding: 9px 10px;
+    border-radius: 7px;
+  }
+  .valora-login-form > div:nth-child(3) > div:last-child { font-size: 10px; }
+  .valora-login-form > button[type="submit"] {
+    min-height: 36px; padding: 8px 12px; flex-wrap: nowrap;
+  }
+  .valora-login-form > button[type="submit"] span {
+    width: auto; flex: 1; max-width: none; text-align: center; font-size: 11px;
+  }
+  .valora-login-form > button[type="submit"] img { width: 14px; height: 14px; }
+  .valora-login-form > div:nth-last-child(2) { padding: 0; gap: 8px; }
+  .valora-login-form > div:nth-last-child(2) > div { font-size: 9px; }
+  .valora-login-form > button:last-child {
+    height: 36px; padding: 8px 12px; border-radius: 7px;
+  }
+  .valora-login-form > button:last-child span { font-size: 10px; text-align: center; }
+}
