@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Topbar5 from '../components/Topbar5';
 import { GoalIcon, getCashboxIcon } from '../components/GoalIcon';
-import { api, type CashboxDto } from '../services/valoraApi';
+import { api, type CashboxDto, type MovementDto } from '../services/valoraApi';
 import {formatMoneyInput,parseMoneyInput} from '../utils/moneyInput';
 
 type Goal={idCaixinha:number;name:string;amount:number;target:number;icon:string};
@@ -14,7 +14,10 @@ const pos=(x:number,y:number,w:number,h:number)=>({position:'absolute' as const,
 export default function Caixinhas(){
  const navigate=useNavigate();const [zoom,setZoom]=useState(1);useEffect(()=>{const f=()=>setZoom(Math.max(1,window.innerWidth/1440));f();window.addEventListener('resize',f);return()=>window.removeEventListener('resize',f)},[]);
 useEffect(()=>{let active=true;api.caixinhas.list().then(items=>{if(active){setGoals(items.map(fromApiCashbox));setLoading(false)}}).catch(error=>{if(active){setApiError(error instanceof Error?error.message:'Erro ao carregar caixinhas');setLoading(false)}});return()=>{active=false}},[]);
- const [loading,setLoading]=useState(true);const [goals,setGoals]=useState<Goal[]>([]);const [showAllGoals,setShowAllGoals]=useState(false);const [showMoreIcons,setShowMoreIcons]=useState(false);const [tipOpen,setTipOpen]=useState(true);const [formOpen,setFormOpen]=useState(true);const [name,setName]=useState('');const [target,setTarget]=useState('');const [start,setStart]=useState('');const [chosenIcon,setChosenIcon]=useState('car');const [chosenColor,setChosenColor]=useState('#5212d6'),[apiError,setApiError]=useState('');
+ const [historyLoading,setHistoryLoading]=useState(true);const [historyError,setHistoryError]=useState('');const [history,setHistory]=useState<MovementDto[]>([]);const [loading,setLoading]=useState(true);const [goals,setGoals]=useState<Goal[]>([]);const [showAllGoals,setShowAllGoals]=useState(false);const [showMoreIcons,setShowMoreIcons]=useState(false);const [tipOpen,setTipOpen]=useState(true);const [formOpen,setFormOpen]=useState(true);const [name,setName]=useState('');const [target,setTarget]=useState('');const [start,setStart]=useState('');const [chosenIcon,setChosenIcon]=useState('car');const [chosenColor,setChosenColor]=useState('#5212d6'),[apiError,setApiError]=useState('');
+ useEffect(()=>{let active=true;api.movimentacoes.listAll().then(items=>{if(!active)return;setHistory(items.filter(item=>item.tipo==='CAIXINHA_GUARDAR'||item.tipo==='CAIXINHA_RESGATE').sort((a,b)=>b.dataMovimentacao.localeCompare(a.dataMovimentacao)||b.id-a.id));setHistoryError('')}).catch(()=>{if(active)setHistoryError('Não foi possível carregar o histórico. Tente atualizar a página.')}).finally(()=>{if(active)setHistoryLoading(false)});return()=>{active=false}},[]);
+ const cashboxName=(movement:MovementDto)=>{const match=movement.descricao.match(/(?:depósito|deposito|resgate)\s+(?:na|da)\s+caixinha\s+(.+)$/i);return match?.[1]?.trim()||'Caixinha não identificada'};
+ const historyDate=(date:string)=>{const iso=date.slice(0,10);const parts=iso.split('-');return parts.length===3?parts.reverse().join('/'):date};
  const nav=[['Início','/dashboard','/Wrapper.svg'],['Movimentações','/movimentacoes','/Movimenta-es-icon.svg'],['Caixinhas','/caixinhas','/Archive-Caixinhas.svg'],['Categorias','/categorias','/Divider.svg'],['Contas conectadas','/contas-conectadas','/Contas-conectadas-icon.svg']];
  const cards=showAllGoals?goals:goals.slice(0,5);const hasMore=goals.length>5;const goalRows=Math.ceil((cards.length+(hasMore&&!showAllGoals?1:0))/2);const historyTop=Math.max(675,310+goalRows*118+22);const sum=goals.reduce((n,g)=>n+g.amount,0);const total=goals.reduce((n,g)=>n+g.target,0);
  return <div style={{zoom,minHeight:Math.max(1024,historyTop+340)}} className="relative w-[1440px] bg-[#f9f9fe] font-[Inter] text-[#140f33]">
@@ -49,7 +52,12 @@ useEffect(()=>{let active=true;api.caixinhas.list().then(items=>{if(active){setG
  <h2 className="absolute left-[16px] top-[15px] font-bold text-[14px]">Últimas movimentações das caixinhas</h2>
  <button onClick={()=>navigate('/movimentacoes')} className="absolute right-[20px] top-[17px] text-[#5212d6] text-[11px] font-semibold">Ver todas →</button>
  <div className="absolute left-[16px] top-[47px] w-[763px] h-[34px] bg-[#f0f0f9] grid items-center text-[10px] text-[#5c5791] px-[5px]" style={{gridTemplateColumns:'148px 172px 198px 150px 1fr'}}><span>Data</span><span>Caixinha</span><span>Descrição</span><span>Tipo</span><span>Valor</span></div>
- <p className="absolute left-[20px] top-[115px] text-[11px] text-[#5c5791]">O histórico ficará disponível quando a API de movimentações for implementada.</p>
+ <div className="absolute left-[16px] right-[16px] top-[85px] bottom-[12px] overflow-y-auto" aria-live="polite">
+ {historyLoading?<p role="status" className="py-6 px-2 text-[12px] text-[#5c5791]">Carregando movimentações das caixinhas...</p>:historyError?<p role="alert" className="py-6 px-2 text-[12px] text-red-600">{historyError}</p>:history.length===0?<p className="py-6 px-2 text-[12px] text-[#5c5791]">Nenhuma movimentação de caixinha registrada.</p>:history.slice(0,5).map(m=><div key={m.id} className="grid min-h-[39px] items-center border-b border-[#f0edf7] px-[5px] text-[11px] text-[#140f33] last:border-b-0" style={{gridTemplateColumns:'148px 172px 198px 150px 1fr'}}>
+ <span>{historyDate(m.dataMovimentacao)}</span><span className="truncate pr-2" title={cashboxName(m)}>{cashboxName(m)}</span><span className="truncate pr-2" title={m.descricao}>{m.descricao}</span><span className={m.tipo==='CAIXINHA_GUARDAR'?'text-[#5712d6]':'text-[#147d53]'}>{m.tipo==='CAIXINHA_GUARDAR'?'Depósito':'Resgate'}</span><span className="font-semibold">{money(Number(m.valor))}</span>
+ </div>)}
+ {history.length>5&&<button type="button" onClick={()=>navigate('/movimentacoes')} className="mt-3 text-[11px] font-semibold text-[#5212d6]">Ver mais {history.length-5} movimentações →</button>}
+ </div>
  </section>
  {tipOpen&&<section style={pos(1070,718,356,263)} className="bg-white border border-[#e3e3f2] rounded-[10px] overflow-hidden">
  <img src="/Moedas-Dica-Valora.png" alt="" className="absolute inset-0 w-full h-full object-cover object-center"/>
