@@ -1821,3 +1821,47 @@ body {
  .valora-detail-bottom-nav img {width:19px; height:19px; filter:brightness(0) invert(1)}
  .valora-detail-bottom-nav button[aria-current="page"] {background:#5115c8; border-radius:9px; padding:7px 0}
 }
+
+
+/* Padrão único de menu lateral no tablet, igual ao de Categorias. */
+@media (min-width:700px) and (max-width:1023px) {
+ :is(.valora-cat-page > [data-cat="sidebar"], .valora-accounts-page > [data-accounts="sidebar"], .valora-connect-page > [data-connect="sidebar"], .valora-detail-page > [data-detail="sidebar"]) {
+   width:116px !important; min-width:116px !important; max-width:116px !important;
+   padding:0 !important; overflow:hidden !important; box-sizing:border-box;
+ }
+ :is(.valora-cat-page > [data-cat="sidebar"], .valora-accounts-page > [data-accounts="sidebar"], .valora-connect-page > [data-connect="sidebar"]) > div:first-child {
+   position:relative !important; left:0 !important; top:0 !important;
+   width:116px !important; height:100% !important;
+ }
+ :is(.valora-cat-page > [data-cat="sidebar"], .valora-accounts-page > [data-accounts="sidebar"], .valora-connect-page > [data-connect="sidebar"]) > div:first-child > div:first-child {
+   position:absolute !important; left:7px !important; top:20px !important;
+   width:102px !important; font-size:17px !important; gap:2px !important;
+ }
+ :is(.valora-cat-page > [data-cat="sidebar"], .valora-accounts-page > [data-accounts="sidebar"], .valora-connect-page > [data-connect="sidebar"]) > div:first-child > div:first-child img {
+   width:27px !important; height:27px !important;
+ }
+ :is(.valora-cat-page > [data-cat="sidebar"], .valora-accounts-page > [data-accounts="sidebar"], .valora-connect-page > [data-connect="sidebar"]) nav {
+   position:absolute !important; left:6px !important; top:85px !important;
+   width:104px !important; gap:7px !important;
+ }
+ :is(.valora-cat-page > [data-cat="sidebar"], .valora-accounts-page > [data-accounts="sidebar"], .valora-connect-page > [data-connect="sidebar"], .valora-detail-page > [data-detail="sidebar"]) nav button {
+   width:104px !important; height:54px !important; padding:5px 3px !important;
+   display:flex !important; flex-direction:column !important;
+   align-items:center !important; justify-content:center !important;
+   gap:3px !important; text-align:center !important;
+   font-size:9px !important; line-height:12px !important;
+   white-space:normal !important;
+ }
+ :is(.valora-cat-page > [data-cat="sidebar"], .valora-accounts-page > [data-accounts="sidebar"], .valora-connect-page > [data-connect="sidebar"], .valora-detail-page > [data-detail="sidebar"]) nav button img {
+   width:19px !important; height:19px !important;
+ }
+ .valora-detail-page > [data-detail="sidebar"] {padding:0 6px !important}
+ .valora-detail-page > [data-detail="sidebar"] > div:first-child {
+   display:flex !important; align-items:center !important;
+   padding:20px 0 22px !important; font-size:17px !important;
+   white-space:nowrap; gap:2px !important;
+ }
+ .valora-detail-page > [data-detail="sidebar"] nav {gap:7px !important}
+ :is(.valora-cat-page > [data-cat="sidebar"], .valora-accounts-page > [data-accounts="sidebar"], .valora-connect-page > [data-connect="sidebar"]) > div:last-child,
+ .valora-detail-page > [data-detail="sidebar"] > div:last-child {display:none !important}
+}
