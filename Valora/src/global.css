@@ -1346,3 +1346,21 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed !important; }
     touch-action:none !important; user-select:none !important;
   }
 }
+
+
+/* Global: impedir que layouts responsivos criem rolagem horizontal na página.
+   Containers de tabela com overflow-x:auto continuam roláveis internamente. */
+html {
+  max-width: 100%;
+  overflow-x: clip;
+}
+body {
+  max-width: 100%;
+  overflow-x: clip;
+}
+#root {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: clip;
+}
