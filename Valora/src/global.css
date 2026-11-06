@@ -1635,3 +1635,100 @@ body {
  .valora-accounts-bottom-nav img { width:19px; height:19px; filter:brightness(0) invert(1); }
  .valora-accounts-bottom-nav button[aria-current="page"] { background:#5115c8; border-radius:9px; padding:7px 0; }
 }
+
+
+/* Tela 7 - Conectar contas: tablet e celular, sem alterar desktop. */
+.valora-connect-bottom-nav { display:none; }
+@media (max-width:1023px) {
+ .valora-connect-page { zoom:1 !important; width:100% !important; min-width:0 !important; max-width:100% !important; min-height:100dvh !important; height:auto !important; box-sizing:border-box; display:grid !important; gap:14px; align-content:start; }
+ .valora-connect-page > [data-connect] { position:relative !important; left:auto !important; top:auto !important; width:100% !important; min-width:0 !important; max-width:none !important; box-sizing:border-box; }
+ .valora-connect-page > [data-connect="title"] { height:auto !important; font-size:26px !important; line-height:34px; }
+ .valora-connect-page > [data-connect="subtitle"] { height:auto !important; font-size:13px; line-height:19px; }
+ .valora-connect-page > [data-connect="hero"] { height:500px !important; }
+ .valora-connect-page > [data-connect="hero"] > img { left:auto !important; right:10px !important; width:34% !important; }
+ .valora-connect-page > [data-connect="hero"] > button { left:4% !important; width:92% !important; }
+ .valora-connect-page > [data-connect="hero"] > p:last-child { left:4% !important; right:4% !important; width:auto !important; text-align:center; font-size:10px; }
+ .valora-connect-page > [data-connect="how"] { height:340px !important; }
+ .valora-connect-page > [data-connect="security"] { height:146px !important; }
+ .valora-connect-page > [data-connect="banks"] { height:auto !important; min-height:460px !important; padding:80px 18px 22px; }
+ .valora-connect-page > [data-connect="banks"] > div { position:relative !important; left:auto !important; top:auto !important; width:100% !important; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; }
+ .valora-connect-page > [data-connect="banks"] > div > button { width:100% !important; min-width:0; }
+ .valora-connect-overlay { position:fixed !important; inset:0 !important; z-index:300 !important; display:flex; align-items:center; justify-content:center; padding:14px; overflow-y:auto; }
+ .valora-connect-dialog { position:relative !important; left:auto !important; top:auto !important; width:min(780px,100%) !important; height:704px !important; max-height:calc(100dvh - 28px); overflow:auto; flex-shrink:0; }
+ .valora-connect-dialog > label { left:5% !important; width:90% !important; }
+ .valora-connect-dialog > div.grid { left:5% !important; width:90% !important; grid-template-columns:repeat(3,minmax(0,1fr)); }
+ .valora-connect-dialog > div.grid button { min-width:0; }
+ .valora-connect-dialog > button:not(:first-child) { max-width:calc(100% - 36px); }
+}
+@media (min-width:700px) and (max-width:1023px) {
+ .valora-connect-page { grid-template-columns:116px repeat(6,minmax(0,1fr)); grid-template-rows:58px 28px 40px auto auto auto; padding:0 14px 28px 0; column-gap:12px; }
+ .valora-connect-page > [data-connect="sidebar"] { grid-column:1; grid-row:1/9; height:100% !important; min-height:100dvh; overflow:hidden; }
+ .valora-connect-page > [data-connect="sidebar"] > div:first-child { position:relative !important; left:0 !important; top:0 !important; width:116px !important; }
+ .valora-connect-page > [data-connect="sidebar"] > div:first-child > div:first-child { left:7px !important; top:20px !important; font-size:17px !important; gap:2px !important; }
+ .valora-connect-page > [data-connect="sidebar"] > div:first-child > div:first-child img { width:27px !important; height:27px !important; }
+ .valora-connect-page > [data-connect="sidebar"] nav { left:6px !important; top:85px !important; width:104px !important; gap:7px !important; }
+ .valora-connect-page > [data-connect="sidebar"] nav button { width:104px !important; height:54px !important; padding:5px 3px !important; gap:3px !important; flex-direction:column !important; justify-content:center !important; text-align:center !important; font-size:9px !important; line-height:12px !important; white-space:normal !important; }
+ .valora-connect-page > [data-connect="sidebar"] nav button img { width:19px !important; height:19px !important; }
+ .valora-connect-page > [data-connect="sidebar"] > div:last-child { display:none !important; }
+ .valora-connect-page > [data-connect="topbar"] { grid-column:2/-1; grid-row:1; height:58px !important; overflow:hidden; }
+ .valora-connect-page > [data-connect="topbar"] header { min-height:58px !important; height:58px !important; padding:8px !important; }
+ .valora-connect-page > [data-connect="topbar"] header > div:first-child { min-width:0; max-width:45%; }
+ .valora-connect-page > [data-connect="back"] { grid-column:2/-1; grid-row:2; height:auto !important; }
+ .valora-connect-page > [data-connect="title"] { grid-column:2/-1; grid-row:3; }
+ .valora-connect-page > [data-connect="subtitle"] { grid-column:2/-1; grid-row:4; }
+ .valora-connect-page > [data-connect="hero"] { grid-column:2/-1; grid-row:5; }
+ .valora-connect-page > [data-connect="how"] { grid-column:2/5; grid-row:6; }
+ .valora-connect-page > [data-connect="security"] { grid-column:5/-1; grid-row:6; height:340px !important; }
+ .valora-connect-page > [data-connect="security"] > p { left:18px !important; top:90px !important; width:calc(100% - 36px) !important; }
+ .valora-connect-page > [data-connect="security"] > button { left:18px !important; top:215px !important; }
+ .valora-connect-page > [data-connect="banks"] { grid-column:2/-1; grid-row:7; }
+ .valora-connect-page > [data-connect="hero"] > h2 { font-size:23px; }
+ .valora-connect-page > [data-connect="hero"] > img { opacity:.75; }
+ .valora-connect-page > [data-connect="hero"] > p:nth-of-type(1) { font-size:12px; }
+ .valora-connect-page > [data-connect="how"] > div { left:12px !important; }
+ .valora-connect-page > [data-connect="how"] > div > b { left:52px !important; font-size:12px; }
+ .valora-connect-page > [data-connect="how"] > div > p { left:52px !important; font-size:10px; }
+}
+@media (max-width:699px) {
+ .valora-connect-page { display:flex !important; flex-direction:column; padding:66px 14px 90px; gap:13px; }
+ .valora-connect-page > [data-connect="sidebar"] { display:none !important; }
+ .valora-connect-page > [data-connect="topbar"] { position:fixed !important; top:0 !important; left:0 !important; width:100% !important; height:52px !important; z-index:90; overflow:hidden; }
+ .valora-connect-page > [data-connect="topbar"] header { min-height:52px !important; height:52px !important; padding:6px 12px !important; }
+ .valora-connect-page > [data-connect="topbar"] header > div:first-child { display:none !important; }
+ .valora-connect-page > [data-connect="back"] { height:auto !important; }
+ .valora-connect-page > [data-connect="hero"] { height:615px !important; }
+ .valora-connect-page > [data-connect="hero"] > h2 { left:16px !important; top:18px !important; font-size:22px; line-height:27px; }
+ .valora-connect-page > [data-connect="hero"] > p:nth-of-type(1) { left:16px !important; top:91px !important; right:16px !important; font-size:12px; line-height:19px; }
+ .valora-connect-page > [data-connect="hero"] > img { top:170px !important; right:10px !important; width:140px !important; height:100px !important; }
+ .valora-connect-page > [data-connect="hero"] > div { left:16px !important; right:16px !important; top:auto !important; height:auto !important; }
+ .valora-connect-page > [data-connect="hero"] > div:nth-of-type(1) { top:284px !important; }
+ .valora-connect-page > [data-connect="hero"] > div:nth-of-type(2) { top:354px !important; }
+ .valora-connect-page > [data-connect="hero"] > div:nth-of-type(3) { top:424px !important; }
+ .valora-connect-page > [data-connect="hero"] > div p { font-size:11px; line-height:16px; }
+ .valora-connect-page > [data-connect="hero"] > button { top:510px !important; height:48px !important; }
+ .valora-connect-page > [data-connect="hero"] > p:last-child { top:570px !important; line-height:15px; }
+ .valora-connect-page > [data-connect="how"] { height:345px !important; }
+ .valora-connect-page > [data-connect="how"] > div { left:14px !important; right:10px !important; }
+ .valora-connect-page > [data-connect="how"] > div > b { left:55px !important; font-size:12px; }
+ .valora-connect-page > [data-connect="how"] > div > p { left:55px !important; font-size:11px; }
+ .valora-connect-page > [data-connect="security"] { height:165px !important; }
+ .valora-connect-page > [data-connect="security"] > p { left:17px !important; top:64px !important; width:calc(100% - 34px) !important; }
+ .valora-connect-page > [data-connect="security"] > button { left:17px !important; top:132px !important; }
+ .valora-connect-page > [data-connect="security"] > b { left:63px !important; font-size:13px; }
+ .valora-connect-page > [data-connect="banks"] { padding:83px 12px 18px; }
+ .valora-connect-page > [data-connect="banks"] > div { grid-template-columns:repeat(2,minmax(0,1fr)); }
+ .valora-connect-page > [data-connect="banks"] > div > button { height:130px !important; }
+ .valora-connect-dialog { height:min(704px,calc(100dvh - 28px)) !important; }
+ .valora-connect-dialog > h2 { left:18px !important; font-size:22px !important; max-width:calc(100% - 36px); }
+ .valora-connect-dialog > p { left:18px !important; right:18px !important; width:auto !important; font-size:12px !important; }
+ .valora-connect-dialog > label { top:120px !important; }
+ .valora-connect-dialog > div.grid { top:190px !important; grid-template-columns:repeat(2,minmax(0,1fr)); gap:9px; }
+ .valora-connect-dialog > div.grid button { height:105px !important; }
+ .valora-connect-dialog > div.grid button img { max-width:55px; max-height:55px; }
+ .valora-connect-dialog > button:not(:first-child) { left:5% !important; width:90% !important; }
+ .valora-connect-dialog > div:not(.grid) { max-width:calc(100% - 36px); }
+ .valora-connect-bottom-nav { display:flex; position:fixed; bottom:0; left:0; right:0; height:68px; padding:4px 6px env(safe-area-inset-bottom); background:#160b35; z-index:100; justify-content:space-around; align-items:center; }
+ .valora-connect-bottom-nav button { display:flex; flex:1; min-width:0; flex-direction:column; justify-content:center; align-items:center; gap:4px; color:white; font-size:9px; }
+ .valora-connect-bottom-nav img { width:19px; height:19px; filter:brightness(0) invert(1); }
+ .valora-connect-bottom-nav button[aria-current="page"] { background:#5115c8; border-radius:9px; padding:7px 0; }
+}
