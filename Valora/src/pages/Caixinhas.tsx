@@ -28,7 +28,7 @@ useEffect(()=>{let active=true;api.caixinhas.list().then(items=>{if(active){setG
  const historyDate=(date:string)=>{const iso=date.slice(0,10);const parts=iso.split('-');return parts.length===3?parts.reverse().join('/'):date};
  const nav=[['Início','/dashboard','/Wrapper.svg'],['Movimentações','/movimentacoes','/Movimenta-es-icon.svg'],['Caixinhas','/caixinhas','/Archive-Caixinhas.svg'],['Categorias','/categorias','/Divider.svg'],['Contas conectadas','/contas-conectadas','/Contas-conectadas-icon.svg']];
  const cards=showAllGoals?goals:goals.slice(0,5);const hasMore=goals.length>5;const goalRows=Math.ceil((cards.length+(hasMore&&!showAllGoals?1:0))/2);const historyTop=Math.max(675,310+goalRows*118+22);const tablet=typeof window!=='undefined'&&window.innerWidth>=700&&window.innerWidth<1024;const tabletHistoryTop=310+Math.ceil((cards.length+(hasMore&&!showAllGoals?1:0))/2)*118+18;const sum=goals.reduce((n,g)=>n+g.amount,0);const total=goals.reduce((n,g)=>n+g.target,0);
- return <div style={{zoom:typeof window!=="undefined"&&window.innerWidth<700?1:zoom,minHeight:Math.max(1024,tablet?tabletHistoryTop+650:historyTop+340)}} className="valora-caixinhas-page relative w-[1440px] bg-[#f9f9fe] font-[Inter] text-[#140f33]">
+ return <div style={{zoom:typeof window!=="undefined"&&window.innerWidth<1024?1:zoom,minHeight:Math.max(1024,tablet?tabletHistoryTop+650:historyTop+340)}} className="valora-caixinhas-page relative w-[1440px] bg-[#f9f9fe] font-[Inter] text-[#140f33]">
  {loading && <PageLoading label="Carregando caixinhas..." />}
  <aside data-caix="sidebar" style={pos(0,0,232,1024)} className="bg-[#160b30] px-3">
  <SidebarMenu active="Caixinhas"/>
