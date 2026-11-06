@@ -56,7 +56,7 @@ export default function ContasConectadas(){
  </section>
  <section data-connect="security" style={pos(1018,568,392,146)} className="bg-[#f0dbff] border border-[#e0e3f2] rounded-[12px]">
  <span className="absolute left-[19px] top-[19px] text-[#541feb]"><Icon kind="shield" size={36}/></span><b className="absolute left-[67px] top-[19px] text-[15px]">Seus dados em segurança</b><span className="absolute right-[13px] top-[13px] font-semibold text-[19px]">belvo.</span>
- <p className="absolute left-[67px] top-[46px] w-[290px] text-[#5c5785] text-[11px] leading-[16px]">A Valora utiliza a tecnologia da Belvo, autorizada pelo Banco Central, e segue todos os padrões de segurança do Open Finance.</p><button onClick={()=>connect()} className="absolute left-[67px] top-[103px] text-[11px] font-semibold text-[#541feb]">Saiba mais sobre a segurança →</button>
+ <p className="absolute left-[67px] top-[46px] w-[290px] text-[#5c5785] text-[11px] leading-[16px]">A Valora utiliza a tecnologia da Belvo, autorizada pelo Banco Central, e segue todos os padrões de segurança do Open Finance.</p>
  </section>
  <section data-connect="banks" style={pos(270,740,1140,420)} className="bg-white border border-[#e0e3f2] rounded-[12px]">
  <h2 className="absolute left-[19px] top-[17px] text-[18px] font-semibold">Instituições disponíveis</h2><p className="absolute left-[19px] top-[45px] text-[12px] text-[#5c5785]">Conecte sua conta nos principais bancos do Brasil.</p>
