@@ -1865,3 +1865,97 @@ body {
  :is(.valora-cat-page > [data-cat="sidebar"], .valora-accounts-page > [data-accounts="sidebar"], .valora-connect-page > [data-connect="sidebar"]) > div:last-child,
  .valora-detail-page > [data-detail="sidebar"] > div:last-child {display:none !important}
 }
+
+
+/* Tablet: SidebarMenu unificado com o menu compacto das caixinhas.
+   A estrutura do SidebarMenu é posicionada absolutamente no desktop;
+   no tablet neutralizamos essas coordenadas para impedir cortes. */
+@media (min-width:700px) and (max-width:1023px) {
+  :is(
+    .valora-cat-page > [data-cat="sidebar"],
+    .valora-accounts-page > [data-accounts="sidebar"],
+    .valora-connect-page > [data-connect="sidebar"]
+  ) {
+    width:116px !important;
+    min-width:116px !important;
+    max-width:116px !important;
+    padding:0 6px !important;
+    overflow:hidden !important;
+  }
+  :is(
+    .valora-cat-page > [data-cat="sidebar"],
+    .valora-accounts-page > [data-accounts="sidebar"],
+    .valora-connect-page > [data-connect="sidebar"]
+  ) > div:first-child {
+    position:relative !important;
+    inset:auto !important;
+    width:100% !important;
+    height:auto !important;
+    padding:0 !important;
+  }
+  :is(
+    .valora-cat-page > [data-cat="sidebar"],
+    .valora-accounts-page > [data-accounts="sidebar"],
+    .valora-connect-page > [data-connect="sidebar"]
+  ) > div:first-child > div:first-child {
+    position:relative !important;
+    inset:auto !important;
+    width:100% !important;
+    display:flex !important;
+    justify-content:center !important;
+    align-items:center !important;
+    gap:2px !important;
+    padding:20px 0 22px !important;
+    font-size:17px !important;
+    line-height:24px !important;
+    white-space:nowrap !important;
+  }
+  :is(
+    .valora-cat-page > [data-cat="sidebar"],
+    .valora-accounts-page > [data-accounts="sidebar"],
+    .valora-connect-page > [data-connect="sidebar"]
+  ) > div:first-child > div:first-child img {
+    width:27px !important;
+    height:27px !important;
+    flex-shrink:0;
+  }
+  :is(
+    .valora-cat-page > [data-cat="sidebar"],
+    .valora-accounts-page > [data-accounts="sidebar"],
+    .valora-connect-page > [data-connect="sidebar"]
+  ) > div:first-child > nav {
+    position:relative !important;
+    inset:auto !important;
+    width:100% !important;
+    display:flex !important;
+    flex-direction:column !important;
+    gap:7px !important;
+  }
+  :is(
+    .valora-cat-page > [data-cat="sidebar"],
+    .valora-accounts-page > [data-accounts="sidebar"],
+    .valora-connect-page > [data-connect="sidebar"]
+  ) > div:first-child > nav button {
+    width:100% !important;
+    height:54px !important;
+    min-height:54px !important;
+    padding:5px 2px !important;
+    display:flex !important;
+    flex-direction:column !important;
+    justify-content:center !important;
+    align-items:center !important;
+    gap:3px !important;
+    text-align:center !important;
+    font-size:9px !important;
+    line-height:12px !important;
+    white-space:normal !important;
+  }
+  :is(
+    .valora-cat-page > [data-cat="sidebar"],
+    .valora-accounts-page > [data-accounts="sidebar"],
+    .valora-connect-page > [data-connect="sidebar"]
+  ) > div:first-child > nav button img {
+    width:19px !important;
+    height:19px !important;
+  }
+}
