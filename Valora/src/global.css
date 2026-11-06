@@ -1959,3 +1959,49 @@ body {
     height:19px !important;
   }
 }
+
+
+/* Tablet: Caixinhas e Movimentações com o mesmo menu vertical de Categorias. */
+@media (min-width:700px) and (max-width:1023px) {
+ .valora-mov-sidebar, .valora-caixinhas-page > [data-caix="sidebar"] {
+   display:block !important; width:116px !important; min-width:116px !important;
+   max-width:116px !important; padding:0 6px !important;
+   overflow:hidden !important; box-sizing:border-box !important;
+   background:#130938 !important;
+ }
+ .valora-mov-sidebar > :first-child {
+   transform:none !important; transform-origin:initial !important;
+ }
+ :is(.valora-mov-sidebar, .valora-caixinhas-page > [data-caix="sidebar"]) > div:first-child {
+   position:relative !important; inset:auto !important;
+   width:100% !important; height:auto !important;
+ }
+ :is(.valora-mov-sidebar, .valora-caixinhas-page > [data-caix="sidebar"]) > div:first-child > div:first-child {
+   position:relative !important; inset:auto !important;
+   width:100% !important; padding:20px 0 22px !important;
+   display:flex !important; justify-content:center !important; align-items:center !important;
+   font-size:17px !important; line-height:24px !important; gap:2px !important;
+   white-space:nowrap !important;
+ }
+ :is(.valora-mov-sidebar, .valora-caixinhas-page > [data-caix="sidebar"]) > div:first-child > div:first-child img {
+   width:27px !important; height:27px !important; flex-shrink:0;
+ }
+ :is(.valora-mov-sidebar, .valora-caixinhas-page > [data-caix="sidebar"]) > div:first-child > nav {
+   position:relative !important; inset:auto !important;
+   width:100% !important; display:flex !important;
+   flex-direction:column !important; gap:7px !important;
+ }
+ :is(.valora-mov-sidebar, .valora-caixinhas-page > [data-caix="sidebar"]) > div:first-child > nav button {
+   width:100% !important; height:54px !important; min-height:54px !important;
+   display:flex !important; flex-direction:column !important;
+   justify-content:center !important; align-items:center !important;
+   padding:5px 2px !important; gap:3px !important;
+   text-align:center !important; font-size:9px !important;
+   line-height:12px !important; white-space:normal !important;
+ }
+ :is(.valora-mov-sidebar, .valora-caixinhas-page > [data-caix="sidebar"]) > div:first-child > nav button img {
+   width:19px !important; height:19px !important;
+ }
+ .valora-mov-sidebar > div:last-child,
+ .valora-caixinhas-page > [data-caix="sidebar"] > div:last-child {display:none !important}
+}
