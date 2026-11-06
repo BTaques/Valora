@@ -8,6 +8,8 @@ export type ValoraUser = {
   nome: string;
   email: string;
   telefone: string;
+  cpf?: string;
+  dataNascimento?: string;
   endereco?: {
     logradouro: string;
     bairro: string;
@@ -233,7 +235,8 @@ export const api = {
     },
 
     async me(): Promise<ValoraUser> {
-      return fetchCurrentUser();
+      const user = getStoredUser() ?? await fetchCurrentUser();
+      return request<ValoraUser>(`/api/usuario/${user.id}`);
     },
 
     logout(): void {
