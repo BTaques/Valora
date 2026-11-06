@@ -17,11 +17,24 @@ function Icon({kind,size=23}:{kind:'transfer'|'eye'|'lock'|'bank'|'shield';size?
 export default function ContasConectadas(){
  const navigate=useNavigate();
  const [zoom,setZoom]=useState(1),[modalStep,setModalStep]=useState<0|1|2|3>(0),[query,setQuery]=useState('');
+ const [showComingSoon,setShowComingSoon]=useState(true);
  useEffect(()=>{const f=()=>setZoom(Math.max(1,window.innerWidth/1440));f();window.addEventListener('resize',f);return()=>window.removeEventListener('resize',f)},[]);
  const nav=[['Início','/dashboard','/Wrapper.svg'],['Movimentações','/movimentacoes','/Movimenta-es-icon.svg'],['Caixinhas','/caixinhas','/Archive-Caixinhas.svg'],['Categorias','/categorias','/Divider.svg'],['Contas conectadas','/contas-conectadas','/Contas-conectadas-icon.svg']];
  const connect=(name='')=>{setQuery('');setModalStep(name==='Itaú'?2:1)};
  const close=()=>setModalStep(0);
  return <div style={{zoom:typeof window!=="undefined"&&window.innerWidth<1024?1:zoom}} className="valora-connect-page relative w-[1440px] min-h-[1200px] bg-[#f6f9fe] font-[Inter] text-[#0e0b2e]">
+ {showComingSoon && <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-[#130930]/65 px-[5%] py-6" role="presentation">
+  <section role="dialog" aria-modal="true" aria-labelledby="coming-soon-title" aria-describedby="coming-soon-description" className="w-full max-w-[470px] rounded-[20px] bg-white px-[7%] py-9 text-center shadow-2xl sm:px-10">
+   <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-[#f0eaff] text-[#5712d6]"><Icon kind="bank" size={29}/></div>
+   <h2 id="coming-soon-title" className="text-[22px] font-bold text-[#130930]">Novidades a caminho!</h2>
+   <p id="coming-soon-description" className="mt-4 text-[14px] leading-6 text-[#5c5785]">A conexão com contas bancárias ainda está em desenvolvimento e estará disponível em uma próxima atualização da Valora. Enquanto isso, você pode explorar uma prévia desta funcionalidade.</p>
+   <p className="mt-4 text-[14px] font-semibold text-[#130930]">Deseja continuar visualizando esta tela?</p>
+   <div className="mt-7 flex flex-col-reverse gap-3 sm:flex-row">
+    <button type="button" onClick={()=>navigate('/minhas-contas')} className="min-h-[46px] flex-1 rounded-[10px] border border-[#d8d1ec] bg-white px-4 font-semibold text-[#5712d6]">Não, voltar</button>
+    <button type="button" onClick={()=>setShowComingSoon(false)} autoFocus className="min-h-[46px] flex-1 rounded-[10px] bg-[#5712d6] px-4 font-semibold text-white">Sim, continuar</button>
+   </div>
+  </section>
+ </div>}
  <aside data-connect="sidebar" style={pos(0,0,232,1024)} className="bg-[#130930] text-white"><SidebarMenu active="Minhas contas"/>
  <div style={pos(17,726,198,242)} className="overflow-hidden rounded-[12px]"><img src="/Promo-Tela7-Valora.png" className="absolute inset-0 w-full h-full object-cover object-[67%_center]" alt="Planejamento de objetivos"/><div className="absolute inset-0 bg-gradient-to-b from-[#130930]/75 via-transparent to-transparent"/><p className="absolute left-[13px] top-[11px] text-[8px] font-semibold tracking-[2px] text-[#b285ff]">ORGANIZAÇÃO —</p><p className="absolute left-[13px] top-[29px] text-[10px] font-semibold leading-[15px]">O primeiro passo<br/>para conquistar<br/>seus <span className="text-[#b285ff]">objetivos.</span></p></div>
  </aside>
