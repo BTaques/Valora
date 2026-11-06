@@ -1732,3 +1732,92 @@ body {
  .valora-connect-bottom-nav img { width:19px; height:19px; filter:brightness(0) invert(1); }
  .valora-connect-bottom-nav button[aria-current="page"] { background:#5115c8; border-radius:9px; padding:7px 0; }
 }
+
+
+/* Detalhes de caixinha: layout compartilhado para cada caixinha real. */
+.valora-detail-bottom-nav {display:none}
+@media (max-width:1023px) {
+ .valora-detail-page {zoom:1 !important; width:100% !important; max-width:100% !important; min-width:0 !important; min-height:100dvh !important; height:auto !important; display:grid !important; gap:14px; align-content:start; box-sizing:border-box}
+ .valora-detail-page > [data-detail] {position:relative !important; top:auto !important; left:auto !important; width:100% !important; min-width:0 !important; max-width:none !important; box-sizing:border-box}
+ .valora-detail-page > [data-detail="title"] {height:auto !important; min-height:44px; align-items:flex-start}
+ .valora-detail-page > [data-detail="title"] h1 {font-size:26px !important; line-height:33px !important; overflow-wrap:anywhere}
+ .valora-detail-page > [data-detail="subtitle"] {height:auto !important; font-size:13px}
+ .valora-detail-page > [data-detail="summary"] {height:335px !important}
+ .valora-detail-page > [data-detail="summary"] > div:nth-last-child(-n+3) {top:250px !important; width:30% !important; height:68px !important}
+ .valora-detail-page > [data-detail="summary"] > div:nth-last-child(3) {left:2% !important}
+ .valora-detail-page > [data-detail="summary"] > div:nth-last-child(2) {left:35% !important}
+ .valora-detail-page > [data-detail="summary"] > div:nth-last-child(1) {left:68% !important}
+ .valora-detail-page > [data-detail="summary"] > div:nth-last-child(-n+3) b {font-size:12px !important; overflow-wrap:anywhere}
+ .valora-detail-page > [data-detail="evolution"] {height:218px !important; overflow-x:auto}
+ .valora-detail-page > [data-detail="evolution"] > svg {max-width:none}
+ .valora-detail-page > [data-detail="history"] {height:274px !important; overflow-x:auto}
+ .valora-detail-page > [data-detail="history"] > div {min-width:718px}
+ .valora-detail-page > [data-detail="deposit"] {height:48px !important}
+ .valora-detail-page > [data-detail="fixed"] {height:201px !important}
+ .valora-detail-page > [data-detail="fixed"] > div {left:4% !important; width:92% !important; gap:5px}
+ .valora-detail-page > [data-detail="fixed"] > div button {flex:1; min-width:0; width:auto !important}
+ .valora-detail-page > [data-detail="fixed"] > button {left:4% !important; width:92% !important}
+ .valora-detail-page > [data-detail="withdraw"] {height:177px !important}
+ .valora-detail-page > [data-detail="withdraw"] > input,
+ .valora-detail-page > [data-detail="withdraw"] > button {left:4% !important; width:92% !important}
+ .valora-detail-page > [data-detail="info"] {height:331px !important}
+ .valora-detail-page > [data-detail="info"] > div,
+ .valora-detail-page > [data-detail="info"] > button {left:4% !important; width:92% !important}
+ .valora-detail-page > div.fixed {padding:14px}
+ .valora-detail-page > div.fixed [role="dialog"] {width:min(100%,460px); max-height:90dvh; overflow-y:auto; padding:22px}
+}
+@media (min-width:700px) and (max-width:1023px) {
+ .valora-detail-page {grid-template-columns:116px repeat(6,minmax(0,1fr)); grid-template-rows:58px 25px auto auto auto; column-gap:12px; padding:0 14px 28px 0}
+ .valora-detail-page > [data-detail="sidebar"] {grid-column:1; grid-row:1/12; height:100% !important; min-height:100dvh; padding:0 5px !important; overflow:hidden}
+ .valora-detail-page > [data-detail="sidebar"] > div:first-child {font-size:17px !important; padding:20px 0 22px !important; gap:2px}
+ .valora-detail-page > [data-detail="sidebar"] > div:first-child img {width:27px !important; height:27px !important}
+ .valora-detail-page > [data-detail="sidebar"] nav {gap:7px}
+ .valora-detail-page > [data-detail="sidebar"] nav button {height:54px !important; font-size:9px !important; line-height:12px; flex-direction:column; justify-content:center; text-align:center; gap:3px; padding:5px 2px !important}
+ .valora-detail-page > [data-detail="sidebar"] nav button img {width:19px !important; height:19px !important}
+ .valora-detail-page > [data-detail="sidebar"] > div:last-child {display:none}
+ .valora-detail-page > [data-detail="topbar"] {grid-column:2/-1; grid-row:1; height:58px !important; overflow:hidden}
+ .valora-detail-page > [data-detail="topbar"] header {min-height:58px !important; height:58px !important; padding:8px !important}
+ .valora-detail-page > [data-detail="topbar"] header > div:first-child {min-width:0; max-width:45%}
+ .valora-detail-page > [data-detail="back"] {grid-column:2/-1; grid-row:2; height:auto !important}
+ .valora-detail-page > [data-detail="title"] {grid-column:2/-1; grid-row:3}
+ .valora-detail-page > [data-detail="subtitle"] {grid-column:2/-1; grid-row:4}
+ .valora-detail-page > [data-detail="summary"] {grid-column:2/-1; grid-row:5}
+ .valora-detail-page > [data-detail="deposit"] {grid-column:2/-1; grid-row:6}
+ .valora-detail-page > [data-detail="fixed"] {grid-column:2/5; grid-row:7}
+ .valora-detail-page > [data-detail="withdraw"] {grid-column:5/-1; grid-row:7}
+ .valora-detail-page > [data-detail="evolution"] {grid-column:2/-1; grid-row:8}
+ .valora-detail-page > [data-detail="history"] {grid-column:2/-1; grid-row:9}
+ .valora-detail-page > [data-detail="info"] {grid-column:2/-1; grid-row:10}
+ .valora-detail-page > [data-detail="summary"] > div:nth-child(5) {left:4% !important; top:165px !important; width:92% !important}
+ .valora-detail-page > [data-detail="summary"] > div:nth-child(5) > div {width:100% !important}
+ .valora-detail-page > [data-detail="summary"] > div:nth-child(6) {left:auto !important; right:12px !important}
+ .valora-detail-page > [data-detail="info"] > div {max-width:95%}
+}
+@media (max-width:699px) {
+ .valora-detail-page {display:flex !important; flex-direction:column; padding:66px 14px 90px; gap:13px}
+ .valora-detail-page > [data-detail="sidebar"] {display:none !important}
+ .valora-detail-page > [data-detail="topbar"] {position:fixed !important; top:0 !important; left:0 !important; width:100% !important; height:52px !important; z-index:90; overflow:hidden}
+ .valora-detail-page > [data-detail="topbar"] header {height:52px !important; min-height:52px !important; padding:6px 12px !important}
+ .valora-detail-page > [data-detail="topbar"] header > div:first-child {display:none !important}
+ .valora-detail-page > [data-detail="summary"] {height:440px !important}
+ .valora-detail-page > [data-detail="summary"] > div:first-child {left:14px !important; top:14px !important; width:60px !important; height:60px !important}
+ .valora-detail-page > [data-detail="summary"] > div:first-child svg {width:37px; height:37px}
+ .valora-detail-page > [data-detail="summary"] > b {left:87px !important; font-size:14px !important; max-width:calc(100% - 100px); overflow-wrap:anywhere}
+ .valora-detail-page > [data-detail="summary"] > b:nth-of-type(1) {top:18px !important}
+ .valora-detail-page > [data-detail="summary"] > b:nth-of-type(2) {top:46px !important}
+ .valora-detail-page > [data-detail="summary"] > span {left:87px !important; top:76px !important; font-size:11px}
+ .valora-detail-page > [data-detail="summary"] > div:nth-of-type(2) {left:14px !important; top:110px !important; width:calc(100% - 60px) !important}
+ .valora-detail-page > [data-detail="summary"] > b:nth-of-type(3) {left:auto !important; right:12px !important; top:110px !important}
+ .valora-detail-page > [data-detail="summary"] > div:nth-of-type(3) {left:14px !important; top:145px !important; width:calc(100% - 28px) !important}
+ .valora-detail-page > [data-detail="summary"] > div:nth-last-child(-n+3) {top:260px !important; height:52px !important; width:94% !important; left:3% !important}
+ .valora-detail-page > [data-detail="summary"] > div:nth-last-child(2) {top:319px !important}
+ .valora-detail-page > [data-detail="summary"] > div:nth-last-child(1) {top:378px !important}
+ .valora-detail-page > [data-detail="summary"] > div:nth-last-child(-n+3) span:nth-of-type(1) {top:9px !important}
+ .valora-detail-page > [data-detail="summary"] > div:nth-last-child(-n+3) span:nth-of-type(2) {top:9px !important}
+ .valora-detail-page > [data-detail="summary"] > div:nth-last-child(-n+3) b {top:27px !important}
+ .valora-detail-page > [data-detail="info"] > div b {max-width:55%; overflow-wrap:anywhere; text-align:right}
+ .valora-detail-bottom-nav {display:flex; position:fixed; bottom:0; left:0; right:0; height:68px; padding:4px 6px env(safe-area-inset-bottom); background:#160b35; z-index:100; justify-content:space-around; align-items:center}
+ .valora-detail-bottom-nav button {display:flex; flex:1; min-width:0; flex-direction:column; justify-content:center; align-items:center; gap:4px; color:white; font-size:9px}
+ .valora-detail-bottom-nav img {width:19px; height:19px; filter:brightness(0) invert(1)}
+ .valora-detail-bottom-nav button[aria-current="page"] {background:#5115c8; border-radius:9px; padding:7px 0}
+}
