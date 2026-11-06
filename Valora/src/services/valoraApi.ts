@@ -78,24 +78,18 @@ function readJsonSafely(text: string): unknown {
 }
 
 function getMessage(payload: unknown, fallback: string): string {
+  // O backend retorna erros de validação como [{ campo, mensagem }].
+  if (Array.isArray(payload)) {
+    const messages = payload.map(item => getMessage(item, "")).filter(Boolean);
+    return messages.length ? [...new Set(messages)].join(" ") : fallback;
+  }
   if (typeof payload === "string" && payload.trim()) return payload;
   if (payload && typeof payload === "object") {
     const value = payload as Record<string, unknown>;
-    for (const key of ["message", "detail", "erro", "error"]) {
+    for (const key of ["mensagem", "message", "detail", "erro", "error", "defaultMessage"]) {
       if (typeof value[key] === "string" && value[key]) return value[key] as string;
     }
-    if (Array.isArray(value.errors) && value.errors.length) {
-      return value.errors
-        .map((item) => {
-          if (item && typeof item === "object") {
-            const entry = item as Record<string, unknown>;
-            return String(entry.defaultMessage || entry.message || "");
-          }
-          return String(item);
-        })
-        .filter(Boolean)
-        .join(" ");
-    }
+    if (Array.isArray(value.errors)) return getMessage(value.errors, fallback);
   }
   return fallback;
 }
