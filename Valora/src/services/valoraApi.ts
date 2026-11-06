@@ -270,7 +270,7 @@ export const api = {
 
   caixinhas: {
     list(): Promise<CashboxDto[]> {
-      return request<CashboxDto[]>("/api/caixinhas/usuario");
+      return request<CashboxDto[]>("/api/caixinhas");
     },
     get(id: number): Promise<CashboxDto> {
       return request<CashboxDto>(`/api/caixinhas/${id}`);
