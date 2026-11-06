@@ -2,128 +2,99 @@
 
 **Organize suas finanças, acompanhe seus gastos e transforme objetivos em conquistas.**
 
-O **Valora** é uma aplicação web de gestão financeira pessoal desenvolvida como projeto acadêmico de Fintech na **FIAP**. O sistema reúne contas, movimentações, categorias e metas de economia em uma interface única, com integração entre frontend React e API Java.
+O **Valora** é uma aplicação web de gestão financeira pessoal desenvolvida como projeto acadêmico de Fintech na **FIAP**. O frontend em React e TypeScript se comunica com uma API REST em Java/Spring Boot, mantida em um repositório separado.
 
-> **Status:** projeto em desenvolvimento. Os fluxos principais estão implementados; melhorias de responsividade, testes finais e funcionalidades bancárias ainda estão em andamento.
+> **Status:** em desenvolvimento. Os principais fluxos estão integrados; a experiência responsiva e os testes de ponta a ponta continuam em revisão. A conexão com bancos via Open Finance ainda não está disponível.
 
 ## Funcionalidades
 
-- **Autenticação:** cadastro, login, logout e proteção de rotas.
-- **Dashboard:** visão consolidada de saldos, entradas, saídas, movimentações recentes e progresso das metas.
-- **Contas:** cadastro, edição, exclusão e acompanhamento de saldos.
-- **Movimentações:** registro, edição, exclusão, filtros, paginação e exportação CSV.
-- **Categorias:** organização e visualização dos gastos por categoria.
-- **Caixinhas:** criação de objetivos financeiros, acompanhamento do progresso e depósitos vinculados a uma conta.
-- **Histórico de caixinhas:** consulta de depósitos e resgates registrados na API.
+- **Acesso:** cadastro, login com JWT, logout e proteção de rotas.
+- **Dashboard:** visão de saldos, entradas, saídas, movimentações e metas; atalhos para **Registrar gasto** e **Registrar entrada**.
+- **Contas:** cadastro, consulta, edição e exclusão.
+- **Movimentações:** registro de receitas e despesas, consulta, edição, exclusão, filtros e exportação CSV.
+- **Categorias:** cadastro e organização das movimentações.
+- **Caixinhas:** criação de metas, consulta de saldo e progresso, depósitos, resgates e opção de exclusão. Os fluxos dependem das regras e respostas da API.
+- **Busca na barra superior:** pesquisa por movimentações, caixinhas e categorias, com navegação para as respectivas áreas.
+- **Perfil:** menu **Meus dados** e **Sair da conta**; visualização dos dados cadastrais disponibilizados pela API.
+- **Conectar conta bancária:** tela de prévia com aviso de funcionalidade futura; não realiza conexão bancária real.
 
-### Em desenvolvimento
+### Integração de caixinhas
 
-- Layout responsivo para telas menores.
-- Resgates de caixinhas, condicionados a ajustes de validação no backend.
-- Histórico detalhado e gráfico de evolução das caixinhas com dados integralmente persistidos na API.
-- Revisão de mensagens de erro, navegação e testes de ponta a ponta.
-- Integração bancária com a **Belvo** (planejada; ainda não implementada).
+A listagem de caixinhas do usuário autenticado usa:
+
+```http
+GET /api/caixinhas/usuario/
+Authorization: Bearer <token JWT>
+```
+
+O backend identifica o usuário pelo token, sem ID na URL, e é responsável por retornar as caixinhas ativas. O frontend também utiliza as operações de consulta individual, criação, atualização e exclusão previstas na API, incluindo `DELETE /api/caixinhas/{id}`.
+
+> A listagem foi adaptada ao endpoint autenticado. A exclusão e os demais fluxos precisam ser validados com a versão atual da API; não há confirmação de teste de ponta a ponta nesta documentação.
 
 ## Tecnologias
 
 | Camada | Tecnologias |
 | --- | --- |
 | Frontend | React 19, TypeScript, Vite 6, Tailwind CSS 4, React Router |
-| Backend | Java 21, Spring Boot, Spring Data JPA, Spring Security |
-| Banco de dados | Oracle Database, Flyway |
+| Backend | Java, Spring Boot, Spring Data JPA, Spring Security |
+| Banco de dados | Oracle Database |
 | Autenticação | JWT |
 | Design | Figma |
 
-O backend está em um repositório separado: **[api-valora](https://github.com/ArthurTorres1/api-valora)**.
+**Repositórios:** [Frontend — BTaques/Valora](https://github.com/BTaques/Valora) · [API — BTaques/API-Valora](https://github.com/BTaques/API-Valora)
 
-## Como executar localmente
+## Executar localmente
 
-### Pré-requisitos
-
-- Node.js e npm compatíveis com o Vite 6.
-- Java 21 e Maven para executar a API.
-- Acesso a uma instância Oracle configurada para o backend.
-
-### 1. Frontend
-
-Clone este repositório e entre na pasta da aplicação:
+**Pré-requisitos:** Node.js, npm e backend configurado e em execução.
 
 ```bash
 git clone https://github.com/BTaques/Valora.git
-cd Valora
-git checkout integracao-backend
-cd Valora
+cd Valora/Valora
 npm install
 npm run start
 ```
 
-> O comando `npm run start` inicia o servidor Vite. O endereço local é informado no terminal (normalmente `http://localhost:5173`).
+O Vite informa no terminal o endereço local, normalmente `http://localhost:5173`.
 
-Para gerar a versão de produção:
+Para gerar uma versão de produção:
 
 ```bash
 npm run build
 ```
 
-### 2. Backend
+### Backend
 
-Clone o repositório da API:
+O código da API está em [BTaques/API-Valora](https://github.com/BTaques/API-Valora). Configure a conexão com o banco, o segredo JWT e as demais propriedades conforme as instruções e arquivos desse repositório. Inicie a API antes de testar o frontend.
 
-```bash
-git clone https://github.com/ArthurTorres1/api-valora.git
-cd api-valora
-```
+Atualmente, a URL base da API está definida como `http://localhost:8080` em `Valora/src/services/valoraApi.ts`.
 
-Configure as variáveis exigidas pelo arquivo `src/main/resources/application.properties`:
-
-| Propriedade | Finalidade |
-| --- | --- |
-| `DB.URL` | URL JDBC de conexão com o Oracle |
-| `DB.USERNAME` | Usuário do banco |
-| `DB.PASSWORD` | Senha do banco |
-| `JWT_SECRET` | Segredo utilizado na assinatura de tokens |
-
-> **Atenção:** as propriedades acima refletem o arquivo de configuração consultado. Verifique a configuração atual da API antes de executá-la. Não publique credenciais ou segredos no repositório.
-
-Inicie a aplicação pela classe principal do Spring Boot na IDE ou, com o Maven configurado:
-
-```bash
-mvn spring-boot:run
-```
-
-O frontend atualmente consulta a API em `http://localhost:8080`, conforme `Valora/src/services/valoraApi.ts`. Para utilizar outra porta ou endereço, é necessário ajustar essa configuração.
-
-As migrações do banco são gerenciadas pelo **Flyway** no backend.
-
-## Estrutura do projeto
+## Estrutura
 
 ```text
 Valora/
 ├── README.md
 └── Valora/
-    ├── public/               # Imagens e recursos visuais
+    ├── public/          # Imagens e ícones
     ├── src/
-    │   ├── components/       # Componentes reutilizáveis
-    │   ├── pages/            # Telas da aplicação
-    │   ├── services/         # Comunicação com a API
-    │   ├── utils/            # Funções auxiliares
-    │   └── App.tsx           # Rotas da aplicação
+    │   ├── components/  # Componentes reutilizáveis
+    │   ├── pages/       # Telas
+    │   ├── services/    # Integração com a API
+    │   ├── utils/       # Utilitários
+    │   └── App.tsx      # Rotas
     └── package.json
 ```
 
-## Telas
+## Próximos passos
 
-O projeto inclui telas de login, dashboard, movimentações, caixinhas, detalhes de caixinha, categorias e contas.
-
-**Capturas de tela:** serão adicionadas após a revisão visual e os ajustes de responsividade.
-
-## Desenvolvimento e próximos passos
-
-O Valora está sendo evoluído com testes de fluxos financeiros e integração frontend–backend. As próximas etapas incluem concluir a experiência em dispositivos móveis, revisar os fluxos de caixinhas, realizar testes com usuários e estudar a integração bancária via Belvo.
+- Concluir e validar a responsividade em diferentes tamanhos de tela.
+- Testar integralmente os fluxos de caixinhas, inclusive a exclusão, com a API atualizada.
+- Revisar mensagens de erro e realizar testes de ponta a ponta.
+- Evoluir o histórico e os gráficos com dados persistidos na API.
+- Implementar futuramente a integração bancária via Open Finance.
 
 ## Contexto acadêmico
 
-Projeto de Fintech desenvolvido no contexto da formação em tecnologia da **FIAP**, com foco em aplicar conceitos de desenvolvimento web, APIs REST, banco de dados relacional, autenticação e experiência do usuário.
+Projeto de Fintech desenvolvido na **FIAP**, com foco em desenvolvimento web, APIs REST, banco de dados, autenticação e experiência do usuário.
 
 ---
 
