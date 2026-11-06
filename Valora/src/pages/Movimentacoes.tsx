@@ -50,7 +50,7 @@ export default function Movimentacoes(){
    <p className="absolute left-[17px] top-[15px] text-[#b285ff] text-[8px] font-semibold tracking-[2px]">FACILIDADE — NOVO</p>
    <p className="absolute left-[16px] top-[30px] text-white text-[16px] font-bold leading-[20px]">Vincule sua conta<br/><span className="text-[#b285ff]">bancária.</span></p>
    <p className="absolute left-[17px] top-[77px] w-[160px] text-white text-[11px] leading-[15px]">Conecte suas contas e acompanhe tudo em um só lugar.</p>
-   <button className="absolute left-[17px] top-[175px] w-[159px] h-[40px] rounded-[10px] border border-white/80 bg-[#1c1245]/80 text-white text-[12px] font-semibold">Saiba mais &nbsp; →</button>
+   
   </div>
  </aside>
  <div className="valora-mov-topbar absolute left-[235px] top-0 w-[1205px] h-[74px]"><Topbar5/></div>
