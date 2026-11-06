@@ -2148,3 +2148,37 @@ body {
    bottom:auto !important;
  }
 }
+
+
+/* Caixinhas tablet: tabela com cinco colunas fluidas, sem truncar fundo ou divisórias. */
+@media (min-width:700px) and (max-width:1023px) {
+ .valora-caixinhas-page:not(.valora-caixinhas-overlay-root) > [data-caix="history"] [data-caix="history-scroll"] {
+   overflow-x:auto !important;
+   overflow-y:auto !important;
+ }
+ .valora-caixinhas-page:not(.valora-caixinhas-overlay-root) > [data-caix="history"] [data-caix="history-scroll"] > div {
+   width:100% !important;
+   min-width:0 !important;
+   max-width:none !important;
+ }
+ .valora-caixinhas-page:not(.valora-caixinhas-overlay-root) > [data-caix="history"] [data-caix="history-scroll"] > div > div:first-child,
+ .valora-caixinhas-page:not(.valora-caixinhas-overlay-root) > [data-caix="history"] [data-caix="history-scroll"] > div > div[aria-live] > div.grid {
+   width:100% !important;
+   min-width:0 !important;
+   max-width:none !important;
+   box-sizing:border-box !important;
+   grid-template-columns:minmax(75px,1fr) minmax(95px,1.15fr) minmax(120px,1.5fr) minmax(70px,.75fr) minmax(85px,.85fr) !important;
+ }
+ .valora-caixinhas-page:not(.valora-caixinhas-overlay-root) > [data-caix="history"] [data-caix="history-scroll"] > div > div:first-child {
+   background-color:#f0f0f9 !important;
+ }
+ .valora-caixinhas-page:not(.valora-caixinhas-overlay-root) > [data-caix="history"] [data-caix="history-scroll"] > div > div[aria-live] > div.grid {
+   border-bottom:1px solid #f0edf7 !important;
+ }
+ .valora-caixinhas-page:not(.valora-caixinhas-overlay-root) > [data-caix="history"] [data-caix="history-scroll"] .grid > span {
+   min-width:0 !important;
+   overflow:hidden;
+   text-overflow:ellipsis;
+   white-space:nowrap;
+ }
+}
