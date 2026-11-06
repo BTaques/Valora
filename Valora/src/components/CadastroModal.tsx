@@ -12,6 +12,41 @@ export default function CadastroModal({ onClose, onRegistered }: CadastroModalPr
   const [feedback, setFeedback] = useState("");
   const [loading, setLoading] = useState(false);
   const dialogRef = useRef<HTMLDivElement>(null);
+  const formRef = useRef<HTMLFormElement>(null);
+  const cepRequestRef = useRef(0);
+  const [cepStatus, setCepStatus] = useState("");
+  const [cepLoading, setCepLoading] = useState(false);
+
+  async function consultarCep(rawCep: string) {
+    const cep = rawCep.replace(/\D/g, "");
+    const requestId = ++cepRequestRef.current;
+    if (cep.length !== 8) { setCepStatus(""); setCepLoading(false); return; }
+    setCepLoading(true);
+    setCepStatus("");
+    try {
+      const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+      if (!response.ok) throw new Error("Falha ao consultar CEP");
+      const address = await response.json() as { erro?: boolean; logradouro?: string; bairro?: string; localidade?: string; uf?: string };
+      if (requestId !== cepRequestRef.current) return;
+      if (address.erro) { setCepStatus("CEP não encontrado. Preencha o endereço manualmente."); return; }
+      const form = formRef.current;
+      if (!form) return;
+      const fill = (name: string, value?: string) => {
+        const field = form.elements.namedItem(name);
+        if (field instanceof HTMLInputElement && value) field.value = value;
+      };
+      fill("logradouro", address.logradouro);
+      fill("bairro", address.bairro);
+      fill("cidade", address.localidade);
+      fill("uf", address.uf);
+      setCepStatus("Endereço preenchido automaticamente. Confira os dados e informe o número.");
+      (form.elements.namedItem("numero") as HTMLInputElement | null)?.focus();
+    } catch {
+      if (requestId === cepRequestRef.current) setCepStatus("Não foi possível consultar o CEP. Preencha o endereço manualmente.");
+    } finally {
+      if (requestId === cepRequestRef.current) setCepLoading(false);
+    }
+  }
 
   useEffect(() => {
     const previousOverflow = document.body.style.overflow;
@@ -93,7 +128,7 @@ export default function CadastroModal({ onClose, onRegistered }: CadastroModalPr
           <h2 id="valora-cadastro-title">Crie sua conta</h2>
           <p>Seu dinheiro, seus planos. Tudo em um só lugar.</p>
         </div>
-        <form className="valora-cadastro-form" onSubmit={handleSubmit}>
+        <form ref={formRef} className="valora-cadastro-form" onSubmit={handleSubmit}>
           <label>Nome completo<input name="nome" placeholder="Digite seu nome completo" autoComplete="name" required /></label>
           <div className="valora-cadastro-row">
             <label>E-mail<input name="email" type="email" placeholder="seuemail@exemplo.com" autoComplete="email" required /></label>
@@ -104,9 +139,15 @@ export default function CadastroModal({ onClose, onRegistered }: CadastroModalPr
             <label>Data de nascimento<input name="nascimento" type="date" autoComplete="bday" required /></label>
           </div>
           <div className="valora-cadastro-row">
-            <label>CEP<input name="cep" placeholder="00000-000" inputMode="numeric" required /></label>
+            <label>CEP<input name="cep" placeholder="00000-000" inputMode="numeric" maxLength={9} autoComplete="postal-code" onChange={(event) => {
+              const digits = event.currentTarget.value.replace(/\D/g, "").slice(0, 8);
+              event.currentTarget.value = digits.length > 5 ? digits.slice(0, 5) + "-" + digits.slice(5) : digits;
+              if (digits.length === 8) void consultarCep(digits);
+              else { ++cepRequestRef.current; setCepStatus(""); setCepLoading(false); }
+            }} required /></label>
             <label>UF<input name="uf" placeholder="SP" maxLength={2} required /></label>
           </div>
+          {(cepLoading || cepStatus) && <p role="status" aria-live="polite" className="valora-cadastro-feedback">{cepLoading ? "Consultando CEP..." : cepStatus}</p>}
           <label>Logradouro<input name="logradouro" placeholder="Rua, avenida..." required /></label>
           <div className="valora-cadastro-row">
             <label>Número<input name="numero" placeholder="Número" /></label>
