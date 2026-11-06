@@ -1,4 +1,5 @@
 import PageLoading from "../components/PageLoading";
+import SidebarMenu from "../components/SidebarMenu";
 import { FunctionComponent, useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ParceriasValora1 from "../components/ParceriasValora1";
@@ -66,6 +67,7 @@ const Incio: FunctionComponent = () => {
     <div data-valora-dashboard style={{ zoom: dashboardZoom }} className="valora-inicio w-full relative bg-[#f6f8fe] flex items-start flex-nowrap content-start gap-0 min-w-[1440px] leading-[normal] tracking-[normal]">
  {loading && <PageLoading label="Carregando seu resumo financeiro..." />}
       <section className="valora-inicio-sidebar h-[1024px] w-[232px] bg-[#160b30] overflow-hidden shrink-0 flex flex-col items-center py-[33.9px] px-3 box-border relative isolate gap-[41.1px] text-left text-[27px] text-[#fff] font-[Inter] mq450:pt-[22px] mq450:pb-[22px] mq450:box-border mq450:pt-5 mq450:pb-5 mq450:box-border">
+        <div className="valora-inicio-tablet-menu"><SidebarMenu active="Início"/></div>
         <div className="flex items-center py-0 pl-0 pr-10 box-border gap-px max-w-[165.3px]">
           <button className="cursor-pointer [border:none] pt-0 px-0 pb-[3.9px] bg-[transparent] h-[36.9px] flex items-start box-border">
             <img
