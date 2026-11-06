@@ -2133,3 +2133,18 @@ body {
    box-sizing:border-box !important;
  }
 }
+
+
+/* Caixinhas tablet: o cartão Dica da Valora tem conteúdo até 236px;
+   preservar a altura original para não cortar o botão inferior. */
+@media (min-width:700px) and (max-width:1023px) {
+ .valora-caixinhas-page:not(.valora-caixinhas-overlay-root) > [data-caix="tip"] {
+   height:263px !important;
+   min-height:263px !important;
+   overflow:hidden !important;
+ }
+ .valora-caixinhas-page:not(.valora-caixinhas-overlay-root) > [data-caix="tip"] > button:last-child {
+   top:201px !important;
+   bottom:auto !important;
+ }
+}
