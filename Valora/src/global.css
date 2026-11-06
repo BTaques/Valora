@@ -2113,3 +2113,23 @@ body {
  .valora-caixinhas-page > [data-caix="sidebar"] > div:nth-child(2),
  .valora-caixinhas-page > [data-caix="sidebar"] > p { display:none !important; }
 }
+
+
+/* Caixinhas: cabeçalho cinza acompanha todas as colunas, inclusive Valor. */
+@media (min-width:700px) and (max-width:1023px) {
+ .valora-caixinhas-page > [data-caix="history"] [data-caix="history-scroll"] > div {
+   width:100% !important;
+   min-width:763px !important;
+ }
+ .valora-caixinhas-page > [data-caix="history"] [data-caix="history-scroll"] > div > div:first-child {
+   width:100% !important;
+   min-width:763px !important;
+   box-sizing:border-box !important;
+   background:#f0f0f9 !important;
+ }
+ .valora-caixinhas-page > [data-caix="history"] [data-caix="history-scroll"] > div > div[aria-live] > div.grid {
+   width:100% !important;
+   min-width:763px !important;
+   box-sizing:border-box !important;
+ }
+}
