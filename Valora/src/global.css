@@ -1,7 +1,6 @@
 @import "tailwindcss/preflight.css" layer(base);
 @import "tailwindcss/theme.css" layer(theme);
 @import "tailwindcss/utilities.css" layer(utilities);
-@import url("https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,600&display=swap");
 @layer theme, base, components, utilities;
 @config "../tailwind.config.js";
 
@@ -2234,3 +2233,18 @@ body {
     max-width:60% !important;
   }
 }
+
+/* Aparência determinística em navegação normal e anônima. */
+:root {
+  color-scheme: light;
+  font-family: Inter, Arial, sans-serif;
+  font-synthesis: none;
+}
+html, body, #root { color-scheme: light; }
+body { background-color: #f6f8fe; }
+button, input, select, textarea {
+  font-family: Inter, Arial, sans-serif;
+  color-scheme: light;
+}
+input, textarea, select { accent-color: #5712d6; }
+svg, img { flex-shrink: 0; }
