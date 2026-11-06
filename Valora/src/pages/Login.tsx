@@ -1,4 +1,4 @@
-import { FunctionComponent, useCallback, useState } from "react";
+import { FunctionComponent, useCallback, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import CadastroModal from "../components/CadastroModal";
 import FormContent from "../components/FormContent";
@@ -6,12 +6,37 @@ import FormContent from "../components/FormContent";
 const Login: FunctionComponent = () => {
   const navigate = useNavigate();
   const [cadastroAberto, setCadastroAberto] = useState(false);
+  const [loginAberto, setLoginAberto] = useState(false);
+  const dragStartY = useRef<number | null>(null);
+  const [arrastoY, setArrastoY] = useState(0);
+  const fecharLogin = useCallback(() => {
+    setLoginAberto(false);
+    setArrastoY(0);
+    dragStartY.current = null;
+  }, []);
+  const iniciarArrasto = (event: React.PointerEvent<HTMLButtonElement>) => {
+    dragStartY.current = event.clientY;
+    event.currentTarget.setPointerCapture(event.pointerId);
+  };
+  const moverArrasto = (event: React.PointerEvent<HTMLButtonElement>) => {
+    if (dragStartY.current === null) return;
+    setArrastoY(Math.max(0, event.clientY - dragStartY.current));
+  };
+  const terminarArrasto = () => {
+    if (arrastoY > 90) fecharLogin();
+    else setArrastoY(0);
+    dragStartY.current = null;
+  };
   const fecharCadastro = useCallback(() => setCadastroAberto(false), []);
   return (
     <>
     <div className="valora-login w-full relative bg-[#f9f8fc] overflow-hidden flex items-start py-0 pl-0 pr-9 box-border leading-[normal] tracking-[normal] text-left text-sm text-[#6e6980] font-[Inter]">
       <main className="valora-login-layout h-[1024px] flex-1 flex items-start justify-between flex-wrap content-start gap-0 max-w-[1404px] [row-gap:20px] mq1400:gap-0 mq1400:max-w-full">
         <main className="valora-login-hero h-[1024px] flex-1 overflow-hidden flex flex-col items-center py-[5.8px] px-[30px] box-border bg-[url('/Brand@3x.png')] bg-cover bg-no-repeat bg-[top] min-w-[310px] max-w-[760px] min-h-[1024px] text-left text-[29px] text-[#fff] font-[Inter] mq825:max-w-full mq825:flex-1">
+              <div className="valora-login-mobile-actions" style={{ position: "absolute", top: 43, right: 20, left: "auto", zIndex: 50 }}>
+                <button type="button" onClick={() => setLoginAberto(true)}>Fazer login</button>
+                <button type="button" onClick={() => setCadastroAberto(true)}>Criar conta</button>
+              </div>
           <div className="w-full flex-1 flex flex-col items-start max-w-[700px] mq825:max-w-full">
             <div className="w-full flex-1 flex flex-col items-center gap-[82px] max-w-[515px] mq825:gap-[41px] mq825:max-w-full mq450:gap-5">
               <div className="w-full flex items-start py-[40.1px] px-0 box-border gap-[7px] max-w-[468.8px] z-[3] mq825:max-w-full mq450:flex-wrap">
@@ -114,7 +139,8 @@ const Login: FunctionComponent = () => {
             </div>
           </div>
         </main>
-        <section className="valora-login-panel flex-[1.0857] flex flex-col items-start py-[29.9px] px-0 box-border gap-[21px] min-w-[310px] max-w-[519px] text-left text-[11px] text-[#736b8f] font-[Inter] lg:pt-5 lg:pb-5 lg:box-border mq825:max-w-full">
+        {loginAberto && <button type="button" className="valora-login-mobile-backdrop" aria-label="Fechar login" onClick={fecharLogin} />}
+        <section role={loginAberto ? "dialog" : undefined} aria-modal={loginAberto ? true : undefined} aria-label={loginAberto ? "Fazer login" : undefined} style={loginAberto ? { "--valora-drag-y": `${arrastoY}px` } as React.CSSProperties : undefined} className={`valora-login-panel ${loginAberto ? "valora-login-panel-open" : ""} flex-[1.0857] flex flex-col items-start py-[29.9px] px-0 box-border gap-[21px] min-w-[310px] max-w-[519px] text-left text-[11px] text-[#736b8f] font-[Inter] lg:pt-5 lg:pb-5 lg:box-border mq825:max-w-full`}>
           <div className="self-stretch flex items-center justify-end gap-9 mq450:gap-[18px] mq450:flex-wrap">
             <div className="relative">Ainda não tem uma conta?</div>
             <button type="button" onClick={() => setCadastroAberto(true)} className="cursor-pointer border-[#4d21b3] border-solid border-[1.5px] py-[11px] pl-[25px] pr-[22px] bg-[transparent] h-10 rounded-[10px] box-border overflow-hidden flex items-center justify-center hover:bg-[rgba(115,71,217,0.09)] hover:border-[#7347d9] hover:border-solid hover:hover:border-[1.5px] hover:box-border">
@@ -123,6 +149,7 @@ const Login: FunctionComponent = () => {
               </div>
             </button>
           </div>
+          <button type="button" className="valora-login-mobile-close" aria-label="Arraste para baixo para fechar o login" onPointerDown={iniciarArrasto} onPointerMove={moverArrasto} onPointerUp={terminarArrasto} onPointerCancel={terminarArrasto}><span /></button>
           <FormContent />
         </section>
       </main>
