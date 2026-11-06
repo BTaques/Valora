@@ -182,8 +182,8 @@ const Incio: FunctionComponent = () => {
               </div>
             </div>
             <div className="self-stretch flex items-center flex-wrap content-center p-[15px] gap-[13px] text-center text-[11px] text-[#130e33]">
-              <div className="flex-1 flex flex-col items-start gap-2 min-w-[81px]">
-                <button onClick={()=>void openQuick("Saída")} className="cursor-pointer [border:none] py-[8.9px] px-0 bg-[#f0e8ff] self-stretch h-16 rounded-[9px] overflow-hidden shrink-0 flex items-start justify-center box-border hover:bg-[#d6cfe6]">
+              <div className="flex-1 flex flex-col items-center gap-2 min-w-[0]">
+                <button onClick={()=>void openQuick("Saída")} className="cursor-pointer [border:none] py-[8.9px] px-0 bg-[#f0e8ff] self-stretch h-[78px] rounded-[9px] overflow-hidden shrink-0 flex items-center justify-center box-border hover:bg-[#d6cfe6]">
                   <h2 className="m-0 relative text-[25px] font-bold font-[Inter] text-[#4f13d4] text-left mq450:text-xl">
                     −
                   </h2>
@@ -192,8 +192,8 @@ const Incio: FunctionComponent = () => {
                   Registrar gasto
                 </div>
               </div>
-              <div className="flex-1 flex flex-col items-start gap-2 min-w-[92px]">
-                <button onClick={()=>void openQuick("Entrada")} className="cursor-pointer [border:none] py-[8.9px] px-0 bg-[#f0e8ff] self-stretch h-16 rounded-[9px] overflow-hidden shrink-0 flex items-start justify-center box-border hover:bg-[#d6cfe6]">
+              <div className="flex-1 flex flex-col items-center gap-2 min-w-[0]">
+                <button onClick={()=>void openQuick("Entrada")} className="cursor-pointer [border:none] py-[8.9px] px-0 bg-[#f0e8ff] self-stretch h-[78px] rounded-[9px] overflow-hidden shrink-0 flex items-center justify-center box-border hover:bg-[#d6cfe6]">
                   <h2 className="m-0 relative text-[25px] font-bold font-[Inter] text-[#4f13d4] text-left mq450:text-xl">
                     +
                   </h2>
@@ -202,26 +202,7 @@ const Incio: FunctionComponent = () => {
                   Registrar entrada
                 </div>
               </div>
-              <button type="button" onClick={()=>void openQuick("Entrada",true)} className="cursor-pointer flex-1 flex flex-col items-center gap-2 min-w-[95px]">
-                <img
-                  className="self-stretch h-16 relative rounded-[9px] max-w-full overflow-hidden shrink-0"
-                  loading="lazy"
-                  alt=""
-                  src="/Sal-rio.svg"
-                />
-                <div className="relative font-semibold">Salário</div>
-              </button>
-              <div className="cursor-pointer flex-1 flex flex-col items-start gap-2 min-w-[95px]">
-                <img
-                  className="self-stretch h-16 relative rounded-[9px] max-w-full overflow-hidden shrink-0"
-                  loading="lazy"
-                  alt=""
-                  src="/Gastos-fixos.svg"
-                />
-                <div className="self-stretch relative font-semibold">
-                  Gastos fixos
-                </div>
-              </div>
+
             </div>
           </section>
           {quickMode&&<div className="fixed inset-0 z-[400] flex items-center justify-center bg-black/50"><form onSubmit={saveQuick} className="w-[420px] rounded-2xl bg-white p-7 shadow-xl flex flex-col gap-4 text-[14px] leading-normal font-normal text-[#191236]"><div className="flex justify-between items-center"><h2 className="text-[20px] leading-7 font-bold">{quickDescription==="Salário"?"Registrar salário":quickMode==="Entrada"?"Registrar entrada":"Registrar gasto"}</h2><button type="button" onClick={()=>setQuickMode(null)}>✕</button></div><input required className="border rounded-lg p-3" placeholder="Descrição" value={quickDescription} onChange={e=>setQuickDescription(e.target.value)}/><input required className="border rounded-lg p-3" placeholder="Valor (R$)" type="text" inputMode="numeric" value={quickValue} onChange={e=>setQuickValue(formatMoneyInput(e.target.value))}/><input disabled className="border rounded-lg p-3 bg-[#f8f8fc]" value={quickMode}/><select required className="border rounded-lg p-3" value={quickCategory} onChange={e=>setQuickCategory(e.target.value)}><option value="">Selecione a categoria</option>{quickCategories.map(c=><option key={c.idCategoria} value={c.idCategoria}>{c.nmCategoria}</option>)}</select><select required className="border rounded-lg p-3" value={quickAccount} onChange={e=>setQuickAccount(e.target.value)}><option value="">Selecione a conta</option>{contas.map(c=><option key={c.id} value={c.id}>{c.nome}</option>)}</select>{quickError&&<p role="alert" className="text-xs text-red-600">{quickError}</p>}<button disabled={quickSaving||!quickCategories.length||!contas.length} className="bg-[#5212d6] disabled:opacity-50 text-white rounded-lg p-3">{quickSaving?"Salvando...":"Salvar movimentação"}</button>{(!quickCategories.length||!contas.length)&&<p className="text-xs text-red-600">Cadastre uma conta e uma categoria para continuar.</p>}</form></div>}
@@ -284,11 +265,7 @@ const Incio: FunctionComponent = () => {
                     Planeje hoje. Viaje com tranquilidade.
                   </div>
                 </div>
-                <button className="cursor-pointer [border:none] py-[11px] pl-[13px] pr-[23px] bg-[rgba(255,255,255,0.96)] w-[105px] h-[34px] rounded-[10px] overflow-hidden shrink-0 flex items-center box-border hover:bg-[rgba(230,230,230,0.96)]">
-                  <div className="relative text-[10px] font-medium font-[Inter] text-[#4a129e] whitespace-pre-wrap text-left inline-block min-w-[69px]">
-                    Saiba mais →
-                  </div>
-                </button>
+
               </div>
             </div>
           </section>
